@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This is the path where pictures will be stored-->
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--For some reason changing directory from "Pictures" to "ALLPICS"/"abc" does not work-->
+    <external-path name="my_images" path="Android/data/com.example.franc.testcamera/files/Pictures" />
+</paths>
