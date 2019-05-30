@@ -1,7 +1,10 @@
 package com.example.franc.testcamera;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -60,15 +63,24 @@ public class Driver extends AppCompatActivity {
     }
 
     ImageView imageView;
+    //after photo is taken
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            imageView = (ImageView) findViewById(R.id.hello1);
+            File imgFile = new  File(currentPhotoPath);
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            imageView.setImageBitmap(myBitmap);
+            /*
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
+            imageView = (ImageView) findViewById(R.id.hello1);
             imageView.setImageBitmap(imageBitmap);
+            */
         }
     }
 
+    //photopath will be known after a photo is taken
     String currentPhotoPath;
     //Creates unique names for each picture using timestamp
     private File createImageFile() throws IOException {
@@ -85,5 +97,17 @@ public class Driver extends AppCompatActivity {
         // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
         return image;
+    }
+
+
+
+    private String pathFromUri(Uri imageUri) {
+        String[] filePathColumn = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getContentResolver().query(imageUri, filePathColumn,
+                null, null, null);
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String filePath = cursor.getString(columnIndex);
+        return filePath ;
     }
 }
