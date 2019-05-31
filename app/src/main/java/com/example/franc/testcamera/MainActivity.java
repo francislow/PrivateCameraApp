@@ -1,10 +1,8 @@
 package com.example.franc.testcamera;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -12,29 +10,54 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import com.r0adkll.slidr.Slidr;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Driver extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
+    File currentImageFile;
+    ImageView imageView;
+    Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button button = (Button) findViewById(R.id.hello);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        Slidr.attach(this);
+
+        imageView = (ImageView) findViewById(R.id.hello1);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("I CLICKED YOUR IMAGE DUDEE");
+            }
+        });
+
+        button = (Button) findViewById(R.id.hello);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dispatchTakePictureIntent();
             }
         });
-
+        button = (Button) findViewById(R.id.hello3);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, Activity1.class);
+                startActivity(intent);
+            }
+        });
     }
 
     //Run camera app to take photo
@@ -42,72 +65,55 @@ public class Driver extends AppCompatActivity {
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
+        //When camera function fails to starts
+        if (takePictureIntent.resolveActivity(getPackageManager()) == null) {
+            System.out.println("Problem loading camera");
+        }
+        //When camera function starts
+        else if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            System.out.println("Camera loaded");
+
             try {
-                photoFile = createImageFile();
+                currentImageFile = createImageFile();
             } catch (IOException ex) {
                 // Error occurred while creating the File
-                System.out.println("Error occurred while creating the File =.=");
+                System.out.println("Error occurred while creating the image =.=");
             }
             // Continue only if the File was successfully created
-            if (photoFile != null) {
+            if (currentImageFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
                         "com.example.android.fileprovider",
-                        photoFile);
+                        currentImageFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
         }
     }
 
-    ImageView imageView;
     //after photo is taken
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            imageView = (ImageView) findViewById(R.id.hello1);
+            //showing picture as an image view in xml design
+            String currentPhotoPath = currentImageFile.getAbsolutePath();
             File imgFile = new  File(currentPhotoPath);
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             imageView.setImageBitmap(myBitmap);
-            /*
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            imageView = (ImageView) findViewById(R.id.hello1);
-            imageView.setImageBitmap(imageBitmap);
-            */
         }
     }
 
-    //photopath will be known after a photo is taken
-    String currentPhotoPath;
-    //Creates unique names for each picture using timestamp
+    //Creates an image file with unique names for it
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
+        File imageFile = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
-
         // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-
-
-    private String pathFromUri(Uri imageUri) {
-        String[] filePathColumn = { MediaStore.Images.Media.DATA };
-        Cursor cursor = getContentResolver().query(imageUri, filePathColumn,
-                null, null, null);
-        cursor.moveToFirst();
-        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-        String filePath = cursor.getString(columnIndex);
-        return filePath ;
+        return imageFile;
     }
 }

@@ -4,10 +4,8 @@
     package="com.example.franc.testcamera">
 
     <!--Request for permission to use stuffs in android-->
-    <!--Camera stuffs do you even need this?-->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="true" />
-    <!--Storage-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
                      android:maxSdkVersion="18" />
 
@@ -30,14 +28,21 @@
             </meta-data>
         </provider>
 
+        Main Activity
         <activity
-            android:name=".Driver"
+            android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        Activity 2
+        <activity
+            android:name=".Activity1"
+            android:theme="@style/AppTheme.YourSlidrTheme">
         </activity>
     </application>
 
