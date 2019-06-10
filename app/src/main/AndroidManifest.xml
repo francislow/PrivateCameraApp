@@ -28,7 +28,7 @@
             </meta-data>
         </provider>
 
-        Main Activity
+        Define driver to start from
         <activity
             android:name=".ActivityMain"
             android:screenOrientation="portrait">

@@ -3,16 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.franc.testcamera.ActivityMain">
+    android:layout_height="match_parent">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/myvp"
-        android:layout_width="match_parent"
-        android:layout_height="570dp"
-        android:background="@color/colorPrimaryDark"
+    <TextView
+        android:id="@+id/mytv1"
+        android:layout_width="298dp"
+        android:layout_height="62dp"
+        android:text="This is the 1 page"
+        android:textSize="60px"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
