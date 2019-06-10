@@ -6,35 +6,45 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.r0adkll.slidr.Slidr;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+public class ActivityMain extends FragmentActivity {
     File currentImageFile;
     ImageView imageView;
     Button button;
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //set initial layout
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Remove phone's notification bar
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        Slidr.attach(this);
+        //-------------------View Pager-----------------------------------
 
+        viewPager = (ViewPager)findViewById(R.id.myvp);
+        SwipeAdaptor swipeAdaptor = new SwipeAdaptor(getSupportFragmentManager());
+        viewPager.setAdapter(swipeAdaptor);
+
+        //----------------------------------------------------------------
+
+
+        //Image of photo taken
         imageView = (ImageView) findViewById(R.id.hello1);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //Camera button
         button = (Button) findViewById(R.id.hello);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,15 +61,41 @@ public class MainActivity extends AppCompatActivity {
                 dispatchTakePictureIntent();
             }
         });
+
+        //Change page button
         button = (Button) findViewById(R.id.hello3);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, Activity1.class);
+                Intent intent = new Intent(ActivityMain.this, Activity1.class);
                 startActivity(intent);
             }
         });
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //Run camera app to take photo
     static final int REQUEST_TAKE_PHOTO = 1;
