@@ -3,18 +3,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
     <TextView
         android:id="@+id/mytv1"
         android:layout_width="298dp"
-        android:layout_height="62dp"
-        android:text="This is the 1 page"
-        android:textSize="60px"
+        android:layout_height="287dp"
+        android:fontFamily="casual"
+        android:text="Camera Page"
+        android:textAlignment="center"
+        android:textSize="80dp"
+        app:layout_constraintBottom_toTopOf="@+id/mybutton1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.413" />
+
+    <Button
+        android:id="@+id/mybutton1"
+        android:layout_width="330dp"
+        android:layout_height="110dp"
+        android:layout_marginBottom="92dp"
+        android:background="@drawable/custombutton"
+        android:fontFamily="serif-monospace"
+        android:text="Press to take a picture!"
+        android:textColor="#FFFFFF"
+        android:textSize="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

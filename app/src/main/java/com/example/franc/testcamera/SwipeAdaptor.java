@@ -20,10 +20,10 @@ public class SwipeAdaptor extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         Fragment fragment;
         if (position == 0) {
-            fragment = new FragmentPage0();
+            fragment = new FragmentPage1();
         }
         else if (position == 1) {
-            fragment = new FragmentPage1();
+            fragment = new FragmentPageMiddle();
         }
         else {
             fragment = new FragmentPage2();

@@ -23,4 +23,16 @@ public class FragmentPage2 extends Fragment {
         View view = inflater.inflate(R.layout.fragment_page2, container, false);
         return view;
     }
+
+    @Override
+    public void onPause() {
+        System.out.println("fragmentpage2 PAUSED");
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        System.out.println("fragmentpage2 RESUMED");
+        super.onResume();
+    }
 }
