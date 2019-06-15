@@ -1,18 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:fillViewport="true"
     tools:context="com.example.franc.testcamera.ActivityMain">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/myvp"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <!--Top Tab-->
+        <RelativeLayout
+            android:id="@+id/toptab"
+            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include layout="@layout/layout_top_tab" />
+        </RelativeLayout>
+
+        <!--Middle ViewPager-->
+        <RelativeLayout
+            android:id="@+id/midsection"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toptab"
+            android:layout_above="@+id/btmtab"
+            android:background="@color/black">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/myvp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </RelativeLayout>
+
+        <!--Btm Navigation Tab-->
+        <RelativeLayout
+            android:id="@+id/btmtab"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include layout="@layout/layout_btm_tab" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>

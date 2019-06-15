@@ -1,55 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollView2"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentStart="true"
-    android:layout_alignParentTop="true"
-    android:background="#FFFFFF"
-    android:fillViewport="true">
+    android:layout_height="fill_parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:fontFamily="casual"
-            android:gravity="center"
-            android:text="YOUR STUDY LIFE ALL IN ONE APP"
-            android:textColor="#0093FC"
-            android:textSize="40sp"
-            android:textStyle="bold" />
+        <RelativeLayout
+            android:id="@+id/toptab2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/textView2"
+            <include layout="@layout/layout_top_tab" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/middlesection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="18dp"
-            android:layout_marginStart="18dp"
-            android:fontFamily="casual"
-            android:text="Recently Taken:"
-            android:textColor="#000000"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_below="@+id/toptab2">
 
-        <ImageView
-            android:id="@+id/myIV0"
-            android:layout_width="match_parent"
-            android:layout_height="500dp"
-            android:layout_marginTop="15dp" />
+            <include layout="@layout/layout_middle_section"/>
+        </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/myIV1"
-            android:layout_width="fill_parent"
-            android:layout_height="500dp"
-            android:layout_marginTop="15dp" />
-
-    </LinearLayout>
-</ScrollView>
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
