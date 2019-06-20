@@ -1,24 +1,30 @@
 package com.example.franc.testcamera;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
+import static com.example.franc.testcamera.MyCamera.REQUEST_TAKE_PHOTO;
 
 public class ActivityMain extends FragmentActivity {
-    ViewPager viewPager;
-    private File currentImageFile;
-    private Boolean pictureTaken = false;
+    private ViewPager viewPager;
+    private MyCamera myCamera;
+    private SwipeAdaptor swipeAdaptor;
+    public static int lastViewedFragItem = 1;
+
+    private static final int PICK_IMAGE = 100;
+
+    private static final String SAVED_FILE_NAME = "MySavedFiles";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,77 +35,124 @@ public class ActivityMain extends FragmentActivity {
         //Remove phone's notification bar
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        //Set up camera
+        myCamera = new MyCamera(this);
+
         //Set viewpager
+        swipeAdaptor = new SwipeAdaptor(getSupportFragmentManager());
         viewPager = (ViewPager)findViewById(R.id.myvp);
-        SwipeAdaptor swipeAdaptor = new SwipeAdaptor(getSupportFragmentManager());
         viewPager.setAdapter(swipeAdaptor);
-        viewPager.setCurrentItem(1);
-    }
+        viewPager.setCurrentItem(lastViewedFragItem);
 
-    //Signal to take a picture
-    protected void takePicture() {
-        dispatchTakePictureIntent();
-    }
-    protected File getPicture() {
-        return currentImageFile;
-    }
-    protected boolean wasPictureTaken() {
-        return pictureTaken;
-    }
+        //Setup Btm Tab
+        TabLayout btmTabLayout = (TabLayout) findViewById(R.id.btmtablayout);
+        btmTabLayout.setupWithViewPager(viewPager);
+        btmTabLayout.getTabAt(0).setIcon(R.drawable.ic_notes);
+        btmTabLayout.getTabAt(1).setIcon(R.drawable.ic_home);
+        btmTabLayout.getTabAt(2).setIcon(R.drawable.ic_gallery);
+
+        //Setup Top Tab
+        //Camera Button
+        final Button camButton = (Button) findViewById(R.id.cambutton);
+        camButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        camButton.setAlpha(0.1f);
+                        camButton.setScaleX(0.5f);
+                        camButton.setScaleY(0.5f);
+
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        camButton.setAlpha(1f);
+                        camButton.setScaleX(1f);
+                        camButton.setScaleY(1f);
 
 
-    //----------------------CAMERA FUNCTIONS---------------------------------------------------
+                        //If user's touch up is still inside button
+                        if(touchUpInsideButton(motionEvent, camButton))
+                        myCamera.takePicture();
 
-    //Run camera app to take photo
-    static final int REQUEST_TAKE_PHOTO = 1;
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        //When camera function fails to starts
-        if (takePictureIntent.resolveActivity(getPackageManager()) == null) {
-            System.out.println("Problem loading camera");
-        }
-        //When camera function starts
-        else if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            System.out.println("Camera loaded");
-            try {
-                currentImageFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-                System.out.println("Error occurred while creating the image =.=");
+                        break;
+                }
+                return true;
             }
-            //Continue only if the File was successfully created
-            if (currentImageFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.android.fileprovider",
-                        currentImageFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }
-        }
-    }
+        });
 
+        //Add Photo Button
+        final Button addButton = (Button) findViewById(R.id.addButton);
+        addButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        addButton.setAlpha(0.1f);
+                        addButton.setScaleX(0.5f);
+                        addButton.setScaleY(0.5f);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        addButton.setAlpha(1f);
+                        addButton.setScaleX(1f);
+                        addButton.setScaleY(1f);
+
+                        Intent gallery;
+                        //If user's touch up is still inside button
+                        System.out.println("checkpoint2");
+                        if(touchUpInsideButton(motionEvent, addButton)) {
+                            //Bring up add photos page
+                            System.out.println("checkpoint");
+                            gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                            startActivityForResult(gallery, PICK_IMAGE);
+                        }
+
+                        break;
+                }
+                return true;
+            }
+        });
+    }
     //after photo is taken
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //If picture was taken
+        //If picture was taken, set view
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            this.pictureTaken = true;
+            myCamera.setPictureTaken(true);
+        }
+
+        //If
+        else if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
+            Uri tbImageUri = data.getData();
+
+            SharedPreferences settings0 = getSharedPreferences(SAVED_FILE_NAME, 0);
+            SharedPreferences.Editor mySettings0Edit = settings0.edit();
+            mySettings0Edit.putString("tbImageUri", tbImageUri.toString());
+            mySettings0Edit.commit();
         }
     }
 
-    //Creates an image file with unique names for it
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File imageFile = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        // Save a file: path for use with ACTION_VIEW intents
-        return imageFile;
+    public MyCamera getMyCamera() {
+        return myCamera;
+    }
+
+    public boolean touchUpInsideButton(MotionEvent motionEvent, Button button) {
+        int[] buttonPosition = new int[2];
+        button.getLocationOnScreen(buttonPosition);
+
+        //Check
+        if(motionEvent.getRawX() >= buttonPosition[0] && motionEvent.getRawX() <= (buttonPosition[0]+button.getWidth())) {
+            if(motionEvent.getRawY() >= buttonPosition[1] && motionEvent.getRawY() <= (buttonPosition[1]+button.getHeight())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public Uri getTbImageUri() {
+        SharedPreferences settings0 = getSharedPreferences(SAVED_FILE_NAME, 0);
+        String tbImageUriString = settings0.getString("tbImageUri", null);
+        return Uri.parse(tbImageUriString);
     }
 }

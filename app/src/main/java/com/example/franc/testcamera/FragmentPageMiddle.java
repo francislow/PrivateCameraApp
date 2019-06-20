@@ -25,10 +25,6 @@ public class FragmentPageMiddle extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //Getting stored infomation from bundle (shared by all fragments)
-        Bundle bundle = getArguments();
-        String message = Integer.toString(bundle.getInt("count"));
-
         View view = inflater.inflate(R.layout.fragment_page_middle, container, false);
         return view;
     }
@@ -38,14 +34,6 @@ public class FragmentPageMiddle extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         //ImageView
         imageView0 = (ImageView) getActivity().findViewById(R.id.myIV0);
-        imageView0.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), Activity1.class);
-                startActivity(intent);
-            }
-        });
-
         imageView1 = (ImageView) getActivity().findViewById(R.id.myIV1);
 
     }
@@ -58,22 +46,25 @@ public class FragmentPageMiddle extends Fragment {
 
     @Override
     public void onResume() {
+        ActivityMain.lastViewedFragItem = 1;
         System.out.println("fragmentpage0 RESUMED");
         super.onResume();
         //If picture was taken
-        if (((ActivityMain)getActivity()).wasPictureTaken()) {
+        if (((ActivityMain) getActivity()).getMyCamera().wasPictureTaken()) {
             System.out.println("checked picture taken or not");
             //Get the image file
-            File currentImageFile = ((ActivityMain)getActivity()).getPicture();
+            File currentImageFile = ((ActivityMain) getActivity()).getMyCamera().getPicture();
             //Show picture as an image view in xml design
             String currentPhotoPath = currentImageFile.getAbsolutePath();
-            File imgFile = new  File(currentPhotoPath);
+            File imgFile = new File(currentPhotoPath);
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            imageView0.setImageBitmap(myBitmap);
             imageView1.setImageBitmap(myBitmap);
         }
-        else {
-            System.out.println("MY PICTURE WAS NOT TAKEN");
+
+        try {
+            imageView0.setImageURI(((ActivityMain) getActivity()).getTbImageUri());
+        } catch (Exception e) {
+            System.out.println("There is no image");
         }
     }
 }

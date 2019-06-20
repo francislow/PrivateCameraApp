@@ -16,10 +16,6 @@ public class FragmentPage2 extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //Getting stored infomation from bundle (shared by all fragments)
-        Bundle bundle = getArguments();
-        String message = Integer.toString(bundle.getInt("count"));
-
         View view = inflater.inflate(R.layout.fragment_page2, container, false);
         return view;
     }
@@ -32,6 +28,7 @@ public class FragmentPage2 extends Fragment {
 
     @Override
     public void onResume() {
+        ActivityMain.lastViewedFragItem = 2;
         System.out.println("fragmentpage2 RESUMED");
         super.onResume();
     }
