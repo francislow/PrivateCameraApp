@@ -5,14 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.text.Layout;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -24,7 +21,7 @@ public class NewNoteActivity extends Activity {
     EditText noteTitleText;
     Button createNoteButton;
     RelativeLayout rlayout;
-    DatabaseHelper mydb;
+    NotesDatabaseHelper mydb;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,7 +54,7 @@ public class NewNoteActivity extends Activity {
 
     private void createNote(String title, String des) {
         //INSERT DATABASE: new row/note
-        mydb = new DatabaseHelper(this);
+        mydb = new NotesDatabaseHelper(this);
         boolean hasInsertedData = mydb.insertData(title, des, 0, 0, 0, 0, 400, 400);
         if (hasInsertedData) {
             Toast.makeText(NewNoteActivity.this, "Note successfully created", Toast.LENGTH_LONG).show();

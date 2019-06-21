@@ -12,7 +12,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
+
+import java.util.Calendar;
 
 import static com.example.franc.testcamera.MyCamera.REQUEST_TAKE_PHOTO;
 
@@ -119,6 +122,17 @@ public class ActivityMain extends FragmentActivity {
         //If picture was taken, set view
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             myCamera.setPictureTaken(true);
+
+            //Store picture into database
+            PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(this);
+            boolean hasInsertedData = mydb.insertData(myCamera.getPicture().getAbsolutePath(),
+                    null, myCamera.getYear(), myCamera.getMonth(), myCamera.getDay());
+            if (hasInsertedData) {
+                Toast.makeText(this, "Picture successfully inserted into database", Toast.LENGTH_LONG).show();
+            }
+            else {
+                Toast.makeText(this, "Error inserting picture into database", Toast.LENGTH_LONG).show();
+            }
         }
 
         //If

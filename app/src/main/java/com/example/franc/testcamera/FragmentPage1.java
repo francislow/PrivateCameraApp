@@ -13,8 +13,6 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.example.franc.testcamera.UserinputHandlers.NoteInputListener;
-
 import java.util.ArrayList;
 
 /**
@@ -24,7 +22,7 @@ import java.util.ArrayList;
 public class FragmentPage1 extends Fragment {
     private RelativeLayout rlayout;
     private Button addNoteButton;
-    private DatabaseHelper mydb;
+    private NotesDatabaseHelper mydb;
     private ArrayList<StickyNoteWidget> stickyNoteWidgetsList;
 
 
@@ -34,7 +32,7 @@ public class FragmentPage1 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Set up database
-        mydb = new DatabaseHelper(getActivity());
+        mydb = new NotesDatabaseHelper(getActivity());
 
         //Set up sticky notes list
         stickyNoteWidgetsList = new ArrayList<>();

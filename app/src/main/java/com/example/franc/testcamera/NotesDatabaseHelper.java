@@ -10,25 +10,24 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by franc on 19/6/2019.
  */
 
-public class DatabaseHelper extends SQLiteOpenHelper {
+public class NotesDatabaseHelper extends SQLiteOpenHelper {
     //database values
     private static final int versionNumber = 1;
+    private static final String DATABASE_NAME = "notes.db";
 
-    private static final String DATABASE_NAME      = "notes.db";
-    private static final String TABLE_NAME      = "notes_table";
+    //ID | title | description | l margin | r margin | t margin | b margin | width | height
+    private String TABLE_NAME      = "notes_table";
+    private String COL_1      = "ID";
+    private String COL_2      = "TITLE";
+    private String COL_3      = "DES";
+    private String COL_4      = "LMARGIN";
+    private String COL_5      = "RMARGIN";
+    private String COL_6      = "TMARGIN";
+    private String COL_7      = "BMARGIN";
+    private String COL_8      = "WIDTH";
+    private String COL_9      = "HEIGHT";
 
-    private static final String COL_1      = "ID";
-    private static final String COL_2      = "TITLE";
-    private static final String COL_3      = "DES";
-    private static final String COL_4      = "LMARGIN";
-    private static final String COL_5      = "RMARGIN";
-    private static final String COL_6      = "TMARGIN";
-    private static final String COL_7      = "BMARGIN";
-    private static final String COL_8      = "WIDTH";
-    private static final String COL_9      = "HEIGHT";
-
-
-    public DatabaseHelper(Context context) {
+    public NotesDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, versionNumber);
     }
 
@@ -36,12 +35,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         //execSQL takes in a query to do whatever u want it to do
         //CREATE TABLE "table name", creates the table itself
-        db.execSQL("CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, TITLE TEXT, DES TEXT, " +
-                "LMARGIN INTEGER, RMARGIN INTEGER, TMARGIN INTEGER, BMARGIN INTEGER, WIDTH INTEGER, HEIGHT INTEGER);");
+
+        //Creates notes table
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NAME +
+                " (ID INTEGER PRIMARY KEY AUTOINCREMENT, TITLE TEXT, DES TEXT, " +
+                "LMARGIN INTEGER, RMARGIN INTEGER, TMARGIN INTEGER, BMARGIN INTEGER, " +
+                "WIDTH INTEGER, HEIGHT INTEGER);");
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
@@ -99,7 +102,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return true;
     }
-
 
     public Cursor getAllData() {
         SQLiteDatabase db = this.getWritableDatabase();

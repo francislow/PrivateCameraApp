@@ -10,6 +10,7 @@ import android.support.v4.content.FileProvider;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -20,6 +21,10 @@ public class MyCamera {
     private File currentImageFile;
     private Boolean pictureTaken = false;
     private Activity currentActivity;
+
+    String year;
+    String month;
+    String day;
 
     public MyCamera(Activity currentActivity) {
         this.currentActivity = currentActivity;
@@ -74,17 +79,39 @@ public class MyCamera {
 
     //Creates an blank image file with unique names for it
     private File createImageFile() throws IOException {
+        //To be stored in database
+        year = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
+        month = Integer.toString(Calendar.getInstance().get(Calendar.MONTH));
+        day = Integer.toString(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        System.out.println(timeStamp);
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        String imageFileName = "JPEG_" + timeStamp;
         File storageDir = currentActivity.getExternalFilesDir("CameraPictures");
+        //This will may not give a unique name
+        //File imageFile = new File(storageDir, imageFileName + ".jpg");
+        //But this will give a unique file name by adding -(some number) to end of file name
         File imageFile = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
+                imageFileName,   //prefix
+                ".jpg",         //suffix
+                storageDir      //directory
         );
         // Save a file: path for use with ACTION_VIEW intents
         return imageFile;
+
+
+        //save file name to database getAbsolutePath()|year|month|day|label
+    }
+
+    public String getYear(){
+        return this.year;
+    }
+
+    public String getMonth() {
+        return this.month;
+    }
+
+    public String getDay() {
+        return this.day;
     }
 }
