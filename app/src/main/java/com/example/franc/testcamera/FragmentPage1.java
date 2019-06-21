@@ -80,19 +80,7 @@ public class FragmentPage1 extends Fragment {
         if (res.getCount() != 0) {
             //Cycle through each row (each row represents a stickynote)
             while (res.moveToNext()) {
-                int number = res.getInt(0);
-                String title = res.getString(1);
-                String des = res.getString(2);
-                int lMargin = res.getInt(3);
-                int rMargin = res.getInt(4);
-                int tMargin = res.getInt(5);
-                int bMargin = res.getInt(6);
-                int width = res.getInt(7);
-                int height = res.getInt(8);
-
-                StickyNoteWidget snw = new StickyNoteWidget(getActivity(), rlayout,
-                        number, title, des, lMargin, rMargin, tMargin, bMargin, width, height);
-
+                StickyNoteWidget snw = new StickyNoteWidget(getActivity(), rlayout, res);
                 snw.addViewGroup();
                 snw.setListener();
 

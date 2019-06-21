@@ -26,7 +26,7 @@
             android:layout_height="match_parent"
             android:layout_above="@+id/btmtab"
             android:layout_below="@+id/toptab"
-            android:background="@color/black">
+            android:background="@color/white">
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/myvp"

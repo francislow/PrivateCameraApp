@@ -1,6 +1,7 @@
 package com.example.franc.testcamera;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -28,22 +29,23 @@ public class StickyNoteWidget {
     private int height;
 
     private LinearLayout snwLayout;
-    Button widthButton;
-    Button heightButton;
+    private Button widthButton;
+    private Button heightButton;
+    private TextView tv;
+    private LinearLayout noteToolBar;
 
-    public StickyNoteWidget(Context context, ViewGroup layout, int number, String title, String des,
-                            int lMargin, int rMargin, int tMargin, int bMargin, int width, int height) {
-        this.number = number;
-        this.title = title;
-        this.des = des;
+    public StickyNoteWidget(Context context, ViewGroup layout, Cursor res) {
         this.context = context;
         this.layout = layout;
-        this.lMargin = lMargin;
-        this.rMargin = rMargin;
-        this.tMargin = tMargin;
-        this.bMargin = bMargin;
-        this.width = width;
-        this.height = height;
+        this.number = res.getInt(0);
+        this.title = res.getString(1);
+        this.des = res.getString(2);
+        this.lMargin = res.getInt(3);
+        this.rMargin = res.getInt(4);
+        this.tMargin = res.getInt(5);
+        this.bMargin = res.getInt(6);
+        this.width = res.getInt(7);
+        this.height = res.getInt(8);
     }
 
     public void addViewGroup() {
@@ -56,17 +58,18 @@ public class StickyNoteWidget {
         snwLayout.setLayoutParams(lp1);
 
         //Sticky Note - TextView (title and description)
-        TextView tv = new TextView(context);
+        tv = new TextView(context);
         tv.setText(number + " " + title + " " + des + "\n");
         tv.setBackgroundResource(R.color.green);
-        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(width, (int)(0.85* height));
+        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)(0.85* height));
+        tv.setLayoutParams(lp2);
         snwLayout.addView(tv);   //add children to snw model
 
         //Sticky Note - Toolbar
-        LinearLayout noteToolBar = new LinearLayout(context);
+        noteToolBar = new LinearLayout(context);
         noteToolBar.setOrientation(LinearLayout.HORIZONTAL);
         noteToolBar.setBackgroundResource(R.color.blue);
-        LinearLayout.LayoutParams lp3 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT );
+        LinearLayout.LayoutParams lp3 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         noteToolBar.setLayoutParams(lp3);
         snwLayout.addView(noteToolBar);    //add children to snw model
 
@@ -92,21 +95,27 @@ public class StickyNoteWidget {
         widthButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*
-                setWidth(width - 100);
-                setHeight(height - 100);
+                setWidth(width - 150);
+                setHeight(height - 150);
                 snwLayout.invalidate();
-                */
+                tv.invalidate();
+                heightButton.invalidate();
+                widthButton.invalidate();
+
             }
         });
         heightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setWidth(width + 100);
-                setHeight(height + 100);
+                setWidth(width + 150);
+                setHeight(height + 150);
                 snwLayout.invalidate();
+                tv.invalidate();
+                heightButton.invalidate();
+                widthButton.invalidate();
             }
         });
+        heightButton.setActivated(false);
     }
 
     public ViewGroup getViewGroup() {
@@ -125,6 +134,13 @@ public class StickyNoteWidget {
 
     public void setHeight(int newHeight) {
         this.height = newHeight;
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(width, height);
+        snwLayout.setLayoutParams(lp);
+    }
+
+    public void setSize(int newWidth, int newHeight) {
+        this.height = newHeight;
+        this.width = newWidth;
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(width, height);
         snwLayout.setLayoutParams(lp);
     }

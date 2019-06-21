@@ -3,10 +3,12 @@ package com.example.franc.testcamera;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,10 +57,10 @@ public class FragmentPageMiddle extends Fragment {
             //Get the image file
             File currentImageFile = ((ActivityMain) getActivity()).getMyCamera().getPicture();
             //Show picture as an image view in xml design
-            String currentPhotoPath = currentImageFile.getAbsolutePath();
-            File imgFile = new File(currentPhotoPath);
-            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            imageView1.setImageBitmap(myBitmap);
+            Uri photoURI = FileProvider.getUriForFile(getActivity(),
+                    "com.example.android.fileprovider",
+                    currentImageFile);
+            imageView1.setImageURI(photoURI);
         }
 
         try {

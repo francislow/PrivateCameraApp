@@ -59,23 +59,26 @@ public class MyCamera {
                 // Error occurred while creating the File
                 System.out.println("Error occurred while creating the image =.=");
             }
-            //Continue only if the File was successfully created
+            //Continue only if the empty file was successfully created
             if (currentImageFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(currentActivity,
                         "com.example.android.fileprovider",
                         currentImageFile);
+
+                //Put image into empty file created
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 currentActivity.startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
         }
     }
 
-    //Creates an image file with unique names for it
+    //Creates an blank image file with unique names for it
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        System.out.println(timeStamp);
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = currentActivity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = currentActivity.getExternalFilesDir("CameraPictures");
         File imageFile = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
