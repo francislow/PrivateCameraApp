@@ -16,21 +16,16 @@ import android.widget.Toast;
  * Created by franc on 18/6/2019.
  */
 
-public class NewNoteActivity extends Activity {
-    EditText noteDesText;
-    EditText noteTitleText;
-    Button createNoteButton;
-    RelativeLayout rlayout;
-    NotesDatabaseHelper mydb;
+public class ActivityNewNote extends Activity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_newnote);
 
-        createNoteButton = (Button) findViewById(R.id.createNoteButton);
-        noteDesText = (EditText) findViewById(R.id.noteDesText);
-        noteTitleText = (EditText) findViewById(R.id.noteTitleText);
+        final Button createNoteButton = (Button) findViewById(R.id.createNoteButton);
+        final EditText noteDesText = (EditText) findViewById(R.id.noteDesText);
+        final EditText noteTitleText = (EditText) findViewById(R.id.noteTitleText);
 
         createNoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,26 +36,27 @@ public class NewNoteActivity extends Activity {
                 //If title and description are not empty
                 if (!TextUtils.isEmpty(title) && !TextUtils.isEmpty(des)) {
                     createNote(title, des);
-                    Intent intent = new Intent(NewNoteActivity.this, ActivityMain.class);
+                    Intent intent = new Intent(ActivityNewNote.this, ActivityMain.class);
                     startActivity(intent);
                 }
                 else {
-                    Snackbar.make(view, "YOU HAVE EMPTY FILLS", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view, "You have empty fills..", Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
-
     }
 
     private void createNote(String title, String des) {
         //INSERT DATABASE: new row/note
-        mydb = new NotesDatabaseHelper(this);
-        boolean hasInsertedData = mydb.insertData(title, des, 0, 0, 0, 0, 400, 400);
+        NotesDatabaseHelper myNotesDB = new NotesDatabaseHelper(this);
+        boolean hasInsertedData = myNotesDB.insertData(title, des,
+                0, 0, 0, 0, 400, 400);
+
         if (hasInsertedData) {
-            Toast.makeText(NewNoteActivity.this, "Note successfully created", Toast.LENGTH_LONG).show();
+            Toast.makeText(ActivityNewNote.this, "Note successfully created", Toast.LENGTH_LONG).show();
         }
         else {
-            Toast.makeText(NewNoteActivity.this, "Error creating note", Toast.LENGTH_LONG).show();
+            Toast.makeText(ActivityNewNote.this, "Error creating note", Toast.LENGTH_LONG).show();
         }
     }
 }

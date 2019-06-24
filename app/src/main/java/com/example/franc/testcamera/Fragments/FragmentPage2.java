@@ -1,4 +1,4 @@
-package com.example.franc.testcamera;
+package com.example.franc.testcamera.Fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.franc.testcamera.ActivityMain;
+import com.example.franc.testcamera.R;
 
 /**
  * Created by franc on 1/6/2019.

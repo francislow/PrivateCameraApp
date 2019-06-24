@@ -5,19 +5,19 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <!--"Recent" text - Textview-->
     <TextView
-        android:id="@+id/textView1"
-        android:text="This week:"
         android:layout_width="match_parent"
         android:layout_height="45dp"
+
+        android:text="@string/middle_page_text1"
         android:fontFamily="casual"
+        android:textStyle="bold"
         android:gravity="start"
         android:textColor="@color/black"
         android:textSize="20dp"
-        android:paddingLeft="10dp"
-        android:paddingTop="5dp"
-        android:textStyle="bold" />
+        android:paddingStart="10dp"
+        android:paddingEnd="0dp"
+        android:paddingTop="5dp" />
 
 
     <!--Rest of the page - Scrollview-->
@@ -26,33 +26,14 @@
         android:layout_height="450dp"
         android:background="@color/white">
 
+        <!-- To Add and display recent images taken-->
         <LinearLayout
+            android:id="@+id/LL1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/myIV0"
-                android:layout_width="match_parent"
-                android:layout_height="500dp" />
-
-            <ImageView
-                android:id="@+id/myIV1"
-                android:layout_width="fill_parent"
-                android:layout_height="500dp"
-                android:layout_marginTop="15dp" />
-            <ImageView
-                android:id="@+id/myIV3"
-                android:layout_width="fill_parent"
-                android:layout_height="500dp"
-                android:layout_marginTop="15dp" />
-            <ImageView
-                android:id="@+id/myIV2"
-                android:layout_width="fill_parent"
-                android:layout_height="500dp"
-                android:layout_marginTop="15dp" />
-
         </LinearLayout>
+
     </ScrollView>
 
     <!--Recent photos - Scrollview-->
@@ -77,8 +58,8 @@
                 android:layout_width="250dp"
                 android:layout_height="match_parent"
                 android:background="@color/red"/>
-
         </LinearLayout>
+
     </HorizontalScrollView>
 
 </LinearLayout>

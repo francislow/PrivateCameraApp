@@ -11,7 +11,7 @@ import com.r0adkll.slidr.Slidr;
  * Created by franc on 31/5/2019.
  */
 
-public class Activity1 extends AppCompatActivity {
+public class randompopupimage extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">testCamera</string>
+    <string name="middle_page_text1">This Week:</string>
 </resources>

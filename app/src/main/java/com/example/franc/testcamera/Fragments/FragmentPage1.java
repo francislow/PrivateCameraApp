@@ -1,4 +1,4 @@
-package com.example.franc.testcamera;
+package com.example.franc.testcamera.Fragments;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,6 +12,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import com.example.franc.testcamera.ActivityMain;
+import com.example.franc.testcamera.ActivityNewNote;
+import com.example.franc.testcamera.NotesDatabaseHelper;
+import com.example.franc.testcamera.R;
+import com.example.franc.testcamera.StickyNoteWidget;
 
 import java.util.ArrayList;
 
@@ -60,7 +66,7 @@ public class FragmentPage1 extends Fragment {
         addNoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), NewNoteActivity.class);
+                Intent intent = new Intent(getActivity(), ActivityNewNote.class);
                 startActivity(intent);
             }
         });

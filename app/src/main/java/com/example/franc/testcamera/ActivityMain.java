@@ -1,7 +1,6 @@
 package com.example.franc.testcamera;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
@@ -14,20 +13,19 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
-
-import java.util.Calendar;
-
-import static com.example.franc.testcamera.MyCamera.REQUEST_TAKE_PHOTO;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ActivityMain extends FragmentActivity {
-    private ViewPager viewPager;
     private MyCamera myCamera;
-    private SwipeAdaptor swipeAdaptor;
+    private static final int PICK_IMAGE = 2;
+
     public static int lastViewedFragItem = 1;
-
-    private static final int PICK_IMAGE = 100;
-
-    private static final String SAVED_FILE_NAME = "MySavedFiles";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +40,10 @@ public class ActivityMain extends FragmentActivity {
         myCamera = new MyCamera(this);
 
         //Set viewpager
-        swipeAdaptor = new SwipeAdaptor(getSupportFragmentManager());
-        viewPager = (ViewPager)findViewById(R.id.myvp);
+        SwipeAdaptor swipeAdaptor = new SwipeAdaptor(getSupportFragmentManager());
+        ViewPager viewPager = (ViewPager) findViewById(R.id.myvp);
         viewPager.setAdapter(swipeAdaptor);
-        viewPager.setCurrentItem(lastViewedFragItem);
+        viewPager.setCurrentItem(1);
 
         //Setup Btm Tab
         TabLayout btmTabLayout = (TabLayout) findViewById(R.id.btmtablayout);
@@ -65,7 +63,6 @@ public class ActivityMain extends FragmentActivity {
                         camButton.setAlpha(0.1f);
                         camButton.setScaleX(0.5f);
                         camButton.setScaleY(0.5f);
-
                         break;
 
                     case MotionEvent.ACTION_UP:
@@ -73,18 +70,17 @@ public class ActivityMain extends FragmentActivity {
                         camButton.setScaleX(1f);
                         camButton.setScaleY(1f);
 
-
                         //If user's touch up is still inside button
-                        if(touchUpInsideButton(motionEvent, camButton))
-                        myCamera.takePicture();
-
+                        if (touchUpInButton(motionEvent, camButton)) {
+                            myCamera.dispatchTakePictureIntent();
+                        }
                         break;
                 }
                 return true;
             }
         });
 
-        //Add Photo Button
+        //Photo Button
         final Button addButton = (Button) findViewById(R.id.addButton);
         addButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -95,78 +91,112 @@ public class ActivityMain extends FragmentActivity {
                         addButton.setScaleX(0.5f);
                         addButton.setScaleY(0.5f);
                         break;
+
                     case MotionEvent.ACTION_UP:
                         addButton.setAlpha(1f);
                         addButton.setScaleX(1f);
                         addButton.setScaleY(1f);
 
-                        Intent gallery;
                         //If user's touch up is still inside button
-                        System.out.println("checkpoint2");
-                        if(touchUpInsideButton(motionEvent, addButton)) {
+                        if (touchUpInButton(motionEvent, addButton)) {
                             //Bring up add photos page
-                            System.out.println("checkpoint");
-                            gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-                            startActivityForResult(gallery, PICK_IMAGE);
+                            Intent goToGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                            startActivityForResult(goToGallery, PICK_IMAGE);
                         }
-
                         break;
                 }
                 return true;
             }
         });
     }
-    //after photo is taken
+
+    //Handles activity results in all fragments
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //If picture was taken, set view
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            myCamera.setPictureTaken(true);
+        //After user took the photo
+        if (requestCode == MyCamera.TAKE_PHOTO_REQUEST && resultCode == RESULT_OK) {
+            //*Note: In this case data will be null since in camera,
+            // I have added instructions to put data into photoURI instead
 
             //Store picture into database
             PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(this);
+
             boolean hasInsertedData = mydb.insertData(myCamera.getPicture().getAbsolutePath(),
                     null, myCamera.getYear(), myCamera.getMonth(), myCamera.getDay());
+
             if (hasInsertedData) {
                 Toast.makeText(this, "Picture successfully inserted into database", Toast.LENGTH_LONG).show();
-            }
-            else {
+            } else {
                 Toast.makeText(this, "Error inserting picture into database", Toast.LENGTH_LONG).show();
             }
         }
 
-        //If
+        //After user picked an image from gallery
         else if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
-            Uri tbImageUri = data.getData();
+            Uri galleryImageUri = data.getData();
 
-            SharedPreferences settings0 = getSharedPreferences(SAVED_FILE_NAME, 0);
-            SharedPreferences.Editor mySettings0Edit = settings0.edit();
-            mySettings0Edit.putString("tbImageUri", tbImageUri.toString());
-            mySettings0Edit.commit();
+            //Make a copy of the image and store into app folder
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String fileName = "JPEG_" + timeStamp;
+            Uri newUri = copyMediaStoreUriToCacheDir(galleryImageUri, fileName);
+
+            //Store picture into database
+            PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(this);
+            boolean hasInsertedData = mydb.insertData(newUri.getPath(),
+                    null, null, null, null);
+
+            if (hasInsertedData) {
+                Toast.makeText(this, "Picture successfully inserted into database", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Error inserting picture into database", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
-    public MyCamera getMyCamera() {
-        return myCamera;
+    public Uri copyMediaStoreUriToCacheDir(Uri uri, String filename) {
+        String destinationFilename = this.getExternalFilesDir("CameraPictures") + "/" + filename + ".jpg";
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+
+        try {
+            bis = new BufferedInputStream(getContentResolver().openInputStream(uri));
+//          bis = new BufferedInputStream(App.getAppContext().getContentResolver().openInputStream(uri));
+            bos = new BufferedOutputStream(new FileOutputStream(destinationFilename, false));
+            byte[] buf = new byte[1024];
+            bis.read(buf);
+
+            do {
+                bos.write(buf);
+            } while (bis.read(buf) != -1);
+
+            return Uri.fromFile(new File(destinationFilename));
+        } catch (IOException e) {
+            //
+        } finally {
+            try {
+                if (bis != null) {
+                    bis.close();
+                }
+                if (bos != null) {
+                    bos.close();
+                }
+            } catch (IOException e) {
+                System.out.println("copyMediaStoreUriToCacheDir ran into IOException shucks..");
+            }
+        }
+        return null;
     }
 
-    public boolean touchUpInsideButton(MotionEvent motionEvent, Button button) {
+    //If user touched down and up a button within button space
+    public boolean touchUpInButton(MotionEvent motionEvent, Button button) {
         int[] buttonPosition = new int[2];
         button.getLocationOnScreen(buttonPosition);
 
-        //Check
-        if(motionEvent.getRawX() >= buttonPosition[0] && motionEvent.getRawX() <= (buttonPosition[0]+button.getWidth())) {
-            if(motionEvent.getRawY() >= buttonPosition[1] && motionEvent.getRawY() <= (buttonPosition[1]+button.getHeight())) {
+        if (motionEvent.getRawX() >= buttonPosition[0] && motionEvent.getRawX() <= (buttonPosition[0] + button.getWidth())) {
+            if (motionEvent.getRawY() >= buttonPosition[1] && motionEvent.getRawY() <= (buttonPosition[1] + button.getHeight())) {
                 return true;
             }
         }
         return false;
-    }
-
-
-    public Uri getTbImageUri() {
-        SharedPreferences settings0 = getSharedPreferences(SAVED_FILE_NAME, 0);
-        String tbImageUriString = settings0.getString("tbImageUri", null);
-        return Uri.parse(tbImageUriString);
     }
 }

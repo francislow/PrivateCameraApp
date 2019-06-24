@@ -19,45 +19,29 @@ import java.util.Date;
 
 public class MyCamera {
     private File currentImageFile;
-    private Boolean pictureTaken = false;
     private Activity currentActivity;
 
-    String year;
-    String month;
-    String day;
+    private String year;
+    private String month;
+    private String day;
+
+    public static final int TAKE_PHOTO_REQUEST = 1;
 
     public MyCamera(Activity currentActivity) {
         this.currentActivity = currentActivity;
     }
 
-    //Signal to take a picture
-    protected void takePicture() {
-        dispatchTakePictureIntent();
-    }
     protected File getPicture() {
         return currentImageFile;
     }
-    protected boolean wasPictureTaken() {
-        return pictureTaken;
-    }
-    protected void setPictureTaken(boolean bool) {
-        this.pictureTaken = bool;
-    }
 
-    //----------------------CAMERA FUNCTIONS---------------------------------------------------
-
-    //Run camera app to take photo
-    static final int REQUEST_TAKE_PHOTO = 1;
-    private void dispatchTakePictureIntent() {
+    public void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
-        //When camera function fails to starts
         if (takePictureIntent.resolveActivity(currentActivity.getPackageManager()) == null) {
             System.out.println("Problem loading camera");
         }
-        //When camera function starts
         else if (takePictureIntent.resolveActivity(currentActivity.getPackageManager()) != null) {
-            System.out.println("Camera loaded");
             try {
                 currentImageFile = createImageFile();
             } catch (IOException ex) {
@@ -70,15 +54,15 @@ public class MyCamera {
                         "com.example.android.fileprovider",
                         currentImageFile);
 
-                //Put image into empty file created
+                //Add extra instructions to store the image output to photoURI
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                currentActivity.startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+                currentActivity.startActivityForResult(takePictureIntent, TAKE_PHOTO_REQUEST);
             }
         }
     }
 
     //Creates an blank image file with unique names for it
-    private File createImageFile() throws IOException {
+    public File createImageFile() throws IOException {
         //To be stored in database
         year = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
         month = Integer.toString(Calendar.getInstance().get(Calendar.MONTH));
@@ -88,19 +72,13 @@ public class MyCamera {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp;
         File storageDir = currentActivity.getExternalFilesDir("CameraPictures");
+
         //This will may not give a unique name
         //File imageFile = new File(storageDir, imageFileName + ".jpg");
+
         //But this will give a unique file name by adding -(some number) to end of file name
-        File imageFile = File.createTempFile(
-                imageFileName,   //prefix
-                ".jpg",         //suffix
-                storageDir      //directory
-        );
-        // Save a file: path for use with ACTION_VIEW intents
+        File imageFile = File.createTempFile(imageFileName, ".jpg", storageDir);
         return imageFile;
-
-
-        //save file name to database getAbsolutePath()|year|month|day|label
     }
 
     public String getYear(){
