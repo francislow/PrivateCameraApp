@@ -9,8 +9,9 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import com.example.franc.testcamera.SQLiteDatabases.NotesDatabaseHelper;
 
 /**
  * Created by franc on 18/6/2019.

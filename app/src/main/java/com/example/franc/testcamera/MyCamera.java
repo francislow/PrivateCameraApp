@@ -41,20 +41,19 @@ public class MyCamera {
         if (takePictureIntent.resolveActivity(currentActivity.getPackageManager()) == null) {
             System.out.println("Problem loading camera");
         }
-        else if (takePictureIntent.resolveActivity(currentActivity.getPackageManager()) != null) {
+        else {
             try {
-                currentImageFile = createImageFile();
+                currentImageFile = createEmptyFile();
             } catch (IOException ex) {
-                // Error occurred while creating the File
-                System.out.println("Error occurred while creating the image =.=");
+                System.out.println("Error occurred while creating the an empty file for image");
             }
-            //Continue only if the empty file was successfully created
+            // Continue only if the empty file was successfully created
             if (currentImageFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(currentActivity,
                         "com.example.android.fileprovider",
                         currentImageFile);
 
-                //Add extra instructions to store the image output to photoURI
+                // Add extra instructions to intent to store the image output(EXTRA_OUTPUT) into photoURI
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 currentActivity.startActivityForResult(takePictureIntent, TAKE_PHOTO_REQUEST);
             }
@@ -62,7 +61,7 @@ public class MyCamera {
     }
 
     //Creates an blank image file with unique names for it
-    public File createImageFile() throws IOException {
+    public File createEmptyFile() throws IOException {
         //To be stored in database
         year = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
         month = Integer.toString(Calendar.getInstance().get(Calendar.MONTH));

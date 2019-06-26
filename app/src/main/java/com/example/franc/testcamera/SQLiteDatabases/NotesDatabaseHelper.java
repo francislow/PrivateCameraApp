@@ -1,4 +1,4 @@
-package com.example.franc.testcamera;
+package com.example.franc.testcamera.SQLiteDatabases;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -16,16 +16,16 @@ public class NotesDatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "notes.db";
 
     //ID | title | description | l margin | r margin | t margin | b margin | width | height
-    private String TABLE_NAME      = "notes_table";
-    private String COL_1      = "ID";
-    private String COL_2      = "TITLE";
-    private String COL_3      = "DES";
-    private String COL_4      = "LMARGIN";
-    private String COL_5      = "RMARGIN";
-    private String COL_6      = "TMARGIN";
-    private String COL_7      = "BMARGIN";
-    private String COL_8      = "WIDTH";
-    private String COL_9      = "HEIGHT";
+    private String TABLE_NAME = "notes_table";
+    private String COL_1 = "ID";
+    private String COL_2 = "TITLE";
+    private String COL_3 = "DES";
+    private String COL_4 = "LMARGIN";
+    private String COL_5 = "RMARGIN";
+    private String COL_6 = "TMARGIN";
+    private String COL_7 = "BMARGIN";
+    private String COL_8 = "WIDTH";
+    private String COL_9 = "HEIGHT";
 
     public NotesDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, versionNumber);
@@ -37,7 +37,7 @@ public class NotesDatabaseHelper extends SQLiteOpenHelper {
         //CREATE TABLE "table name", creates the table itself
 
         //Creates notes table
-        db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NAME +
+        db.execSQL("CREATE TABLE IF NOT EXIST " + TABLE_NAME +
                 " (ID INTEGER PRIMARY KEY AUTOINCREMENT, TITLE TEXT, DES TEXT, " +
                 "LMARGIN INTEGER, RMARGIN INTEGER, TMARGIN INTEGER, BMARGIN INTEGER, " +
                 "WIDTH INTEGER, HEIGHT INTEGER);");
@@ -45,6 +45,7 @@ public class NotesDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // This will wipe out data very time version is incremented
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
@@ -73,6 +74,8 @@ public class NotesDatabaseHelper extends SQLiteOpenHelper {
 
     public boolean updatePositionData(int id, int leftMargin, int rightMargin, int topMargin, int btmMargin) {
         SQLiteDatabase db = this.getWritableDatabase();
+
+        // Contentvalues are key value fairs
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_1, id);
 
@@ -107,5 +110,10 @@ public class NotesDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);
         return res;
+    }
+
+    public Integer deleteData(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_NAME, "ID = ?", new String[] {Integer.toString(id)});
     }
 }

@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.example.franc.testcamera.ActivityMain;
 import com.example.franc.testcamera.ActivityNewNote;
-import com.example.franc.testcamera.NotesDatabaseHelper;
+import com.example.franc.testcamera.SQLiteDatabases.NotesDatabaseHelper;
 import com.example.franc.testcamera.R;
 import com.example.franc.testcamera.StickyNoteWidget;
 

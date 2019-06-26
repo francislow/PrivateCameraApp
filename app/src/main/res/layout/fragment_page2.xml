@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LL3"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary">
+    android:orientation="vertical"
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/mytv2"
-        android:layout_width="298dp"
+        android:layout_width="match_parent"
         android:layout_height="62dp"
-        android:text="This is the gallery page"
+        android:text="Label"
         android:textSize="60px"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,4 +20,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-</android.support.constraint.ConstraintLayout>
+    <GridLayout
+        android:id="@+id/grid1"
+        android:columnCount="3"
+        android:rowCount="3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </GridLayout>
+
+
+</LinearLayout>

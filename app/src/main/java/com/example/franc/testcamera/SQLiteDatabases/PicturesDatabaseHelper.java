@@ -1,4 +1,4 @@
-package com.example.franc.testcamera;
+package com.example.franc.testcamera.SQLiteDatabases;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,13 +18,12 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
 
     //ID | getAbsolutePath() | label | year | month | day
     private static final String TABLE_NAME = "pictures_table";
-    private static final String COL_1      = "ID";
-    private static final String COL_2      = "ABSPATH";
-    private static final String COL_3      = "LABEL";
-    private static final String COL_4      = "YEAR";
-    private static final String COL_5      = "MONTH";
-    private static final String COL_6      = "DAY";
-
+    private static final String COL_1 = "ID";
+    private static final String COL_2 = "ABSPATH";
+    private static final String COL_3 = "LABEL";
+    private static final String COL_4 = "YEAR";
+    private static final String COL_5 = "MONTH";
+    private static final String COL_6 = "DAY";
 
     public PicturesDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, versionNumber);
@@ -84,5 +83,10 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);
         return res;
+    }
+
+    public Integer deleteData(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_NAME, "ID = ?", new String[] {Integer.toString(id)});
     }
 }
