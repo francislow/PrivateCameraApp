@@ -1,33 +1,52 @@
 package com.example.franc.testcamera.Fragments;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.franc.testcamera.ActivityMain;
+import com.example.franc.testcamera.ActivityNewNote;
 import com.example.franc.testcamera.R;
+import com.example.franc.testcamera.RecyclerViewAdaptor;
 import com.example.franc.testcamera.SQLiteDatabases.PicturesDatabaseHelper;
 import com.example.franc.testcamera.Utilities.ImageUtilities;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by franc on 1/6/2019.
  */
 
 public class FragmentPage2 extends Fragment {
-    GridLayout gridLayout;
-    private LinearLayout LLScreen;
+    private List<String> distinctCategoryNames = new ArrayList<>();
+    private ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
 
     @Nullable
     @Override
@@ -40,10 +59,90 @@ public class FragmentPage2 extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        gridLayout = (GridLayout) getActivity().findViewById(R.id.grid1);
-        LLScreen = (LinearLayout) getActivity().findViewById(R.id.LL3);
+        //Setup Top Tab
+        //Camera Button
+        final Button searchButton = (Button) getActivity().findViewById(R.id.search_button);
+        searchButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        searchButton.setAlpha(0.1f);
+                        searchButton.setScaleX(0.5f);
+                        searchButton.setScaleY(0.5f);
+                        break;
 
+                    case MotionEvent.ACTION_UP:
+                        searchButton.setAlpha(1f);
+                        searchButton.setScaleX(1f);
+                        searchButton.setScaleY(1f);
 
+                        //If user's touch up is still inside button
+                        if (ActivityMain.touchUpInButton(motionEvent, searchButton)) {
+                            //search for pic name
+                        }
+                        break;
+                }
+                return true;
+            }
+        });
+
+        //Photo Button
+        final Button addCatButton = (Button) getActivity().findViewById(R.id.add_cat_button);
+        addCatButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        addCatButton.setAlpha(0.1f);
+                        addCatButton.setScaleX(0.5f);
+                        addCatButton.setScaleY(0.5f);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        addCatButton.setAlpha(1f);
+                        addCatButton.setScaleX(1f);
+                        addCatButton.setScaleY(1f);
+
+                        //If user's touch up is still inside button
+                        if (ActivityMain.touchUpInButton(motionEvent, addCatButton)) {
+                            //Add a category
+                            final Dialog nagDialog = new Dialog(getActivity());
+                            nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                            nagDialog.setContentView(R.layout.insert_cat_name_page);
+
+                            //Set add category button on click listener
+                            Button submitButton = (Button) nagDialog.findViewById(R.id.button1);
+                            submitButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    EditText categoryNameText = (EditText) nagDialog.findViewById(R.id.editT1);
+                                    String categoryName = categoryNameText.getText().toString().trim();
+                                    PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(getActivity());
+                                    boolean hasInsertedData = mydb.insertCategoryNameData(categoryName);
+                                    if (hasInsertedData) {
+                                        onResume();
+                                        Toast.makeText(getActivity(), "successfully added to database", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(getActivity(), "Error adding to database", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+
+                            nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    nagDialog.dismiss();
+                                }
+                            });
+
+                            nagDialog.show();
+                        }
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     @Override
@@ -54,71 +153,54 @@ public class FragmentPage2 extends Fragment {
 
     @Override
     public void onResume() {
-        ActivityMain.lastViewedFragItem = 2;
         System.out.println("fragmentpage2 RESUMED");
         super.onResume();
 
-        gridLayout.removeAllViews();
+        initRecyclerViewLists();
+        initRecyclerView();
+    }
+
+    public void initRecyclerViewLists() {
+        distinctCategoryNames.clear();
+        distinctCategoryNames.add("Unsorted");
+        photoPathLists.clear();
 
         PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(getActivity());
-        Cursor res = mydb.getAllData();
-        if (res.getCount() != 0) {
-            //Cycle through each row (each row represents a stickynote)
-            while (res.moveToNext()) {
-                //Render Label Text view
-                if (res.getString(2) != null) {
-                    //LLScreen.addView();
-                }
-                else {
 
-                }
+        Cursor res1 = mydb.getCategoryNameData();
 
-                //Render images
-                final ImageView newImageView = new ImageView(this.getActivity());
-                newImageView.setAdjustViewBounds(true);
-                int gridWidth = getResources().getDisplayMetrics().widthPixels;
-                LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(gridWidth / 3, gridWidth / 3);
-                lp1.setMargins(100, 100, 100, 100);
-                newImageView.setLayoutParams(lp1);
-                gridLayout.addView(newImageView, 0);
-
-                //Resize bitmap before displaying to prevent out of memory error
-                final Bitmap newBitMap = ImageUtilities.shrinkBitmap(res.getString(1), 1000, 1000);
-                Bitmap resized = Bitmap.createScaledBitmap(newBitMap, gridWidth / 3, gridWidth / 3, true);
-                newImageView.setImageBitmap(resized);
-
-                //on click
-                newImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //Version 1 of dialog
-                        final Dialog nagDialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-                        nagDialog.setContentView(R.layout.preview_image_page);
-
-                        //Version 2 of dialog
-                        //final Dialog nagDialog = new Dialog(getActivity());
-                        //nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        //nagDialog.setContentView(R.layout.preview_image_page);
-
-                        ImageView previewImage = (ImageView) nagDialog.findViewById(R.id.preview_image);
-                        previewImage.setImageBitmap(newBitMap);
-
-                        /*
-                        #find out how to use this#
-                        nagDialog.setCanceledOnTouchOutside();
-                        */
-                        nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                            @Override
-                            public void onCancel(DialogInterface dialog) {
-                                nagDialog.dismiss();
-                            }
-                        });
-
-                        nagDialog.show();
-                    }
-                });
-
-            }
+        // Init category
+        while (res1.moveToNext()) {
+            // Init distinctCategoryNames
+            String currentCategory = res1.getString(1);
+            distinctCategoryNames.add(currentCategory);
         }
+
+        // Init imageViewLists
+        Cursor res2 = mydb.getAllData();
+        for (int i = 0; i < distinctCategoryNames.size(); i++) {
+            res2.moveToFirst();
+            res2.moveToPrevious();
+            ArrayList<String> photoPaths = new ArrayList<>();
+            while (res2.moveToNext()) {
+                // If picture belongs to the category
+                if (res2.getString(2).equals(distinctCategoryNames.get(i))) {
+                    photoPaths.add(res2.getString(1));
+                }
+            }
+            photoPathLists.add(photoPaths);
+        }
+    }
+
+
+    public void initRecyclerView() {
+        RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv);
+        RecyclerViewAdaptor recyclerViewAdaptor = new RecyclerViewAdaptor(getActivity(), distinctCategoryNames, photoPathLists);
+        recyclerView.setAdapter(recyclerViewAdaptor);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    public void movePicture(ImageView imageView, String categoryName) {
+        imageView.getTag();
     }
 }

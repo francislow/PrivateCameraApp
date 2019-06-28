@@ -5,26 +5,35 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
+    <!--Top Tab-->
+    <RelativeLayout
+        android:id="@+id/toptab1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/fragmentpage_middle_top_tab" />
+    </RelativeLayout>
+
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="wrap_content"
 
         android:text="@string/middle_page_text1"
         android:fontFamily="casual"
         android:textStyle="bold"
         android:gravity="start"
         android:textColor="@color/black"
-        android:textSize="20dp"
-        android:paddingStart="10dp"
+        android:textSize="15dp"
+        android:paddingStart="8dp"
         android:paddingEnd="0dp"
-        android:paddingTop="5dp" />
+        android:paddingTop="1dp" />
 
 
     <!--Rest of the page - Scrollview-->
     <ScrollView
         android:id="@+id/vScrollView"
         android:layout_width="match_parent"
-        android:layout_height="450dp"
+        android:layout_height="467dp"
         android:background="@color/white">
 
         <!-- To Add and display recent images taken-->

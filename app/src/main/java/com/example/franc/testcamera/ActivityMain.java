@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.franc.testcamera.Fragments.FragmentPage2;
 import com.example.franc.testcamera.SQLiteDatabases.PicturesDatabaseHelper;
 
 import java.io.BufferedInputStream;
@@ -24,10 +25,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ActivityMain extends FragmentActivity {
-    private MyCamera myCamera;
-    private static final int PICK_IMAGE = 2;
-
-    public static int lastViewedFragItem = 1;
+    public static MyCamera myCamera;
+    public static final int PICK_IMAGE_REQUEST = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,62 +53,6 @@ public class ActivityMain extends FragmentActivity {
         btmTabLayout.getTabAt(1).setIcon(R.drawable.ic_home);
         btmTabLayout.getTabAt(2).setIcon(R.drawable.ic_gallery);
 
-        //Setup Top Tab
-        //Camera Button
-        final Button camButton = (Button) findViewById(R.id.cambutton);
-        camButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        camButton.setAlpha(0.1f);
-                        camButton.setScaleX(0.5f);
-                        camButton.setScaleY(0.5f);
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        camButton.setAlpha(1f);
-                        camButton.setScaleX(1f);
-                        camButton.setScaleY(1f);
-
-                        //If user's touch up is still inside button
-                        if (touchUpInButton(motionEvent, camButton)) {
-                            myCamera.dispatchTakePictureIntent();
-                        }
-                        break;
-                }
-                return true;
-            }
-        });
-
-        //Photo Button
-        final Button addButton = (Button) findViewById(R.id.addButton);
-        addButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        addButton.setAlpha(0.1f);
-                        addButton.setScaleX(0.5f);
-                        addButton.setScaleY(0.5f);
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        addButton.setAlpha(1f);
-                        addButton.setScaleX(1f);
-                        addButton.setScaleY(1f);
-
-                        //If user's touch up is still inside button
-                        if (touchUpInButton(motionEvent, addButton)) {
-                            //Bring up add photos page
-                            Intent goToGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-                            startActivityForResult(goToGallery, PICK_IMAGE);
-                        }
-                        break;
-                }
-                return true;
-            }
-        });
     }
 
     //Handles activity results in all fragments
@@ -124,7 +67,8 @@ public class ActivityMain extends FragmentActivity {
             PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(this);
 
             boolean hasInsertedData = mydb.insertData(myCamera.getPicture().getAbsolutePath(),
-                    null, myCamera.getYear(), myCamera.getMonth(), myCamera.getDay());
+                    "Unsorted", myCamera.getYear(), myCamera.getMonth(), myCamera.getDay());
+
 
             if (hasInsertedData) {
                 Toast.makeText(this, "Picture successfully inserted into database", Toast.LENGTH_LONG).show();
@@ -134,7 +78,8 @@ public class ActivityMain extends FragmentActivity {
         }
 
         //After user picked an image from gallery
-        else if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
+        else if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
+            System.out.println("IT RANNNNNN pcik image");
             Uri galleryImageUri = data.getData();
 
             //Make a copy of the image and store into app folder
@@ -145,7 +90,8 @@ public class ActivityMain extends FragmentActivity {
             //Store picture into database
             PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(this);
             boolean hasInsertedData = mydb.insertData(newUri.getPath(),
-                    null, null, null, null);
+                    "Unsorted", null, null, null);
+
 
             if (hasInsertedData) {
                 Toast.makeText(this, "Picture successfully inserted into database", Toast.LENGTH_LONG).show();
@@ -190,7 +136,7 @@ public class ActivityMain extends FragmentActivity {
     }
 
     //If user touched down and up a button within button space
-    public boolean touchUpInButton(MotionEvent motionEvent, Button button) {
+    public static boolean touchUpInButton(MotionEvent motionEvent, Button button) {
         int[] buttonPosition = new int[2];
         button.getLocationOnScreen(buttonPosition);
 

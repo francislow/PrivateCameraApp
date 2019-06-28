@@ -16,9 +16,11 @@ buildscript {
 }
 
 allprojects {
+    //Location of remote repositories to download the external libraries needed
     repositories {
         google()
         jcenter()
+        maven { url "https://jitpack.io" }
     }
 }
 

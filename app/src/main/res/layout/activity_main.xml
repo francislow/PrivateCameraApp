@@ -1,23 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:orientation="vertical"
     tools:context="com.example.franc.testcamera.ActivityMain">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <!--Top Tab-->
-        <RelativeLayout
-            android:id="@+id/toptab"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true">
-
-            <include layout="@layout/activity_main_top_tab" />
-        </RelativeLayout>
 
         <!--Middle ViewPager-->
         <RelativeLayout
@@ -25,7 +12,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/btmtab"
-            android:layout_below="@+id/toptab"
             android:background="@color/white">
 
             <android.support.v4.view.ViewPager
@@ -44,6 +30,4 @@
             <include layout="@layout/activity_main_btm_tab" />
         </RelativeLayout>
 
-    </RelativeLayout>
-
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

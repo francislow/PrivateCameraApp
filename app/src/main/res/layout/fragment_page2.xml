@@ -1,32 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/LL3"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:orientation="vertical"
     android:background="@color/white">
 
-    <TextView
-        android:id="@+id/mytv2"
+    <!--Top Tab-->
+    <RelativeLayout
+        android:id="@+id/toptab2"
         android:layout_width="match_parent"
-        android:layout_height="62dp"
-        android:text="Label"
-        android:textSize="60px"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content" >
 
-    <GridLayout
-        android:id="@+id/grid1"
-        android:columnCount="3"
-        android:rowCount="3"
+        <include layout="@layout/fragmentpage_2_top_tab" />
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerv"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </GridLayout>
 
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
+    <!--Top Tab-->
+    <RelativeLayout
+        android:id="@+id/toptab0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true">
+
+        <include layout="@layout/fragmentpage_middle_top_tab" />
+    </RelativeLayout>
 
     <Button
         android:id="@+id/addnotebutton"

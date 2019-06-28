@@ -3,10 +3,12 @@ package com.example.franc.testcamera.Fragments;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.franc.testcamera.ActivityMain;
 import com.example.franc.testcamera.ActivityNewNote;
+import com.example.franc.testcamera.MyCamera;
 import com.example.franc.testcamera.SQLiteDatabases.NotesDatabaseHelper;
 import com.example.franc.testcamera.R;
 import com.example.franc.testcamera.StickyNoteWidget;
@@ -30,7 +33,6 @@ public class FragmentPage1 extends Fragment {
     private Button addNoteButton;
     private NotesDatabaseHelper mydb;
     private ArrayList<StickyNoteWidget> stickyNoteWidgetsList;
-
 
     //Runs first
     //Mainly to setup variables
@@ -70,13 +72,70 @@ public class FragmentPage1 extends Fragment {
                 startActivity(intent);
             }
         });
+
+        /*
+        //Setup Top Tab
+        //Camera Button
+        final Button camButton = (Button) getActivity().findViewById(R.id.cambutton);
+        camButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        camButton.setAlpha(0.1f);
+                        camButton.setScaleX(0.5f);
+                        camButton.setScaleY(0.5f);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        camButton.setAlpha(1f);
+                        camButton.setScaleX(1f);
+                        camButton.setScaleY(1f);
+
+                        //If user's touch up is still inside button
+                        if (ActivityMain.touchUpInButton(motionEvent, camButton)) {
+                            ActivityMain.myCamera.dispatchTakePictureIntent();
+                        }
+                        break;
+                }
+                return true;
+            }
+        });
+
+        //Photo Button
+        final Button addButton = (Button) getActivity().findViewById(R.id.addButton);
+        addButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        addButton.setAlpha(0.1f);
+                        addButton.setScaleX(0.5f);
+                        addButton.setScaleY(0.5f);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        addButton.setAlpha(1f);
+                        addButton.setScaleX(1f);
+                        addButton.setScaleY(1f);
+
+                        //If user's touch up is still inside button
+                        if (ActivityMain.touchUpInButton(motionEvent, addButton)) {
+                            //Bring up add photos page
+                            Intent goToGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                            getActivity().startActivityForResult(goToGallery, ActivityMain.PICK_IMAGE_REQUEST);
+                        }
+                        break;
+                }
+                return true;
+            }
+        });
+        */
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ActivityMain.lastViewedFragItem = 0;
-
 
         //GET DATA FROM DATABASE: properties of each note
         Cursor res = mydb.getAllData();

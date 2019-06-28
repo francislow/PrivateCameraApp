@@ -37,7 +37,7 @@ public class NotesDatabaseHelper extends SQLiteOpenHelper {
         //CREATE TABLE "table name", creates the table itself
 
         //Creates notes table
-        db.execSQL("CREATE TABLE IF NOT EXIST " + TABLE_NAME +
+        db.execSQL("CREATE TABLE " + TABLE_NAME +
                 " (ID INTEGER PRIMARY KEY AUTOINCREMENT, TITLE TEXT, DES TEXT, " +
                 "LMARGIN INTEGER, RMARGIN INTEGER, TMARGIN INTEGER, BMARGIN INTEGER, " +
                 "WIDTH INTEGER, HEIGHT INTEGER);");
