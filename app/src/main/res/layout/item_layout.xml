@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Test"
-        android:textSize="20dp"
+        android:textSize="15dp"
         android:paddingStart="6dp"
         android:paddingEnd="0dp"
         android:paddingTop="5dp"
@@ -27,7 +27,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         android:background="@color/lightgrey"/>
 
 </LinearLayout>

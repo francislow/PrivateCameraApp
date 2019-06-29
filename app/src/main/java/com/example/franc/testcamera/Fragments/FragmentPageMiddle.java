@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,7 +33,7 @@ import com.github.chrisbanes.photoview.PhotoView;
  * Created by franc on 1/6/2019.
  */
 
-public class FragmentPageMiddle extends Fragment {
+public class FragmentPageMiddle extends Fragment implements View.OnTouchListener, View.OnClickListener {
     private LinearLayout LLOfPictures;
     private LinearLayout LLOfThumbnails;
     private ScrollView vScrollView;
@@ -42,8 +43,7 @@ public class FragmentPageMiddle extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_page_middle, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_page_middle, container, false);
     }
 
     @Override
@@ -62,70 +62,20 @@ public class FragmentPageMiddle extends Fragment {
         //Setup Top Tab
         //Camera Button
         final Button camButton = (Button) getActivity().findViewById(R.id.cambutton);
-        camButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        camButton.setAlpha(0.1f);
-                        camButton.setScaleX(0.5f);
-                        camButton.setScaleY(0.5f);
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        camButton.setAlpha(1f);
-                        camButton.setScaleX(1f);
-                        camButton.setScaleY(1f);
-
-                        //If user's touch up is still inside button
-                        if (ActivityMain.touchUpInButton(motionEvent, camButton)) {
-                            ActivityMain.myCamera.dispatchTakePictureIntent();
-                        }
-                        break;
-                }
-                return true;
-            }
-        });
+        camButton.setOnTouchListener(this);
 
         //Photo Button
         final Button addButton = (Button) getActivity().findViewById(R.id.addButton);
-        addButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        addButton.setAlpha(0.1f);
-                        addButton.setScaleX(0.5f);
-                        addButton.setScaleY(0.5f);
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        addButton.setAlpha(1f);
-                        addButton.setScaleX(1f);
-                        addButton.setScaleY(1f);
-
-                        //If user's touch up is still inside button
-                        if (ActivityMain.touchUpInButton(motionEvent, addButton)) {
-                            //Bring up add photos page
-                            Intent goToGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-                            getActivity().startActivityForResult(goToGallery, ActivityMain.PICK_IMAGE_REQUEST);
-                        }
-                        break;
-                }
-                return true;
-            }
-        });
+        addButton.setOnTouchListener(this);
     }
 
     @Override
     public void onPause() {
-        System.out.println("fragmentpagemiddle PAUSED");
         super.onPause();
     }
 
     @Override
     public void onResume() {
-        System.out.println("fragmentpagemiddle RESUMED");
         super.onResume();
 
         // Remove all existing pictures
@@ -136,75 +86,109 @@ public class FragmentPageMiddle extends Fragment {
         PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(getActivity());
         final Cursor res = mydb.getAllData();
 
-
         //While there is data in pictures database
         while (res.moveToNext()) {
             //Get current photo path
-            final String currentPhotoPath = res.getString(1);
+            String currentPhotoPath = res.getString(1);
 
-            //Render recently added pictures
-            final ImageView newImageView = new ImageView(this.getActivity());
+            // Set up image view
+            ImageView newImageView = new ImageView(this.getActivity());
             LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(screenWidth, screenHeight / 2);
             lp1.setMargins(0, 24, 0, 0);
             newImageView.setLayoutParams(lp1);
-            newImageView.setPadding(20,0,20,0);
+            newImageView.setPadding(20, 0, 20, 0);
             LLOfPictures.addView(newImageView, 0);
+            //Put image into image view
             Glide
                     .with(this.getActivity())
                     .load(currentPhotoPath)
                     .transform(new CenterCrop(), new RoundedCorners(25))
                     .into(newImageView);
+            //Set on click listener for the image view
+            newImageView.setTag(currentPhotoPath);
+            newImageView.setOnClickListener(this);
 
-            //Set on click listener
-            newImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Version 1 of dialog
-                    final Dialog nagDialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-                    nagDialog.setContentView(R.layout.preview_image_page);
-
-                    //Version 2 of dialog
-                    //final Dialog nagDialog = new Dialog(getActivity());
-                    //nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    //nagDialog.setContentView(R.layout.preview_image_page);
-
-                    ImageView previewImage = (PhotoView) nagDialog.findViewById(R.id.preview_image);
-                    Glide
-                            .with(nagDialog.getContext())
-                            .load(currentPhotoPath)
-                            .into(previewImage);
-
-                    nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            nagDialog.dismiss();
-                        }
-                    });
-
-                    nagDialog.show();
-                }
-            });
-
-
-            //Render thumbnails
+            //Set up thumbnail (image view)
             ImageView newThumbnail = new ImageView(this.getActivity());
             LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(screenHeight / 13, screenHeight / 13);
             lp2.setMargins(23, 10, 0, 10);
             newThumbnail.setLayoutParams(lp2);
             LLOfThumbnails.addView(newThumbnail, 0);
+            // Put image into thumbnail (image view)
             Glide
                     .with(getActivity())
                     .load(currentPhotoPath)
                     .transform(new CenterCrop(), new RoundedCorners(60))
                     .into(newThumbnail);
-
             //Set on click listener
-            newThumbnail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    vScrollView.smoothScrollTo(0, newImageView.getTop());
+            newThumbnail.setTag(newImageView);
+            newThumbnail.setOnClickListener(this);
+        }
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                view.setAlpha(0.1f);
+                view.setScaleX(0.5f);
+                view.setScaleY(0.5f);
+                break;
+
+            case MotionEvent.ACTION_UP:
+                view.setAlpha(1f);
+                view.setScaleX(1f);
+                view.setScaleY(1f);
+
+                // If user's touch up is still in the button
+                if (ActivityMain.touchUpInButton(motionEvent, (Button) view)) {
+                    switch (view.getId()) {
+                        case R.id.cambutton:
+                            // Start camera
+                            ActivityMain.myCamera.dispatchTakePictureIntent();
+                            break;
+
+                        case R.id.addButton:
+                            // Start gallery
+                            Intent goToGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                            getActivity().startActivityForResult(goToGallery, ActivityMain.PICK_IMAGE_REQUEST);
+                            break;
+                    }
                 }
-            });
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (((LinearLayout) view.getParent()).getOrientation()) {
+            // For the display pictures
+            case LinearLayout.VERTICAL:
+                String currentPhotoPath = (String) view.getTag();
+                final Dialog nagDialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+                nagDialog.setContentView(R.layout.preview_image_page);
+
+                ImageView previewImage = (PhotoView) nagDialog.findViewById(R.id.preview_image);
+                Glide
+                        .with(nagDialog.getContext())
+                        .load(currentPhotoPath)
+                        .into(previewImage);
+
+                nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        nagDialog.dismiss();
+                    }
+                });
+                nagDialog.show();
+                break;
+
+            // For the thumbnails
+            case LinearLayout.HORIZONTAL:
+                ImageView correspondingIV = (ImageView)view.getTag();
+                vScrollView.smoothScrollTo(0, correspondingIV.getTop());
+                break;
         }
     }
 }

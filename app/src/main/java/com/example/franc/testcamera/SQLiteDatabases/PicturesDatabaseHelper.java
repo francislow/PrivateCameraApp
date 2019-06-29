@@ -94,7 +94,7 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_2, pathName);
 
         contentValues.put(COL_3, categoryName);
-        long result = db.update(TABLE_NAME, contentValues, "ABSPATH = ?", new String[] {"ABSPATH"});
+        long result = db.update(TABLE_NAME, contentValues, "ABSPATH = ?", new String[] {pathName});
 
         if (result == -1) {
             return false;
@@ -121,8 +121,8 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public Integer deleteData(int id) {
+    public Integer deleteData(String pathName) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_NAME, "ID = ?", new String[] {Integer.toString(id)});
+        return db.delete(TABLE_NAME, "ABSPATH = ?", new String[] {pathName});
     }
 }

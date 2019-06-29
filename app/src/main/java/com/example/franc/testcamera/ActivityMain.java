@@ -28,6 +28,9 @@ public class ActivityMain extends FragmentActivity {
     public static MyCamera myCamera;
     public static final int PICK_IMAGE_REQUEST = 2;
 
+    public static final String DEFAULTCATEGORYNAME = "Unsorted";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //set initial layout
@@ -67,7 +70,7 @@ public class ActivityMain extends FragmentActivity {
             PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(this);
 
             boolean hasInsertedData = mydb.insertData(myCamera.getPicture().getAbsolutePath(),
-                    "Unsorted", myCamera.getYear(), myCamera.getMonth(), myCamera.getDay());
+                    DEFAULTCATEGORYNAME, myCamera.getYear(), myCamera.getMonth(), myCamera.getDay());
 
 
             if (hasInsertedData) {
@@ -90,7 +93,7 @@ public class ActivityMain extends FragmentActivity {
             //Store picture into database
             PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(this);
             boolean hasInsertedData = mydb.insertData(newUri.getPath(),
-                    "Unsorted", null, null, null);
+                    DEFAULTCATEGORYNAME, null, null, null);
 
 
             if (hasInsertedData) {

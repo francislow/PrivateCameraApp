@@ -45,13 +45,13 @@ import java.util.stream.Collectors;
  */
 
 public class FragmentPage2 extends Fragment {
-    private List<String> distinctCategoryNames = new ArrayList<>();
-    private ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
+    PicturesDatabaseHelper mydb;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_page2, container, false);
+        mydb = new PicturesDatabaseHelper(getActivity());
         return view;
     }
 
@@ -60,7 +60,6 @@ public class FragmentPage2 extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         //Setup Top Tab
-        //Camera Button
         final Button searchButton = (Button) getActivity().findViewById(R.id.search_button);
         searchButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -118,7 +117,6 @@ public class FragmentPage2 extends Fragment {
                                 public void onClick(View v) {
                                     EditText categoryNameText = (EditText) nagDialog.findViewById(R.id.editT1);
                                     String categoryName = categoryNameText.getText().toString().trim();
-                                    PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(getActivity());
                                     boolean hasInsertedData = mydb.insertCategoryNameData(categoryName);
                                     if (hasInsertedData) {
                                         onResume();
@@ -147,36 +145,23 @@ public class FragmentPage2 extends Fragment {
 
     @Override
     public void onPause() {
-        System.out.println("fragmentpage2 PAUSED");
         super.onPause();
     }
 
     @Override
     public void onResume() {
-        System.out.println("fragmentpage2 RESUMED");
         super.onResume();
 
-        initRecyclerViewLists();
-        initRecyclerView();
-    }
-
-    public void initRecyclerViewLists() {
-        distinctCategoryNames.clear();
-        distinctCategoryNames.add("Unsorted");
-        photoPathLists.clear();
-
-        PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(getActivity());
-
+        // Set up distinctCategoryNames list
+        List<String> distinctCategoryNames = new ArrayList<>();
         Cursor res1 = mydb.getCategoryNameData();
-
-        // Init category
+        distinctCategoryNames.add(ActivityMain.DEFAULTCATEGORYNAME);
         while (res1.moveToNext()) {
-            // Init distinctCategoryNames
             String currentCategory = res1.getString(1);
             distinctCategoryNames.add(currentCategory);
         }
-
-        // Init imageViewLists
+        // Set up photoPath list
+        ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
         Cursor res2 = mydb.getAllData();
         for (int i = 0; i < distinctCategoryNames.size(); i++) {
             res2.moveToFirst();
@@ -190,17 +175,14 @@ public class FragmentPage2 extends Fragment {
             }
             photoPathLists.add(photoPaths);
         }
+
+        initRecyclerView(distinctCategoryNames, photoPathLists);
     }
 
-
-    public void initRecyclerView() {
+    public void initRecyclerView(List<String> distinctCategoryNames, ArrayList<ArrayList<String>> photoPathLists) {
         RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv);
-        RecyclerViewAdaptor recyclerViewAdaptor = new RecyclerViewAdaptor(getActivity(), distinctCategoryNames, photoPathLists);
+        RecyclerViewAdaptor recyclerViewAdaptor = new RecyclerViewAdaptor(this, distinctCategoryNames, photoPathLists);
         recyclerView.setAdapter(recyclerViewAdaptor);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-    }
-
-    public void movePicture(ImageView imageView, String categoryName) {
-        imageView.getTag();
     }
 }
