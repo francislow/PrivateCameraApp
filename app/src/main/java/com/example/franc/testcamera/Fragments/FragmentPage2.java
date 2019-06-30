@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -47,6 +48,9 @@ import java.util.stream.Collectors;
 public class FragmentPage2 extends Fragment {
     PicturesDatabaseHelper mydb;
 
+    public static ImageView dustbin;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -60,26 +64,38 @@ public class FragmentPage2 extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         //Setup Top Tab
-        final Button searchButton = (Button) getActivity().findViewById(R.id.search_button);
-        searchButton.setOnTouchListener(new View.OnTouchListener() {
+        dustbin = (ImageView) getActivity().findViewById(R.id.dustbin);
+        dustbin.setOnDragListener(new View.OnDragListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        searchButton.setAlpha(0.1f);
-                        searchButton.setScaleX(0.5f);
-                        searchButton.setScaleY(0.5f);
+            public boolean onDrag(View v, DragEvent event) {
+                ImageView draggedImage = (ImageView) event.getLocalState();
+                GridLayout oldGridView = (GridLayout) draggedImage.getParent();        // v -> parentlayout
+                // view -> the dragged picture
+                switch (event.getAction()) {
+                    case DragEvent.ACTION_DRAG_STARTED:
                         break;
-
-                    case MotionEvent.ACTION_UP:
-                        searchButton.setAlpha(1f);
-                        searchButton.setScaleX(1f);
-                        searchButton.setScaleY(1f);
-
-                        //If user's touch up is still inside button
-                        if (ActivityMain.touchUpInButton(motionEvent, searchButton)) {
-                            //search for pic name
+                    case DragEvent.ACTION_DRAG_ENDED:
+                        break;
+                    case DragEvent.ACTION_DRAG_ENTERED:
+                        dustbin.setScaleX(2);
+                        dustbin.setScaleY(2);
+                        break;
+                    case DragEvent.ACTION_DRAG_EXITED:
+                        dustbin.setScaleX(1f);
+                        dustbin.setScaleY(1f);
+                        break;
+                    case DragEvent.ACTION_DROP:
+                        dustbin.setScaleX(1f);
+                        dustbin.setScaleY(1f);
+                        oldGridView.removeView(draggedImage);
+                        boolean hasDeletedData = mydb.deleteData((String) draggedImage.getTag());
+                        if (hasDeletedData) {
+                            Toast.makeText(getActivity(), "Successfully deleted picture", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), "Error deleting picture", Toast.LENGTH_SHORT).show();
                         }
+                        break;
+                    default:
                         break;
                 }
                 return true;

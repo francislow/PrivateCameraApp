@@ -121,8 +121,14 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public Integer deleteData(String pathName) {
+    public boolean deleteData(String pathName) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_NAME, "ABSPATH = ?", new String[] {pathName});
+
+        long result = db.delete(TABLE_NAME, "ABSPATH = ?", new String[] {pathName});
+
+        if (result == -1) {
+            return false;
+        }
+        return true;
     }
 }
