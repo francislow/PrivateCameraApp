@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.franc.testcamera.SQLiteDatabases.NotesDatabaseHelper;
+import com.r0adkll.slidr.Slidr;
 
 /**
  * Created by franc on 18/6/2019.
@@ -22,7 +23,9 @@ public class ActivityNewNote extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_newnote);
+        setContentView(R.layout.fragment_page1_activity_newnote);
+
+        Slidr.attach(this);
 
         final Button createNoteButton = (Button) findViewById(R.id.createNoteButton);
         final EditText noteDesText = (EditText) findViewById(R.id.noteDesText);

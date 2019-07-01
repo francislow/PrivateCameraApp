@@ -33,7 +33,7 @@
             </meta-data>
         </provider>
 
-        Define driver to start from
+        <!-- Define driver to start from -->
         <activity
             android:name=".ActivityMain"
             android:screenOrientation="portrait">
@@ -44,7 +44,7 @@
             </intent-filter>
         </activity>
 
-        Activity 2
+        <!-- Activity 2 -->
         <activity
             android:name=".ActivityNewNote"
             android:theme="@style/AppTheme.YourSlidrTheme">

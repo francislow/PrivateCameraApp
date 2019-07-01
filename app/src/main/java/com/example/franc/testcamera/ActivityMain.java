@@ -2,18 +2,15 @@ package com.example.franc.testcamera;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.franc.testcamera.Fragments.FragmentPage2;
 import com.example.franc.testcamera.SQLiteDatabases.PicturesDatabaseHelper;
 
 import java.io.BufferedInputStream;
@@ -26,9 +23,11 @@ import java.util.Date;
 
 public class ActivityMain extends FragmentActivity {
     public static MyCamera myCamera;
-    public static final int PICK_IMAGE_REQUEST = 2;
 
+    public static final int TAKE_PHOTO_REQUEST = 1;
+    public static final int PICK_IMAGE_REQUEST = 2;
     public static final String DEFAULTCATEGORYNAME = "Unsorted";
+    public static final String IMAGEFOLDERNAME = "UserPictures";
 
 
     @Override
@@ -62,14 +61,14 @@ public class ActivityMain extends FragmentActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //After user took the photo
-        if (requestCode == MyCamera.TAKE_PHOTO_REQUEST && resultCode == RESULT_OK) {
+        if (requestCode == TAKE_PHOTO_REQUEST && resultCode == RESULT_OK) {
             //*Note: In this case data will be null since in camera,
             // I have added instructions to put data into photoURI instead
 
             //Store picture into database
             PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(this);
 
-            boolean hasInsertedData = mydb.insertData(myCamera.getPicture().getAbsolutePath(),
+            boolean hasInsertedData = mydb.insertNewRowPTable(myCamera.getPicture().getAbsolutePath(),
                     DEFAULTCATEGORYNAME, myCamera.getYear(), myCamera.getMonth(), myCamera.getDay());
 
 
@@ -92,7 +91,7 @@ public class ActivityMain extends FragmentActivity {
 
             //Store picture into database
             PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(this);
-            boolean hasInsertedData = mydb.insertData(newUri.getPath(),
+            boolean hasInsertedData = mydb.insertNewRowPTable(newUri.getPath(),
                     DEFAULTCATEGORYNAME, null, null, null);
 
 
@@ -105,7 +104,7 @@ public class ActivityMain extends FragmentActivity {
     }
 
     public Uri copyMediaStoreUriToCacheDir(Uri uri, String filename) {
-        String destinationFilename = this.getExternalFilesDir("CameraPictures") + "/" + filename + ".jpg";
+        String destinationFilename = this.getExternalFilesDir(IMAGEFOLDERNAME) + "/" + filename + ".jpg";
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
 

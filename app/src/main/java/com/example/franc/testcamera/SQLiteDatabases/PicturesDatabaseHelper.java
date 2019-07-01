@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.franc.testcamera.ActivityMain;
+
 /**
  * Created by franc on 19/6/2019.
  */
@@ -17,18 +19,19 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "pictures.db";
 
     //ID | getAbsolutePath() | categoryName | year | month | day
-    private static final String TABLE_NAME = "pictures_table";
-    private static final String COL_1 = "ID";
-    private static final String COL_2 = "ABSPATH";
-    private static final String COL_3 = "CATEGORYNAME";
-    private static final String COL_4 = "YEAR";
-    private static final String COL_5 = "MONTH";
-    private static final String COL_6 = "DAY";
+    private static final String PICTURES_TABLE_NAME = "pictures_table";
+    private static final String COL_P_1 = "ID";
+    private static final String COL_P_2 = "ABSPATH";
+    private static final String COL_P_3 = "CATEGORYNAME";
+    private static final String COL_P_4 = "YEAR";
+    private static final String COL_P_5 = "MONTH";
+    private static final String COL_P_6 = "DAY";
 
     //ID | categoryName
-    private static final String TABLE_NAME2 = "category_table";
-    private static final String COL2_1 = "ID";
-    private static final String COL2_2 = "CATEGORYNAME";
+    private static final String CATEGORIES_TABLE_NAME = "category_table";
+    private static final String COL_C_1 = "ID";
+    private static final String COL_C_2 = "CATEGORYNAME";
+
 
     public PicturesDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, versionNumber);
@@ -36,38 +39,35 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //execSQL takes in a query to do whatever u want it to do
-        //CREATE TABLE "table name", creates the table itself
-
         //Creates pictures table
-        db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NAME +
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + PICTURES_TABLE_NAME +
                 " (ID INTEGER PRIMARY KEY AUTOINCREMENT, ABSPATH TEXT, CATEGORYNAME TEXT, " +
                 "YEAR INTEGER, MONTH INTEGER, DAY INTEGER);");
 
         //Creates category table
-        db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NAME2 +
-                " (ID INTEGER PRIMARY KEY AUTOINCREMENT, CATEGORYNAME TEXT);");
-        //insert Unsorted into categoryName first
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + CATEGORIES_TABLE_NAME +
+                " (ID INTEGER PRIMARY KEY AUTOINCREMENT, CATEGORYNAME TEXT, POSITION INTEGER);");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME2);
+        db.execSQL("DROP TABLE IF EXISTS " + PICTURES_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + CATEGORIES_TABLE_NAME);
         onCreate(db);
     }
 
-    public boolean insertData(String absPath, String categoryName, String year, String month, String day) {
+    /* Pictures Table ----------------------------------------------------------------------------*/
+    public boolean insertNewRowPTable(String absPath, String categoryName, String year, String month, String day) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_2, absPath);
-        contentValues.put(COL_3, categoryName);
-        contentValues.put(COL_4, year);
-        contentValues.put(COL_5, month);
-        contentValues.put(COL_6, day);
+        contentValues.put(COL_P_2, absPath);
+        contentValues.put(COL_P_3, categoryName);
+        contentValues.put(COL_P_4, year);
+        contentValues.put(COL_P_5, month);
+        contentValues.put(COL_P_6, day);
 
-        long result = db.insert(TABLE_NAME, null, contentValues);
+        long result = db.insert(PICTURES_TABLE_NAME, null, contentValues);
 
         if (result == -1) {
             return false;
@@ -75,12 +75,13 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean insertCategoryNameData(String categoryName) {
+    public boolean updateCategoryNamePTable(String pathName, String newCategoryName) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL2_2, categoryName);
+        contentValues.put(COL_P_2, pathName);
 
-        long result = db.insert(TABLE_NAME2, null, contentValues);
+        contentValues.put(COL_P_3, newCategoryName);
+        long result = db.update(PICTURES_TABLE_NAME, contentValues, "ABSPATH = ?", new String[] {pathName});
 
         if (result == -1) {
             return false;
@@ -88,13 +89,12 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean updateCategoryNameData(String pathName, String categoryName) {
+    public boolean updateAllCategoryNamePTable(String categoryName, String newCategoryName) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_2, pathName);
+        contentValues.put(COL_P_3, newCategoryName);
 
-        contentValues.put(COL_3, categoryName);
-        long result = db.update(TABLE_NAME, contentValues, "ABSPATH = ?", new String[] {pathName});
+        long result = db.update(PICTURES_TABLE_NAME, contentValues, "CATEGORYNAME = ?", new String[] {categoryName});
 
         if (result == -1) {
             return false;
@@ -102,29 +102,69 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public Cursor getCategoryNameData() {
+    public Cursor getAllDataPTable() {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_NAME2, null);
+        Cursor res = db.rawQuery("select * from " + PICTURES_TABLE_NAME, null);
         return res;
     }
 
-
-    public Cursor getAllData() {
+    public boolean deleteRowPTable(String pathName) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);
+
+        long result = db.delete(PICTURES_TABLE_NAME, "ABSPATH = ?", new String[] {pathName});
+
+        if (result == -1) {
+            return false;
+        }
+        return true;
+    }
+
+    /* Categories Table ----------------------------------------------------------------------------*/
+    public boolean insertNewRowCTable (String categoryName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_C_2, categoryName);
+
+        long result = db.insert(CATEGORIES_TABLE_NAME, null, contentValues);
+
+        if (result == -1) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean updateCategoryNameDataCTable(String categoryName, String newCategoryName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_C_2, newCategoryName);
+        long result = db.update(CATEGORIES_TABLE_NAME, contentValues, "CATEGORYNAME = ?", new String[] {categoryName});
+
+        if (result == -1) {
+            return false;
+        }
+        return true;
+    }
+
+    public Cursor getAllDataCTable() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + CATEGORIES_TABLE_NAME, null);
         return res;
     }
 
-    public Cursor getUniqueCategories() {
+    public boolean deleteRowCTable(String catName) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select distinct " + COL_3 + " from " + TABLE_NAME, null);
-        return res;
+
+        long result = db.delete(CATEGORIES_TABLE_NAME, "CATEGORYNAME = ?", new String[] {catName});
+
+        if (result == -1) {
+            return false;
+        }
+        return true;
     }
 
-    public boolean deleteData(String pathName) {
+    public boolean deleteAllRowsCTable() {
         SQLiteDatabase db = this.getWritableDatabase();
-
-        long result = db.delete(TABLE_NAME, "ABSPATH = ?", new String[] {pathName});
+        long result = db.delete(CATEGORIES_TABLE_NAME, null, null);
 
         if (result == -1) {
             return false;

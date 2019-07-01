@@ -1,14 +1,9 @@
 package com.example.franc.testcamera.Fragments;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,22 +19,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.franc.testcamera.ActivityMain;
-import com.example.franc.testcamera.ActivityNewNote;
 import com.example.franc.testcamera.R;
 import com.example.franc.testcamera.RecyclerViewAdaptor;
 import com.example.franc.testcamera.SQLiteDatabases.PicturesDatabaseHelper;
-import com.example.franc.testcamera.Utilities.ImageUtilities;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by franc on 1/6/2019.
@@ -47,9 +34,6 @@ import java.util.stream.Collectors;
 
 public class FragmentPage2 extends Fragment {
     PicturesDatabaseHelper mydb;
-
-    public static ImageView dustbin;
-
 
     @Nullable
     @Override
@@ -64,21 +48,23 @@ public class FragmentPage2 extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         //Setup Top Tab
-        dustbin = (ImageView) getActivity().findViewById(R.id.dustbin);
+        final ImageView dustbin = (ImageView) getActivity().findViewById(R.id.dustbin);
+        dustbin.getBackground().setAlpha(0);
         dustbin.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View v, DragEvent event) {
                 ImageView draggedImage = (ImageView) event.getLocalState();
-                GridLayout oldGridView = (GridLayout) draggedImage.getParent();        // v -> parentlayout
-                // view -> the dragged picture
+                GridLayout oldGridView = (GridLayout) draggedImage.getParent();        // v -> parentlayout view -> the dragged picture
                 switch (event.getAction()) {
                     case DragEvent.ACTION_DRAG_STARTED:
+                        dustbin.getBackground().setAlpha(255);
                         break;
                     case DragEvent.ACTION_DRAG_ENDED:
+                        dustbin.getBackground().setAlpha(0);
                         break;
                     case DragEvent.ACTION_DRAG_ENTERED:
-                        dustbin.setScaleX(2);
-                        dustbin.setScaleY(2);
+                        dustbin.setScaleX(1.5f);
+                        dustbin.setScaleY(1.5f);
                         break;
                     case DragEvent.ACTION_DRAG_EXITED:
                         dustbin.setScaleX(1f);
@@ -88,7 +74,7 @@ public class FragmentPage2 extends Fragment {
                         dustbin.setScaleX(1f);
                         dustbin.setScaleY(1f);
                         oldGridView.removeView(draggedImage);
-                        boolean hasDeletedData = mydb.deleteData((String) draggedImage.getTag());
+                        boolean hasDeletedData = mydb.deleteRowPTable((String) draggedImage.getTag());
                         if (hasDeletedData) {
                             Toast.makeText(getActivity(), "Successfully deleted picture", Toast.LENGTH_SHORT).show();
                         } else {
@@ -124,7 +110,7 @@ public class FragmentPage2 extends Fragment {
                             //Add a category
                             final Dialog nagDialog = new Dialog(getActivity());
                             nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                            nagDialog.setContentView(R.layout.insert_cat_name_page);
+                            nagDialog.setContentView(R.layout.dialog_insert_cat_name);
 
                             //Set add category button on click listener
                             Button submitButton = (Button) nagDialog.findViewById(R.id.button1);
@@ -133,7 +119,7 @@ public class FragmentPage2 extends Fragment {
                                 public void onClick(View v) {
                                     EditText categoryNameText = (EditText) nagDialog.findViewById(R.id.editT1);
                                     String categoryName = categoryNameText.getText().toString().trim();
-                                    boolean hasInsertedData = mydb.insertCategoryNameData(categoryName);
+                                    boolean hasInsertedData = mydb.insertNewRowCTable(categoryName);
                                     if (hasInsertedData) {
                                         onResume();
                                         Toast.makeText(getActivity(), "successfully added to database", Toast.LENGTH_LONG).show();
@@ -169,16 +155,28 @@ public class FragmentPage2 extends Fragment {
         super.onResume();
 
         // Set up distinctCategoryNames list
-        List<String> distinctCategoryNames = new ArrayList<>();
-        Cursor res1 = mydb.getCategoryNameData();
-        distinctCategoryNames.add(ActivityMain.DEFAULTCATEGORYNAME);
+        ArrayList<String> distinctCategoryNames = new ArrayList<>();
+        Cursor res3 = mydb.getAllDataCTable();
+
+        boolean hasDefaultCatName = false;
+        while (res3.moveToNext()) {
+            String currentCatName = res3.getString(1);
+            if (currentCatName.equals(ActivityMain.DEFAULTCATEGORYNAME)) {
+                hasDefaultCatName = true;
+            }
+        }
+        if (!hasDefaultCatName) {
+            mydb.insertNewRowCTable(ActivityMain.DEFAULTCATEGORYNAME);
+        }
+
+        Cursor res1 = mydb.getAllDataCTable();
         while (res1.moveToNext()) {
-            String currentCategory = res1.getString(1);
-            distinctCategoryNames.add(currentCategory);
+            String currentCatName = res1.getString(1);
+            distinctCategoryNames.add(currentCatName);
         }
         // Set up photoPath list
         ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
-        Cursor res2 = mydb.getAllData();
+        Cursor res2 = mydb.getAllDataPTable();
         for (int i = 0; i < distinctCategoryNames.size(); i++) {
             res2.moveToFirst();
             res2.moveToPrevious();
@@ -195,7 +193,7 @@ public class FragmentPage2 extends Fragment {
         initRecyclerView(distinctCategoryNames, photoPathLists);
     }
 
-    public void initRecyclerView(List<String> distinctCategoryNames, ArrayList<ArrayList<String>> photoPathLists) {
+    public void initRecyclerView(ArrayList<String> distinctCategoryNames, ArrayList<ArrayList<String>> photoPathLists) {
         RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv);
         RecyclerViewAdaptor recyclerViewAdaptor = new RecyclerViewAdaptor(this, distinctCategoryNames, photoPathLists);
         recyclerView.setAdapter(recyclerViewAdaptor);

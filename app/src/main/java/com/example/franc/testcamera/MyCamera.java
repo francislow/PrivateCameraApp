@@ -25,7 +25,6 @@ public class MyCamera {
     private String month;
     private String day;
 
-    public static final int TAKE_PHOTO_REQUEST = 1;
 
     public MyCamera(Activity currentActivity) {
         this.currentActivity = currentActivity;
@@ -53,9 +52,9 @@ public class MyCamera {
                         "com.example.android.fileprovider",
                         currentImageFile);
 
-                // Add extra instructions to intent to store the image output(EXTRA_OUTPUT) into photoURI
+                // Add extra instructions to intent to store the image output(EXTRA_OUTPUT) into photoURI of the empty file created
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                currentActivity.startActivityForResult(takePictureIntent, TAKE_PHOTO_REQUEST);
+                currentActivity.startActivityForResult(takePictureIntent, ActivityMain.TAKE_PHOTO_REQUEST);
             }
         }
     }
@@ -70,7 +69,7 @@ public class MyCamera {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp;
-        File storageDir = currentActivity.getExternalFilesDir("CameraPictures");
+        File storageDir = currentActivity.getExternalFilesDir(ActivityMain.IMAGEFOLDERNAME);
 
         //This will may not give a unique name
         //File imageFile = new File(storageDir, imageFileName + ".jpg");

@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <include layout="@layout/fragmentpage_2_top_tab" />
+        <include layout="@layout/fragment_page2_top_tab" />
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView

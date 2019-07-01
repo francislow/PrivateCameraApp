@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true">
 
-        <include layout="@layout/fragmentpage_middle_top_tab" />
+        <include layout="@layout/fragment_page_middle_top_tab" />
     </RelativeLayout>
 
     <Button

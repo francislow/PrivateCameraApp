@@ -9,7 +9,9 @@
     <color name="black">#000000</color>
     <color name="lightgrey">#F5F4F4</color>
     <color name="red">#F91919</color>
-    <color name="green">#92FD0F</color>
+    <color name="green">#46E400</color>
     <color name="blue">#0FF4FD</color>
+    <color name="grey">#DEDEDE</color>
+
 
 </resources>

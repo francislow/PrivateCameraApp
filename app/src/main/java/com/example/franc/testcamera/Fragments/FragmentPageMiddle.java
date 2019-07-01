@@ -13,12 +13,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
 import com.bumptech.glide.Glide;
@@ -84,7 +81,7 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
 
         // Get database and cursor
         PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(getActivity());
-        final Cursor res = mydb.getAllData();
+        final Cursor res = mydb.getAllDataPTable();
 
         //While there is data in pictures database
         while (res.moveToNext()) {
@@ -167,7 +164,7 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
             case LinearLayout.VERTICAL:
                 String currentPhotoPath = (String) view.getTag();
                 final Dialog nagDialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-                nagDialog.setContentView(R.layout.preview_image_page);
+                nagDialog.setContentView(R.layout.dialog_preview_image);
 
                 ImageView previewImage = (PhotoView) nagDialog.findViewById(R.id.preview_image);
                 Glide

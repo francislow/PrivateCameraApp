@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- This is the path where pictures will be stored-->
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--For some reason changing directory from "Pictures" to "ALLPICS"/"abc" does not work-->
-    <external-path name="cameraPictures" path="Android/data/com.example.franc.testcamera/files/CameraPictures" />
-    <external-path name="module1" path="Android/data/com.example.franc.testcamera/files/Module1" />
+    <!-- this is for the camera to find the empty image file created which is in CameraPictures folder,
+    defined by me in MyCamera class-->
+    <external-path name="cameraPictures" path="Android/data/com.example.franc.testcamera/files/UserPictures" />
 </paths>

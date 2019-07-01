@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/item1"
-        android:title="item1">
+        android:id="@+id/popup_up"
+        android:title="Up">
     </item>
     <item
-        android:id="@+id/item2"
-        android:title="item2">
+        android:id="@+id/popup_down"
+        android:title="Down">
+    </item>
+    <item
+        android:id="@+id/popup_edit"
+        android:title="Edit Label Name">
+    </item>
+    <item
+        android:id="@+id/popup_remove"
+        android:title="Remove all">
     </item>
 
 </menu>
