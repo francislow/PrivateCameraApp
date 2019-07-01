@@ -1,4 +1,4 @@
-package com.example.franc.testcamera;
+package com.example.franc.testcamera.Utilities;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -41,7 +41,6 @@ public class SwipeAdaptor extends FragmentStatePagerAdapter {
         return fragment;
     }
 
-    //How many pages we want
     @Override
     public int getCount() {
         return numPages;

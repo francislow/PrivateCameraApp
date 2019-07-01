@@ -9,8 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.franc.testcamera.UserinputHandlers.NoteInputListener;
-
 /**
  * Created by franc on 20/6/2019.
  */

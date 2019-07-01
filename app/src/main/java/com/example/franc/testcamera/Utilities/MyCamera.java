@@ -1,4 +1,4 @@
-package com.example.franc.testcamera;
+package com.example.franc.testcamera.Utilities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
+
+import com.example.franc.testcamera.ActivityMain;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +32,7 @@ public class MyCamera {
         this.currentActivity = currentActivity;
     }
 
-    protected File getPicture() {
+    public File getPicture() {
         return currentImageFile;
     }
 
@@ -69,7 +71,7 @@ public class MyCamera {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp;
-        File storageDir = currentActivity.getExternalFilesDir(ActivityMain.IMAGEFOLDERNAME);
+        File storageDir = currentActivity.getExternalFilesDir(ActivityMain.APPIMAGEFOLDERNAME);
 
         //This will may not give a unique name
         //File imageFile = new File(storageDir, imageFileName + ".jpg");

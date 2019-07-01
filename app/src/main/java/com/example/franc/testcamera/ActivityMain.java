@@ -6,29 +6,25 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.franc.testcamera.SQLiteDatabases.PicturesDatabaseHelper;
+import com.example.franc.testcamera.Utilities.MyCamera;
+import com.example.franc.testcamera.Utilities.MyUtilities;
+import com.example.franc.testcamera.Utilities.SwipeAdaptor;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ActivityMain extends FragmentActivity {
-    public static MyCamera myCamera;
+    public static MyCamera MYCAMERA;
+    public PicturesDatabaseHelper mydb;
 
     public static final int TAKE_PHOTO_REQUEST = 1;
     public static final int PICK_IMAGE_REQUEST = 2;
     public static final String DEFAULTCATEGORYNAME = "Unsorted";
-    public static final String IMAGEFOLDERNAME = "UserPictures";
-
+    public static final String APPIMAGEFOLDERNAME = "UserPictures";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +36,10 @@ public class ActivityMain extends FragmentActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //Set up camera
-        myCamera = new MyCamera(this);
+        MYCAMERA = new MyCamera(this);
+
+        //Set up database
+        mydb = new PicturesDatabaseHelper(this);
 
         //Set viewpager
         SwipeAdaptor swipeAdaptor = new SwipeAdaptor(getSupportFragmentManager());
@@ -66,10 +65,8 @@ public class ActivityMain extends FragmentActivity {
             // I have added instructions to put data into photoURI instead
 
             //Store picture into database
-            PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(this);
-
-            boolean hasInsertedData = mydb.insertNewRowPTable(myCamera.getPicture().getAbsolutePath(),
-                    DEFAULTCATEGORYNAME, myCamera.getYear(), myCamera.getMonth(), myCamera.getDay());
+            boolean hasInsertedData = mydb.insertNewRowPTable(MYCAMERA.getPicture().getAbsolutePath(),
+                    DEFAULTCATEGORYNAME, MYCAMERA.getYear(), MYCAMERA.getMonth(), MYCAMERA.getDay());
 
 
             if (hasInsertedData) {
@@ -87,10 +84,9 @@ public class ActivityMain extends FragmentActivity {
             //Make a copy of the image and store into app folder
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             String fileName = "JPEG_" + timeStamp;
-            Uri newUri = copyMediaStoreUriToCacheDir(galleryImageUri, fileName);
+            Uri newUri = MyUtilities.copyMediaStoreUriToCacheDir(galleryImageUri, fileName, this);
 
             //Store picture into database
-            PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(this);
             boolean hasInsertedData = mydb.insertNewRowPTable(newUri.getPath(),
                     DEFAULTCATEGORYNAME, null, null, null);
 
@@ -101,52 +97,5 @@ public class ActivityMain extends FragmentActivity {
                 Toast.makeText(this, "Error inserting picture into database", Toast.LENGTH_LONG).show();
             }
         }
-    }
-
-    public Uri copyMediaStoreUriToCacheDir(Uri uri, String filename) {
-        String destinationFilename = this.getExternalFilesDir(IMAGEFOLDERNAME) + "/" + filename + ".jpg";
-        BufferedInputStream bis = null;
-        BufferedOutputStream bos = null;
-
-        try {
-            bis = new BufferedInputStream(getContentResolver().openInputStream(uri));
-//          bis = new BufferedInputStream(App.getAppContext().getContentResolver().openInputStream(uri));
-            bos = new BufferedOutputStream(new FileOutputStream(destinationFilename, false));
-            byte[] buf = new byte[1024];
-            bis.read(buf);
-
-            do {
-                bos.write(buf);
-            } while (bis.read(buf) != -1);
-
-            return Uri.fromFile(new File(destinationFilename));
-        } catch (IOException e) {
-            //
-        } finally {
-            try {
-                if (bis != null) {
-                    bis.close();
-                }
-                if (bos != null) {
-                    bos.close();
-                }
-            } catch (IOException e) {
-                System.out.println("copyMediaStoreUriToCacheDir ran into IOException shucks..");
-            }
-        }
-        return null;
-    }
-
-    //If user touched down and up a button within button space
-    public static boolean touchUpInButton(MotionEvent motionEvent, Button button) {
-        int[] buttonPosition = new int[2];
-        button.getLocationOnScreen(buttonPosition);
-
-        if (motionEvent.getRawX() >= buttonPosition[0] && motionEvent.getRawX() <= (buttonPosition[0] + button.getWidth())) {
-            if (motionEvent.getRawY() >= buttonPosition[1] && motionEvent.getRawY() <= (buttonPosition[1] + button.getHeight())) {
-                return true;
-            }
-        }
-        return false;
     }
 }

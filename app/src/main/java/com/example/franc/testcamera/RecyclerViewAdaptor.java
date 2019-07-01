@@ -28,6 +28,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.franc.testcamera.Fragments.FragmentPage2;
 import com.example.franc.testcamera.SQLiteDatabases.PicturesDatabaseHelper;
+import com.example.franc.testcamera.Utilities.MyUtilities;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,14 +72,12 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
         for (final String currentPhotoPath : currentPhotoPathList) {
             // Render images
-            ImageView newImageView = new ImageView(fragment.getContext());
-            newImageView.setAdjustViewBounds(true);
+            ImageView newImageView = new ImageView(myContext);
             int gridWidth = fragment.getResources().getDisplayMetrics().widthPixels;
             LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(gridWidth / 3, gridWidth / 3);
             newImageView.setPadding(14, 14, 14, 14);
             newImageView.setLayoutParams(lp1);
 
-            // OMG GLIDE DOES IMAGE LOADING SO MUCH BETTER!! No lags due to decode file
             Glide
                     .with(myContext)
                     .load(currentPhotoPath)
@@ -142,11 +141,11 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             line = (ImageView) itemView.findViewById(R.id.line);
 
             parentLayout.setOnDragListener(new View.OnDragListener() {
-                @Override
+                @Override          // v -> parentlayout
                 public boolean onDrag(View v, DragEvent event) {
                     ImageView draggedImage = (ImageView) event.getLocalState();
-                    GridLayout oldGridView = (GridLayout) draggedImage.getParent();        // v -> parentlayout
-                    GridLayout newGridView = (GridLayout) ((LinearLayout) v).getChildAt(1);      // view -> the dragged picture
+                    GridLayout oldGridView = (GridLayout) draggedImage.getParent();
+                    GridLayout newGridView = (GridLayout) ((LinearLayout) v).getChildAt(1);
 
                     switch (event.getAction()) {
                         case DragEvent.ACTION_DRAG_STARTED:
@@ -281,13 +280,19 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                             EditText categoryNameET = (EditText) nagDialog.findViewById(R.id.editT2);
                                             String newCategoryName = categoryNameET.getText().toString().trim();
                                             String oldCategoryName = categoryTV.getText().toString().trim();
-                                            boolean updated = mydb.updateCategoryNameDataCTable(oldCategoryName, newCategoryName);
-                                            boolean updated2 = mydb.updateAllCategoryNamePTable(oldCategoryName, newCategoryName);
-                                            if (updated && updated2) {
-                                                categoryTV.setText(newCategoryName);
-                                                Toast.makeText(myContext, "successfully updated cat name and pic cat name", Toast.LENGTH_LONG).show();
-                                            } else {
-                                                Toast.makeText(myContext, "Error updating cat name and pic cat name", Toast.LENGTH_LONG).show();
+                                            if (!MyUtilities.hasDuplicatedCatNamesInCTable(newCategoryName, myContext)) {
+                                                boolean updated = mydb.updateCategoryNameDataCTable(oldCategoryName, newCategoryName);
+                                                boolean updated2 = mydb.updateAllCategoryNamePTable(oldCategoryName, newCategoryName);
+                                                if (updated && updated2) {
+                                                    categoryTV.setText(newCategoryName);
+                                                    Toast.makeText(myContext, "successfully updated cat name and pic cat name", Toast.LENGTH_LONG).show();
+                                                } else {
+                                                    Toast.makeText(myContext, "Error updating cat name and pic cat name", Toast.LENGTH_LONG).show();
+                                                }
+                                                nagDialog.dismiss();
+                                            }
+                                            else {
+                                                Toast.makeText(myContext, "Unable to edit label, you already have an exact label", Toast.LENGTH_LONG).show();
                                             }
                                         }
                                     });
@@ -305,7 +310,6 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                     });
                     popupMenu.inflate(R.menu.pop_menu);
                     popupMenu.show();
-
                 }
             });
         }

@@ -1,4 +1,4 @@
-package com.example.franc.testcamera.UserinputHandlers;
+package com.example.franc.testcamera;
 
 import android.util.Log;
 import android.view.MotionEvent;

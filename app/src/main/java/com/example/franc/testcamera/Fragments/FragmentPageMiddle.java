@@ -24,6 +24,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.franc.testcamera.ActivityMain;
 import com.example.franc.testcamera.SQLiteDatabases.PicturesDatabaseHelper;
 import com.example.franc.testcamera.R;
+import com.example.franc.testcamera.Utilities.MyUtilities;
 import com.github.chrisbanes.photoview.PhotoView;
 
 /**
@@ -138,13 +139,15 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
                 view.setScaleY(1f);
 
                 // If user's touch up is still in the button
-                if (ActivityMain.touchUpInButton(motionEvent, (Button) view)) {
+                if (MyUtilities.touchUpInButton(motionEvent, (Button) view)) {
                     switch (view.getId()) {
+                        // If it is a camera button
                         case R.id.cambutton:
                             // Start camera
-                            ActivityMain.myCamera.dispatchTakePictureIntent();
+                            ActivityMain.MYCAMERA.dispatchTakePictureIntent();
                             break;
 
+                        // If it is an add from gallery button
                         case R.id.addButton:
                             // Start gallery
                             Intent goToGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
@@ -160,7 +163,7 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
     @Override
     public void onClick(View view) {
         switch (((LinearLayout) view.getParent()).getOrientation()) {
-            // For the display pictures
+            // If it is the display pictures
             case LinearLayout.VERTICAL:
                 String currentPhotoPath = (String) view.getTag();
                 final Dialog nagDialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
@@ -181,7 +184,7 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
                 nagDialog.show();
                 break;
 
-            // For the thumbnails
+            // If it is the thumbnails
             case LinearLayout.HORIZONTAL:
                 ImageView correspondingIV = (ImageView)view.getTag();
                 vScrollView.smoothScrollTo(0, correspondingIV.getTop());
