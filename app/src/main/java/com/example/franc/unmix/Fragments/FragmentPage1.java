@@ -1,4 +1,4 @@
-package com.example.franc.testcamera.Fragments;
+package com.example.franc.unmix.Fragments;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,10 +13,10 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.example.franc.testcamera.ActivityNewNote;
-import com.example.franc.testcamera.SQLiteDatabases.NotesDatabaseHelper;
-import com.example.franc.testcamera.R;
-import com.example.franc.testcamera.StickyNoteWidget;
+import com.example.franc.unmix.ActivityNewNote;
+import com.example.franc.unmix.SQLiteDatabases.NotesDatabaseHelper;
+import com.example.franc.unmix.R;
+import com.example.franc.unmix.StickyNoteWidget;
 
 import java.util.ArrayList;
 

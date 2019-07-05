@@ -1,13 +1,12 @@
-package com.example.franc.testcamera.Utilities;
+package com.example.franc.unmix.Utilities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 
-import com.example.franc.testcamera.ActivityMain;
+import com.example.franc.unmix.ActivityMain;
 
 import java.io.File;
 import java.io.IOException;

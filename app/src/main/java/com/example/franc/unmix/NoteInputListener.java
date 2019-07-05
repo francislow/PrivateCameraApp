@@ -1,13 +1,8 @@
-package com.example.franc.testcamera;
+package com.example.franc.unmix;
 
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import com.example.franc.testcamera.StickyNoteWidget;
 
 /**
  * Created by franc on 18/6/2019.

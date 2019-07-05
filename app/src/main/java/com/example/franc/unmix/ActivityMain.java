@@ -1,4 +1,4 @@
-package com.example.franc.testcamera;
+package com.example.franc.unmix;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -9,10 +9,10 @@ import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.example.franc.testcamera.SQLiteDatabases.PicturesDatabaseHelper;
-import com.example.franc.testcamera.Utilities.MyCamera;
-import com.example.franc.testcamera.Utilities.MyUtilities;
-import com.example.franc.testcamera.Utilities.SwipeAdaptor;
+import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
+import com.example.franc.unmix.Utilities.MyCamera;
+import com.example.franc.unmix.Utilities.MyUtilities;
+import com.example.franc.unmix.Utilities.SwipeAdaptor;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -88,7 +88,7 @@ public class ActivityMain extends FragmentActivity {
 
             //Store picture into database
             boolean hasInsertedData = mydb.insertNewRowPTable(newUri.getPath(),
-                    DEFAULTCATEGORYNAME, null, null, null);
+                    DEFAULTCATEGORYNAME, "HI", null, null);
 
 
             if (hasInsertedData) {

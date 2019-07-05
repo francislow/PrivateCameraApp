@@ -1,4 +1,4 @@
-package com.example.franc.testcamera.Fragments;
+package com.example.franc.unmix.Fragments;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -19,13 +19,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.franc.testcamera.ActivityMain;
-import com.example.franc.testcamera.R;
-import com.example.franc.testcamera.RecyclerViewAdaptor;
-import com.example.franc.testcamera.SQLiteDatabases.PicturesDatabaseHelper;
-import com.example.franc.testcamera.Utilities.MyUtilities;
+import com.example.franc.unmix.ActivityMain;
+import com.example.franc.unmix.CustomPicture;
+import com.example.franc.unmix.R;
+import com.example.franc.unmix.RecyclerViewAdaptor;
+import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
+import com.example.franc.unmix.Utilities.MyUtilities;
 
 import java.util.ArrayList;
 
@@ -34,7 +36,12 @@ import java.util.ArrayList;
  */
 
 public class FragmentPage2 extends Fragment implements View.OnTouchListener, View.OnDragListener {
-    PicturesDatabaseHelper mydb;
+    private PicturesDatabaseHelper mydb;
+    private Button addCatButton;
+    private TextView textView;
+    private Button switchLabelViewButton;
+
+    public static boolean labelViewFlag = false;
 
     @Nullable
     @Override
@@ -49,12 +56,17 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         super.onViewCreated(view, savedInstanceState);
 
         // Setup Top Tab
+        // App name text view
+        textView = (TextView) getActivity().findViewById(R.id.appname2);
         // Dustbin image view
         final ImageView dustbin = (ImageView) getActivity().findViewById(R.id.dustbin);
         dustbin.getBackground().setAlpha(0);
         dustbin.setOnDragListener(this);
+        // Switch to label view button
+        switchLabelViewButton = (Button) getActivity().findViewById(R.id.switch_to_label);
+        switchLabelViewButton.setOnTouchListener(this);
         // Photo Button
-        final Button addCatButton = (Button) getActivity().findViewById(R.id.add_cat_button);
+        addCatButton = (Button) getActivity().findViewById(R.id.add_cat_button);
         addCatButton.setOnTouchListener(this);
     }
 
@@ -144,43 +156,55 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
 
                 //If user's touch up is still inside button
                 if (MyUtilities.touchUpInButton(motionEvent, (Button) view)) {
-                    //Add a category
-                    final Dialog nagDialog = new Dialog(getActivity());
-                    nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    nagDialog.setContentView(R.layout.dialog_insert_cat_name);
+                    switch (view.getId()) {
+                        case R.id.add_cat_button:
+                        //Add a category
+                        final Dialog nagDialog = new Dialog(getActivity());
+                        nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        nagDialog.setContentView(R.layout.dialog_insert_cat_name);
 
-                    //Set add category button on click listener
-                    Button submitButton = (Button) nagDialog.findViewById(R.id.button1);
-                    submitButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            EditText categoryNameText = (EditText) nagDialog.findViewById(R.id.editT1);
-                            String newCategoryName = categoryNameText.getText().toString().trim();
-                            if (!MyUtilities.hasDuplicatedCatNamesInCTable(newCategoryName, getActivity())) {
-                                boolean hasInsertedData = mydb.insertNewRowCTable(newCategoryName);
-                                if (hasInsertedData) {
-                                    onResume();
-                                    Toast.makeText(getActivity(), "successfully added to database", Toast.LENGTH_LONG).show();
+                        //Set add category button on click listener
+                        Button submitButton = (Button) nagDialog.findViewById(R.id.button1);
+                        submitButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                EditText categoryNameText = (EditText) nagDialog.findViewById(R.id.editT1);
+                                String newCategoryName = categoryNameText.getText().toString().trim();
+                                if (!MyUtilities.hasDuplicatedCatNamesInCTable(newCategoryName, getActivity())) {
+                                    boolean hasInsertedData = mydb.insertNewRowCTable(newCategoryName);
+                                    if (hasInsertedData) {
+                                        onResume();
+                                        Toast.makeText(getActivity(), "successfully added to database", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(getActivity(), "Error adding to database", Toast.LENGTH_LONG).show();
+                                    }
+                                    nagDialog.dismiss();
                                 } else {
-                                    Toast.makeText(getActivity(), "Error adding to database", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getActivity(), "Unable to add label, you already have an exact label", Toast.LENGTH_LONG).show();
                                 }
-                                nagDialog.dismiss();
-                            } else {
-                                Toast.makeText(getActivity(), "Unable to add label, you already have an exact label", Toast.LENGTH_LONG).show();
                             }
-                        }
-                    });
+                        });
 
-                    nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            nagDialog.dismiss();
-                        }
-                    });
+                        nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                nagDialog.dismiss();
+                            }
+                        });
 
-                    nagDialog.show();
+                        nagDialog.show();
+                        break;
+                        case R.id.switch_to_label:
+                            if (labelViewFlag) {
+                                labelViewFlag = false;
+                            }
+                            else {
+                                labelViewFlag = true;
+                            }
+                            onResume();
+                            break;
+                    }
                 }
-                break;
         }
         return true;
     }
@@ -188,13 +212,17 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     @Override
     public boolean onDrag(View view, DragEvent event) {
         // view -> the dustbin
-        ImageView draggedImage = (ImageView) event.getLocalState();
+        CustomPicture draggedImage = (CustomPicture) event.getLocalState();
         GridLayout oldGridView = (GridLayout) draggedImage.getParent();
         switch (event.getAction()) {
             case DragEvent.ACTION_DRAG_STARTED:
+                addCatButton.getBackground().setAlpha(0);
+                textView.setAlpha(0);
                 view.getBackground().setAlpha(255);
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
+                addCatButton.getBackground().setAlpha(255);
+                textView.setAlpha(1);
                 view.getBackground().setAlpha(0);
                 break;
             case DragEvent.ACTION_DRAG_ENTERED:

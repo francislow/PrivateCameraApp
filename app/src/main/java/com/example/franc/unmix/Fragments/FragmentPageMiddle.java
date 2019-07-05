@@ -1,4 +1,4 @@
-package com.example.franc.testcamera.Fragments;
+package com.example.franc.unmix.Fragments;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -21,10 +21,10 @@ import android.widget.ScrollView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.example.franc.testcamera.ActivityMain;
-import com.example.franc.testcamera.SQLiteDatabases.PicturesDatabaseHelper;
-import com.example.franc.testcamera.R;
-import com.example.franc.testcamera.Utilities.MyUtilities;
+import com.example.franc.unmix.ActivityMain;
+import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
+import com.example.franc.unmix.R;
+import com.example.franc.unmix.Utilities.MyUtilities;
 import com.github.chrisbanes.photoview.PhotoView;
 
 /**

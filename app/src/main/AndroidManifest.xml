@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.franc.testcamera">
+    package="com.example.franc.unmix">
 
     <!--Request for permission to use stuffs in android-->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -35,7 +35,7 @@
 
         <!-- Define driver to start from -->
         <activity
-            android:name=".ActivityMain"
+            android:name="com.example.franc.unmix.ActivityMain"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,7 +46,7 @@
 
         <!-- Activity 2 -->
         <activity
-            android:name=".ActivityNewNote"
+            android:name="com.example.franc.unmix.ActivityNewNote"
             android:theme="@style/AppTheme.YourSlidrTheme">
         </activity>
     </application>

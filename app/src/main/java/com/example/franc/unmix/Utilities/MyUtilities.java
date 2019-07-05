@@ -1,4 +1,4 @@
-package com.example.franc.testcamera.Utilities;
+package com.example.franc.unmix.Utilities;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -6,8 +6,8 @@ import android.net.Uri;
 import android.view.MotionEvent;
 import android.widget.Button;
 
-import com.example.franc.testcamera.ActivityMain;
-import com.example.franc.testcamera.SQLiteDatabases.PicturesDatabaseHelper;
+import com.example.franc.unmix.ActivityMain;
+import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

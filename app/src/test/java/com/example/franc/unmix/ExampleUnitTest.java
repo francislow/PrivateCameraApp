@@ -1,4 +1,4 @@
-package com.example.franc.testcamera;
+package com.example.franc.unmix;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.example.franc.testcamera;
+package com.example.franc.unmix;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.franc.testcamera.SQLiteDatabases.NotesDatabaseHelper;
+import com.example.franc.unmix.SQLiteDatabases.NotesDatabaseHelper;
 import com.r0adkll.slidr.Slidr;
 
 /**

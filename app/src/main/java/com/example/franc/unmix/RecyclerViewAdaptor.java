@@ -1,4 +1,4 @@
-package com.example.franc.testcamera;
+package com.example.franc.unmix;
 
 import android.app.Dialog;
 import android.content.ClipData;
@@ -24,11 +24,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.example.franc.testcamera.Fragments.FragmentPage2;
-import com.example.franc.testcamera.SQLiteDatabases.PicturesDatabaseHelper;
-import com.example.franc.testcamera.Utilities.MyUtilities;
+import com.example.franc.unmix.Fragments.FragmentPage2;
+import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
+import com.example.franc.unmix.Utilities.MyUtilities;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,23 +69,14 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
         ArrayList<String> currentPhotoPathList = photoPathLists.get(position);
 
         for (final String currentPhotoPath : currentPhotoPathList) {
-            // Render images
-            ImageView newImageView = new ImageView(myContext);
-            int gridWidth = fragment.getResources().getDisplayMetrics().widthPixels;
-            LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(gridWidth / 3, gridWidth / 3);
-            newImageView.setPadding(14, 14, 14, 14);
-            newImageView.setLayoutParams(lp1);
+            CustomPicture newCustomPicture = new CustomPicture(myContext);
 
-            Glide
-                    .with(myContext)
-                    .load(currentPhotoPath)
-                    .transform(new CenterCrop(), new RoundedCorners(15))
-                    .into(newImageView);
+                newCustomPicture.displayPicture(currentPhotoPath);
 
-            holder.gridLayout.addView(newImageView);
+            holder.gridLayout.addView(newCustomPicture);
 
-            newImageView.setTag(currentPhotoPath);
-            newImageView.setOnLongClickListener(new View.OnLongClickListener() {
+            newCustomPicture.setTag(currentPhotoPath);
+            newCustomPicture.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     ClipData data = ClipData.newPlainText("", "");
@@ -98,12 +87,13 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                 }
             });
 
-            newImageView.setOnClickListener(new View.OnClickListener() {
+            newCustomPicture.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final Dialog nagDialog = new Dialog(myContext, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
                     nagDialog.setContentView(R.layout.dialog_preview_image);
 
+                    
                     ImageView previewImage = (ImageView) nagDialog.findViewById(R.id.preview_image);
                     Glide
                             .with(myContext)
@@ -143,7 +133,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             parentLayout.setOnDragListener(new View.OnDragListener() {
                 @Override          // v -> parentlayout
                 public boolean onDrag(View v, DragEvent event) {
-                    ImageView draggedImage = (ImageView) event.getLocalState();
+                    CustomPicture draggedImage = (CustomPicture) event.getLocalState();
                     GridLayout oldGridView = (GridLayout) draggedImage.getParent();
                     GridLayout newGridView = (GridLayout) ((LinearLayout) v).getChildAt(1);
 
@@ -253,8 +243,8 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                             // If gridlayout has pictures in it
                                             if (gridLayout.getChildCount() != 0) {
                                                 for (int i = 0; i < gridLayout.getChildCount(); i++ ) {
-                                                    ImageView currentIV = (ImageView) gridLayout.getChildAt(0);
-                                                    boolean hasDeletedPicData = mydb.deleteRowPTable((String) currentIV.getTag());
+                                                    CustomPicture currentPic = (CustomPicture) gridLayout.getChildAt(0);
+                                                    boolean hasDeletedPicData = mydb.deleteRowPTable((String) currentPic.getTag());
                                                     if (hasDeletedPicData) {
                                                         Toast.makeText(fragment.getActivity(), "Successfully deleted all picture", Toast.LENGTH_SHORT).show();
                                                     } else {
@@ -330,10 +320,10 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             int height;
 
             // Sets the width of the shadow to half the width of the original View
-            width = getView().getWidth() / 2;
+            width = getView().getWidth() * 2 / 5;
 
             // Sets the height of the shadow to half the height of the original View
-            height = getView().getHeight() / 2;
+            height = getView().getHeight() *2 / 5;
 
             // Sets the size parameter's width and height values. These get back to the system
             // through the size parameter.
