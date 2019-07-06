@@ -87,6 +87,20 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public boolean updateLabelNamePTable(String pathName, String newLabelName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_P_2, pathName);
+
+        contentValues.put(COL_P_4, newLabelName);
+        long result = db.update(PICTURES_TABLE_NAME, contentValues, "ABSPATH = ?", new String[] {pathName});
+
+        if (result == -1) {
+            return false;
+        }
+        return true;
+    }
+
     public boolean updateAllCategoryNamePTable(String categoryName, String newCategoryName) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();

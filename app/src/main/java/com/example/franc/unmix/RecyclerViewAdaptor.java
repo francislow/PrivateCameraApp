@@ -70,45 +70,11 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
         for (final String currentPhotoPath : currentPhotoPathList) {
             CustomPicture newCustomPicture = new CustomPicture(myContext);
-
-                newCustomPicture.displayPicture(currentPhotoPath);
+            newCustomPicture.displayImage(currentPhotoPath);
+            newCustomPicture.setCustomListener();
 
             holder.gridLayout.addView(newCustomPicture);
 
-            newCustomPicture.setTag(currentPhotoPath);
-            newCustomPicture.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    ClipData data = ClipData.newPlainText("", "");
-                    //View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                    View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view);
-                    view.startDrag(data, shadowBuilder, view, 0);
-                    return true;
-                }
-            });
-
-            newCustomPicture.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final Dialog nagDialog = new Dialog(myContext, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-                    nagDialog.setContentView(R.layout.dialog_preview_image);
-
-                    
-                    ImageView previewImage = (ImageView) nagDialog.findViewById(R.id.preview_image);
-                    Glide
-                            .with(myContext)
-                            .load(currentPhotoPath)
-                            .into(previewImage);
-
-                    nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            nagDialog.dismiss();
-                        }
-                    });
-                    nagDialog.show();
-                }
-            });
         }
     }
 
@@ -133,18 +99,18 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             parentLayout.setOnDragListener(new View.OnDragListener() {
                 @Override          // v -> parentlayout
                 public boolean onDrag(View v, DragEvent event) {
-                    CustomPicture draggedImage = (CustomPicture) event.getLocalState();
-                    GridLayout oldGridView = (GridLayout) draggedImage.getParent();
+                    CustomPicture draggedPicture = (CustomPicture) event.getLocalState();
+                    GridLayout oldGridView = (GridLayout) draggedPicture.getParent();
                     GridLayout newGridView = (GridLayout) ((LinearLayout) v).getChildAt(1);
 
                     switch (event.getAction()) {
                         case DragEvent.ACTION_DRAG_STARTED:
                             line.setVisibility(View.VISIBLE);
-                            draggedImage.setVisibility(View.INVISIBLE);
+                            draggedPicture.setVisibility(View.INVISIBLE);
                             break;
                         case DragEvent.ACTION_DRAG_ENDED:
                             line.setVisibility(View.INVISIBLE);
-                            draggedImage.setVisibility(View.VISIBLE);
+                            draggedPicture.setVisibility(View.VISIBLE);
                             break;
                         case DragEvent.ACTION_DRAG_ENTERED:
                             categoryTV.setTextColor(fragment.getActivity().getResources().getColor(R.color.green));
@@ -155,9 +121,9 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                         case DragEvent.ACTION_DROP:
                             categoryTV.setTextColor(fragment.getActivity().getResources().getColor(R.color.black));
 
-                            oldGridView.removeView(draggedImage);
-                            newGridView.addView(draggedImage);
-                            boolean hasInsertedData = mydb.updateCategoryNamePTable((String) draggedImage.getTag(), categoryTV.getText().toString());
+                            oldGridView.removeView(draggedPicture);
+                            newGridView.addView(draggedPicture);
+                            boolean hasInsertedData = mydb.updateCategoryNamePTable((String) draggedPicture.getPhotoPath(), categoryTV.getText().toString());
                             if (hasInsertedData) {
                                 Toast.makeText(myContext, "Successfully updated cat name", Toast.LENGTH_SHORT).show();
                             } else {
@@ -173,174 +139,137 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             categoryTV.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PopupMenu popupMenu = new PopupMenu(fragment.getActivity(), categoryTV);
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()) {
-                                case R.id.popup_down:
-                                    try {
-                                        int oldIndex = categoryNames.indexOf(categoryTV.getText().toString());
-                                        Collections.swap(categoryNames, oldIndex, oldIndex + 1);
-                                        boolean bool = mydb.deleteAllRowsCTable();
-                                        if (bool) {
-                                            Toast.makeText(myContext, "Successfully deleted all cat name", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(myContext, "Error deleted all cat name", Toast.LENGTH_SHORT).show();
-                                        }
-                                        for (String catName : categoryNames) {
-                                            mydb.insertNewRowCTable(catName);
-                                        }
-                                        fragment.onResume();
-
-                                    } catch (IndexOutOfBoundsException e) {
-                                    }
-                                    break;
-                                case R.id.popup_up:
-                                    try {
-                                        int oldIndex = categoryNames.indexOf(categoryTV.getText().toString());
-                                        Collections.swap(categoryNames, oldIndex, oldIndex - 1);
-                                        boolean bool = mydb.deleteAllRowsCTable();
-                                        if (bool) {
-                                            Toast.makeText(myContext, "Successfully deleted all cat name", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(myContext, "Error deleted all cat name", Toast.LENGTH_SHORT).show();
-                                        }
-                                        for (String catName : categoryNames) {
-                                            mydb.insertNewRowCTable(catName);
-                                        }
-                                        fragment.onResume();
-
-                                    } catch (IndexOutOfBoundsException e) {
-                                    }
-                                    break;
-                                case R.id.popup_remove:
-                                    // Prompts user if he really wants to delete all pictures permanently
-                                    final Dialog myDialog = new Dialog(myContext);
-                                    myDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                    myDialog.setContentView(R.layout.dialog_delete_all_data);
-                                    myDialog.setCancelable(false);
-
-                                    Button noButton = (Button) myDialog.findViewById(R.id.no_button);
-                                    noButton.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            myDialog.dismiss();
-                                        }
-                                    });
-
-                                    Button yesButton = (Button) myDialog.findViewById(R.id.yes_button);
-                                    yesButton.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            boolean hasDeletedCatNameData = mydb.deleteRowCTable(categoryTV.getText().toString());
-                                            if (hasDeletedCatNameData) {
-                                                Toast.makeText(myContext, "Successfully deleted cat name", Toast.LENGTH_SHORT).show();
+                    //allow on click only it is not in edit label mode and category name is custom
+                    if (!categoryTV.getText().equals(ActivityMain.DEFAULTCATEGORYNAME) && !FragmentPage2.ISINLABELVIEWMODE) {
+                        PopupMenu popupMenu = new PopupMenu(fragment.getActivity(), categoryTV);
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case R.id.popup_down:
+                                        try {
+                                            int oldIndex = categoryNames.indexOf(categoryTV.getText().toString());
+                                            Collections.swap(categoryNames, oldIndex, oldIndex + 1);
+                                            boolean bool = mydb.deleteAllRowsCTable();
+                                            if (bool) {
+                                                Toast.makeText(myContext, "Successfully deleted all cat name", Toast.LENGTH_SHORT).show();
                                             } else {
-                                                Toast.makeText(myContext, "Error deleted cat name", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(myContext, "Error deleted all cat name", Toast.LENGTH_SHORT).show();
                                             }
-                                            parentLayout.removeAllViews();
-                                            // If gridlayout has pictures in it
-                                            if (gridLayout.getChildCount() != 0) {
-                                                for (int i = 0; i < gridLayout.getChildCount(); i++ ) {
-                                                    CustomPicture currentPic = (CustomPicture) gridLayout.getChildAt(0);
-                                                    boolean hasDeletedPicData = mydb.deleteRowPTable((String) currentPic.getTag());
-                                                    if (hasDeletedPicData) {
-                                                        Toast.makeText(fragment.getActivity(), "Successfully deleted all picture", Toast.LENGTH_SHORT).show();
-                                                    } else {
-                                                        Toast.makeText(fragment.getActivity(), "Error deleting all picture", Toast.LENGTH_SHORT).show();
+                                            for (String catName : categoryNames) {
+                                                mydb.insertNewRowCTable(catName);
+                                            }
+                                            fragment.onResume();
+
+                                        } catch (IndexOutOfBoundsException e) {
+                                        }
+                                        break;
+                                    case R.id.popup_up:
+                                        try {
+                                            int oldIndex = categoryNames.indexOf(categoryTV.getText().toString());
+                                            Collections.swap(categoryNames, oldIndex, oldIndex - 1);
+                                            boolean bool = mydb.deleteAllRowsCTable();
+                                            if (bool) {
+                                                Toast.makeText(myContext, "Successfully deleted all cat name", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(myContext, "Error deleted all cat name", Toast.LENGTH_SHORT).show();
+                                            }
+                                            for (String catName : categoryNames) {
+                                                mydb.insertNewRowCTable(catName);
+                                            }
+                                            fragment.onResume();
+
+                                        } catch (IndexOutOfBoundsException e) {
+                                        }
+                                        break;
+                                    case R.id.popup_remove:
+                                        // Prompts user if he really wants to delete all pictures permanently
+                                        final Dialog myDialog = new Dialog(myContext);
+                                        myDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                        myDialog.setContentView(R.layout.dialog_delete_all_data);
+                                        myDialog.setCancelable(false);
+
+                                        Button noButton = (Button) myDialog.findViewById(R.id.no_button);
+                                        noButton.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                myDialog.dismiss();
+                                            }
+                                        });
+
+                                        Button yesButton = (Button) myDialog.findViewById(R.id.yes_button);
+                                        yesButton.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                boolean hasDeletedCatNameData = mydb.deleteRowCTable(categoryTV.getText().toString());
+                                                if (hasDeletedCatNameData) {
+                                                    Toast.makeText(myContext, "Successfully deleted cat name", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    Toast.makeText(myContext, "Error deleted cat name", Toast.LENGTH_SHORT).show();
+                                                }
+                                                parentLayout.removeAllViews();
+                                                // If gridlayout has pictures in it
+                                                if (gridLayout.getChildCount() != 0) {
+                                                    for (int i = 0; i < gridLayout.getChildCount(); i++) {
+                                                        CustomPicture currentPic = (CustomPicture) gridLayout.getChildAt(0);
+                                                        boolean hasDeletedPicData = mydb.deleteRowPTable((String) currentPic.getTag());
+                                                        if (hasDeletedPicData) {
+                                                            Toast.makeText(fragment.getActivity(), "Successfully deleted all picture", Toast.LENGTH_SHORT).show();
+                                                        } else {
+                                                            Toast.makeText(fragment.getActivity(), "Error deleting all picture", Toast.LENGTH_SHORT).show();
+                                                        }
                                                     }
                                                 }
+                                                myDialog.dismiss();
                                             }
-                                            myDialog.dismiss();
-                                        }
-                                    });
-                                    myDialog.show();
-                                    break;
-                                case R.id.popup_edit:
-                                    final Dialog nagDialog = new Dialog(myContext);
-                                    nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                    nagDialog.setContentView(R.layout.dialog_edit_cat_name);
+                                        });
+                                        myDialog.show();
+                                        break;
+                                    case R.id.popup_edit:
+                                        final Dialog nagDialog = new Dialog(myContext);
+                                        nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                        nagDialog.setContentView(R.layout.dialog_edit_cat_name);
 
-                                    //Set add category button on click listener
-                                    Button submitButton = (Button) nagDialog.findViewById(R.id.button2);
-                                    submitButton.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            EditText categoryNameET = (EditText) nagDialog.findViewById(R.id.editT2);
-                                            String newCategoryName = categoryNameET.getText().toString().trim();
-                                            String oldCategoryName = categoryTV.getText().toString().trim();
-                                            if (!MyUtilities.hasDuplicatedCatNamesInCTable(newCategoryName, myContext)) {
-                                                boolean updated = mydb.updateCategoryNameDataCTable(oldCategoryName, newCategoryName);
-                                                boolean updated2 = mydb.updateAllCategoryNamePTable(oldCategoryName, newCategoryName);
-                                                if (updated && updated2) {
-                                                    categoryTV.setText(newCategoryName);
-                                                    Toast.makeText(myContext, "successfully updated cat name and pic cat name", Toast.LENGTH_LONG).show();
+                                        //Set add category button on click listener
+                                        Button submitButton = (Button) nagDialog.findViewById(R.id.button2);
+                                        submitButton.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                EditText categoryNameET = (EditText) nagDialog.findViewById(R.id.editT2);
+                                                String newCategoryName = categoryNameET.getText().toString().trim();
+                                                String oldCategoryName = categoryTV.getText().toString().trim();
+                                                if (!MyUtilities.hasDuplicatedCatNamesInCTable(newCategoryName, myContext)) {
+                                                    boolean updated = mydb.updateCategoryNameDataCTable(oldCategoryName, newCategoryName);
+                                                    boolean updated2 = mydb.updateAllCategoryNamePTable(oldCategoryName, newCategoryName);
+                                                    if (updated && updated2) {
+                                                        categoryTV.setText(newCategoryName);
+                                                        Toast.makeText(myContext, "successfully updated cat name and pic cat name", Toast.LENGTH_LONG).show();
+                                                    } else {
+                                                        Toast.makeText(myContext, "Error updating cat name and pic cat name", Toast.LENGTH_LONG).show();
+                                                    }
+                                                    nagDialog.dismiss();
                                                 } else {
-                                                    Toast.makeText(myContext, "Error updating cat name and pic cat name", Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(myContext, "Unable to edit label, you already have an exact label", Toast.LENGTH_LONG).show();
                                                 }
+                                            }
+                                        });
+                                        nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                            @Override
+                                            public void onCancel(DialogInterface dialog) {
                                                 nagDialog.dismiss();
                                             }
-                                            else {
-                                                Toast.makeText(myContext, "Unable to edit label, you already have an exact label", Toast.LENGTH_LONG).show();
-                                            }
-                                        }
-                                    });
-                                    nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                        @Override
-                                        public void onCancel(DialogInterface dialog) {
-                                            nagDialog.dismiss();
-                                        }
-                                    });
+                                        });
 
-                                    nagDialog.show();
+                                        nagDialog.show();
+                                }
+                                return true;
                             }
-                            return true;
-                        }
-                    });
-                    popupMenu.inflate(R.menu.pop_menu);
-                    popupMenu.show();
+                        });
+                        popupMenu.inflate(R.menu.pop_menu);
+                        popupMenu.show();
+                    }
                 }
             });
         }
-    }
-
-    private static class MyDragShadowBuilder extends View.DragShadowBuilder {
-        private Point mScaleFactor;
-
-        public MyDragShadowBuilder(View v) {
-            super(v);
-        }
-
-        // Defines a callback that sends the drag shadow dimensions and touch point back to the system.
-        @Override
-        public void onProvideShadowMetrics(Point size, Point touch) {
-            // Defines local variables
-            int width;
-            int height;
-
-            // Sets the width of the shadow to half the width of the original View
-            width = getView().getWidth() * 2 / 5;
-
-            // Sets the height of the shadow to half the height of the original View
-            height = getView().getHeight() *2 / 5;
-
-            // Sets the size parameter's width and height values. These get back to the system
-            // through the size parameter.
-            size.set(width, height);
-            // Sets size parameter to member that will be used for scaling shadow image.
-            mScaleFactor = size;
-
-            // Sets the touch point's position to be in the middle of the drag shadow
-            touch.set(width / 2, height / 2);
-        }
-
-        @Override
-        public void onDrawShadow(Canvas canvas) {
-            // Draws the ColorDrawable in the Canvas passed in from the system.
-            canvas.scale(mScaleFactor.x / (float) getView().getWidth(), mScaleFactor.y / (float) getView().getHeight());
-            getView().draw(canvas);
-        }
-
     }
 }

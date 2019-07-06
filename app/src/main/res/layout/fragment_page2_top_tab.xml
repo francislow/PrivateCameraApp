@@ -20,7 +20,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto">
         android:background="@drawable/ic_add_category" />
 
     <Button
-        android:id="@+id/switch_to_label"
+        android:id="@+id/switch_to_label_button"
         android:layout_width="45dp"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"

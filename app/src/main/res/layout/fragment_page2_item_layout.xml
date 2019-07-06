@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="15dp"
+        android:text="test"
         android:paddingStart="6dp"
         android:paddingEnd="0dp"
         android:paddingTop="5dp"

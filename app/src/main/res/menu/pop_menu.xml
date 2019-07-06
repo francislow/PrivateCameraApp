@@ -10,7 +10,7 @@
     </item>
     <item
         android:id="@+id/popup_edit"
-        android:title="Edit Label Name">
+        android:title="Edit Category Name">
     </item>
     <item
         android:id="@+id/popup_remove"

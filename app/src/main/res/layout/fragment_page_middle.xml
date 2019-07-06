@@ -33,7 +33,7 @@
     <ScrollView
         android:id="@+id/vScrollView"
         android:layout_width="match_parent"
-        android:layout_height="467dp"
+        android:layout_height="470dp"
         android:background="@color/white">
 
         <!-- To Add and display recent images taken-->

@@ -41,7 +41,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     private TextView textView;
     private Button switchLabelViewButton;
 
-    public static boolean labelViewFlag = false;
+    public static boolean ISINLABELVIEWMODE = false;
 
     @Nullable
     @Override
@@ -63,7 +63,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         dustbin.getBackground().setAlpha(0);
         dustbin.setOnDragListener(this);
         // Switch to label view button
-        switchLabelViewButton = (Button) getActivity().findViewById(R.id.switch_to_label);
+        switchLabelViewButton = (Button) getActivity().findViewById(R.id.switch_to_label_button);
         switchLabelViewButton.setOnTouchListener(this);
         // Photo Button
         addCatButton = (Button) getActivity().findViewById(R.id.add_cat_button);
@@ -89,6 +89,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         initRecyclerView(distinctCategoryNames, photoPathLists);
     }
 
+
     // Set up distinctCategoryNames list
     public ArrayList<String> setUpDistinctCategoryNamesList() {
         ArrayList<String> distinctCategoryNames = new ArrayList<>();
@@ -113,7 +114,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
 
         return distinctCategoryNames;
     }
-
     // Set up photo path list
     public ArrayList<ArrayList<String>> setUpPhotoPathList(ArrayList<String> distinctCategoryNames) {
         ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
@@ -157,6 +157,17 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 //If user's touch up is still inside button
                 if (MyUtilities.touchUpInButton(motionEvent, (Button) view)) {
                     switch (view.getId()) {
+                        case R.id.switch_to_label_button:
+                            if (ISINLABELVIEWMODE) {
+                                ISINLABELVIEWMODE = false;
+                            }
+                            else {
+                                ISINLABELVIEWMODE = true;
+                            }
+                            // Refreshes this page
+                            onResume();
+                            break;
+
                         case R.id.add_cat_button:
                         //Add a category
                         final Dialog nagDialog = new Dialog(getActivity());
@@ -173,6 +184,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                                 if (!MyUtilities.hasDuplicatedCatNamesInCTable(newCategoryName, getActivity())) {
                                     boolean hasInsertedData = mydb.insertNewRowCTable(newCategoryName);
                                     if (hasInsertedData) {
+                                        // Refreshes this page
                                         onResume();
                                         Toast.makeText(getActivity(), "successfully added to database", Toast.LENGTH_LONG).show();
                                     } else {
@@ -194,15 +206,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
 
                         nagDialog.show();
                         break;
-                        case R.id.switch_to_label:
-                            if (labelViewFlag) {
-                                labelViewFlag = false;
-                            }
-                            else {
-                                labelViewFlag = true;
-                            }
-                            onResume();
-                            break;
                     }
                 }
         }
@@ -234,15 +237,18 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 view.setScaleY(1f);
                 break;
             case DragEvent.ACTION_DROP:
+                // User wants to delete the photo
                 view.setScaleX(1f);
                 view.setScaleY(1f);
                 oldGridView.removeView(draggedImage);
-                boolean hasDeletedData = mydb.deleteRowPTable((String) draggedImage.getTag());
+                boolean hasDeletedData = mydb.deleteRowPTable((String) draggedImage.getPhotoPath());
                 if (hasDeletedData) {
                     Toast.makeText(getActivity(), "Successfully deleted picture", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity(), "Error deleting picture", Toast.LENGTH_SHORT).show();
                 }
+                // Refresh middle page
+                ActivityMain.swipeAdaptor.getItem(1).onResume();
                 break;
             default:
                 break;

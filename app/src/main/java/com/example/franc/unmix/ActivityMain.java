@@ -20,7 +20,7 @@ import java.util.Date;
 public class ActivityMain extends FragmentActivity {
     public static MyCamera MYCAMERA;
     public PicturesDatabaseHelper mydb;
-
+    public static SwipeAdaptor swipeAdaptor;
     public static final int TAKE_PHOTO_REQUEST = 1;
     public static final int PICK_IMAGE_REQUEST = 2;
     public static final String DEFAULTCATEGORYNAME = "Unsorted";
@@ -42,8 +42,8 @@ public class ActivityMain extends FragmentActivity {
         mydb = new PicturesDatabaseHelper(this);
 
         //Set viewpager
-        SwipeAdaptor swipeAdaptor = new SwipeAdaptor(getSupportFragmentManager());
-        ViewPager viewPager = (ViewPager) findViewById(R.id.myvp);
+        swipeAdaptor = new SwipeAdaptor(getSupportFragmentManager());
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.myvp);
         viewPager.setAdapter(swipeAdaptor);
         viewPager.setCurrentItem(1);
 
@@ -98,4 +98,6 @@ public class ActivityMain extends FragmentActivity {
             }
         }
     }
+
+
 }
