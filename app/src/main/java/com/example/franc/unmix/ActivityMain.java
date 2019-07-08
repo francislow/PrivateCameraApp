@@ -50,9 +50,10 @@ public class ActivityMain extends FragmentActivity {
         //Setup Btm Tab
         TabLayout btmTabLayout = (TabLayout) findViewById(R.id.btmtablayout);
         btmTabLayout.setupWithViewPager(viewPager);
-        btmTabLayout.getTabAt(0).setIcon(R.drawable.ic_notes);
+        btmTabLayout.getTabAt(0).setIcon(R.drawable.ic_pin);
         btmTabLayout.getTabAt(1).setIcon(R.drawable.ic_home);
         btmTabLayout.getTabAt(2).setIcon(R.drawable.ic_gallery);
+        btmTabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.white));
 
     }
 
@@ -66,7 +67,7 @@ public class ActivityMain extends FragmentActivity {
 
             //Store picture into database
             boolean hasInsertedData = mydb.insertNewRowPTable(MYCAMERA.getPicture().getAbsolutePath(),
-                    DEFAULTCATEGORYNAME, MYCAMERA.getYear(), MYCAMERA.getMonth(), MYCAMERA.getDay());
+                    DEFAULTCATEGORYNAME, null, null, null);
 
 
             if (hasInsertedData) {
@@ -88,7 +89,7 @@ public class ActivityMain extends FragmentActivity {
 
             //Store picture into database
             boolean hasInsertedData = mydb.insertNewRowPTable(newUri.getPath(),
-                    DEFAULTCATEGORYNAME, "HI", null, null);
+                    DEFAULTCATEGORYNAME, null, null, null);
 
 
             if (hasInsertedData) {

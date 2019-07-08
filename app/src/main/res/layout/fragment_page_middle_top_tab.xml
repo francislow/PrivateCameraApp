@@ -15,8 +15,7 @@
             android:id="@+id/cambutton"
             android:layout_width="45dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
-            android:layout_marginStart="5dp"
+
             android:background="@drawable/ic_camera" />
 
         <Button
@@ -25,8 +24,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="5dp"
-            android:layout_marginEnd="5dp"
+
             android:background="@drawable/ic_add_photo" />
 
         <TextView

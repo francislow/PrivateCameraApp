@@ -14,34 +14,40 @@
         <include layout="@layout/fragment_page_middle_top_tab" />
     </RelativeLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:text="@string/middle_page_text1"
-        android:fontFamily="casual"
-        android:textStyle="bold"
-        android:gravity="start"
-        android:textColor="@color/black"
-        android:textSize="15dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="0dp"
-        android:paddingTop="1dp" />
-
-
     <!--Rest of the page - Scrollview-->
     <ScrollView
         android:id="@+id/vScrollView"
         android:layout_width="match_parent"
-        android:layout_height="470dp"
-        android:background="@color/white">
+        android:layout_height="495dp"
+        android:background="@color/white"
+        android:scrollbars="none">
 
-        <!-- To Add and display recent images taken-->
         <LinearLayout
-            android:id="@+id/LL1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/recentlyadded"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:fontFamily="sans-serif-condensed"
+                android:gravity="start"
+                android:paddingEnd="0dp"
+                android:paddingStart="8dp"
+                android:paddingTop="6dp"
+                android:text="@string/middle_page_text1"
+                android:textColor="@color/black"
+                android:textSize="13dp" />
+
+            <!-- To Add and display recent images taken-->
+            <LinearLayout
+                android:id="@+id/LL1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            </LinearLayout>
         </LinearLayout>
 
     </ScrollView>
@@ -50,15 +56,14 @@
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        android:scrollbarSize="0dp">
+        android:background="@color/lightgrey"
+        android:scrollbars="none">
 
         <LinearLayout
             android:id="@+id/LL2"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
-        </LinearLayout>
+            android:orientation="horizontal"></LinearLayout>
 
     </HorizontalScrollView>
 

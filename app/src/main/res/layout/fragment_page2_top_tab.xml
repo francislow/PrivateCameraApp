@@ -7,27 +7,41 @@ xmlns:app="http://schemas.android.com/apk/res-auto">
     android:layout_height="45dp" >
 
     <RelativeLayout
+        android:id="@+id/top_tab_space"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/white_grey_bottom_border" />
 
-    <Button
-        android:id="@+id/add_cat_button"
-        android:layout_width="45dp"
+    <RelativeLayout
+        android:id="@+id/top_tab_space_2"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp"
-        android:background="@drawable/ic_add_category" />
+        android:background="@drawable/white_grey_bottom_border_test" />
 
     <Button
         android:id="@+id/switch_to_label_button"
         android:layout_width="45dp"
         android:layout_height="match_parent"
+        android:background="@drawable/ic_edit" />
+
+    <Button
+        android:id="@+id/add_cat_button"
+        android:layout_width="45dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/ic_add_category" />
+    <!--
+    <Button
+        android:id="@+id/information_button"
+        android:layout_width="45dp"
+        android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:layout_marginLeft="5dp"
         android:layout_marginStart="5dp"
-        android:background="@drawable/ic_swtich_to_label" />
+        android:background="@drawable/ic_information" />
+        -->
 
+    <!--
     <ImageView
         android:id="@+id/dustbin"
         android:layout_width="45dp"
@@ -36,13 +50,24 @@ xmlns:app="http://schemas.android.com/apk/res-auto">
         android:layout_marginRight="5dp"
         android:layout_marginEnd="5dp"
         android:background="@drawable/ic_remove" />
+        -->
+    <TextView
+        android:id="@+id/dustbin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="REMOVE"
+        android:textSize="14dp"
+        android:fontFamily="sans-serif"
+        android:textStyle="bold"/>
+
 
     <TextView
         android:id="@+id/appname2"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_toRightOf="@+id/add_cat_button"
-        android:layout_toEndOf="@+id/add_cat_button"
+        android:layout_toRightOf="@+id/switch_to_label_button"
+        android:layout_toEndOf="@+id/switch_to_label_button"
         android:gravity="center"
         android:text="@string/app_name"
         android:textColor="@color/black"

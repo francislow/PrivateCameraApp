@@ -3,12 +3,14 @@ package com.example.franc.unmix.Fragments;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +43,9 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     private Button addCatButton;
     private TextView textView;
     private Button switchLabelViewButton;
+    private RelativeLayout topTabSpace;
+    private RelativeLayout topTabSpace2;
+    private TextView dustbinTV;
 
     public static boolean ISINLABELVIEWMODE = false;
 
@@ -56,28 +62,41 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         super.onViewCreated(view, savedInstanceState);
 
         // Setup Top Tab
-        // App name text view
+        topTabSpace = (RelativeLayout) getActivity().findViewById(R.id.top_tab_space);
+        topTabSpace2 = (RelativeLayout) getActivity().findViewById(R.id.top_tab_space_2);
+        topTabSpace2.setOnDragListener(this);
+        topTabSpace2.getBackground().setAlpha(0);
+        // App name textview
         textView = (TextView) getActivity().findViewById(R.id.appname2);
-        // Dustbin image view
+        // Dustbin imageview
+        /*
         final ImageView dustbin = (ImageView) getActivity().findViewById(R.id.dustbin);
         dustbin.getBackground().setAlpha(0);
         dustbin.setOnDragListener(this);
+        */
+        dustbinTV = (TextView) getActivity().findViewById(R.id.dustbin);
+        dustbinTV.setVisibility(View.INVISIBLE);
+
         // Switch to label view button
         switchLabelViewButton = (Button) getActivity().findViewById(R.id.switch_to_label_button);
         switchLabelViewButton.setOnTouchListener(this);
         // Photo Button
         addCatButton = (Button) getActivity().findViewById(R.id.add_cat_button);
         addCatButton.setOnTouchListener(this);
-    }
 
-    @Override
-    public void onPause() {
-        super.onPause();
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        if (FragmentPage2.ISINLABELVIEWMODE) {
+            addCatButton.setVisibility(View.VISIBLE);
+
+        }
+        else {
+            addCatButton.setVisibility(View.INVISIBLE);
+        }
 
         // Set up distinctCategoryNames list
         ArrayList<String> distinctCategoryNames = setUpDistinctCategoryNamesList();
@@ -114,6 +133,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
 
         return distinctCategoryNames;
     }
+
     // Set up photo path list
     public ArrayList<ArrayList<String>> setUpPhotoPathList(ArrayList<String> distinctCategoryNames) {
         ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
@@ -135,7 +155,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
 
     public void initRecyclerView(ArrayList<String> distinctCategoryNames, ArrayList<ArrayList<String>> photoPathLists) {
         RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv);
-        RecyclerViewAdaptor recyclerViewAdaptor = new RecyclerViewAdaptor(this, distinctCategoryNames, photoPathLists);
+        RecyclerViewAdaptor recyclerViewAdaptor = new RecyclerViewAdaptor(this.getActivity(), distinctCategoryNames, photoPathLists);
         recyclerView.setAdapter(recyclerViewAdaptor);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
@@ -160,52 +180,56 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                         case R.id.switch_to_label_button:
                             if (ISINLABELVIEWMODE) {
                                 ISINLABELVIEWMODE = false;
-                            }
-                            else {
+                            } else {
                                 ISINLABELVIEWMODE = true;
                             }
-                            // Refreshes this page
-                            onResume();
+
+                            //if (user pressed for the first time / user wants information to be repeated) {
+                                //display dialog
+                                //on cancel
+                                // Refreshes this page
+                                onResume();
+                            //}
+
                             break;
 
                         case R.id.add_cat_button:
-                        //Add a category
-                        final Dialog nagDialog = new Dialog(getActivity());
-                        nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        nagDialog.setContentView(R.layout.dialog_insert_cat_name);
+                            //Add a category
+                            final Dialog nagDialog = new Dialog(getActivity());
+                            nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                            nagDialog.setContentView(R.layout.dialog_insert_cat_name);
 
-                        //Set add category button on click listener
-                        Button submitButton = (Button) nagDialog.findViewById(R.id.button1);
-                        submitButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                EditText categoryNameText = (EditText) nagDialog.findViewById(R.id.editT1);
-                                String newCategoryName = categoryNameText.getText().toString().trim();
-                                if (!MyUtilities.hasDuplicatedCatNamesInCTable(newCategoryName, getActivity())) {
-                                    boolean hasInsertedData = mydb.insertNewRowCTable(newCategoryName);
-                                    if (hasInsertedData) {
-                                        // Refreshes this page
-                                        onResume();
-                                        Toast.makeText(getActivity(), "successfully added to database", Toast.LENGTH_LONG).show();
+                            //Set add category button on click listener
+                            Button submitButton = (Button) nagDialog.findViewById(R.id.button1);
+                            submitButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    EditText categoryNameText = (EditText) nagDialog.findViewById(R.id.editT1);
+                                    String newCategoryName = categoryNameText.getText().toString().trim();
+                                    if (!MyUtilities.hasDuplicatedCatNamesInCTable(newCategoryName, getActivity())) {
+                                        boolean hasInsertedData = mydb.insertNewRowCTable(newCategoryName);
+                                        if (hasInsertedData) {
+                                            Toast.makeText(getActivity(), "successfully added to database", Toast.LENGTH_LONG).show();
+                                            // Refreshes this page
+                                            onResume();
+                                        } else {
+                                            Toast.makeText(getActivity(), "Error adding to database", Toast.LENGTH_LONG).show();
+                                        }
+                                        nagDialog.dismiss();
                                     } else {
-                                        Toast.makeText(getActivity(), "Error adding to database", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getActivity(), "Unable to add label, you already have an exact label", Toast.LENGTH_LONG).show();
                                     }
-                                    nagDialog.dismiss();
-                                } else {
-                                    Toast.makeText(getActivity(), "Unable to add label, you already have an exact label", Toast.LENGTH_LONG).show();
                                 }
-                            }
-                        });
+                            });
 
-                        nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                            @Override
-                            public void onCancel(DialogInterface dialog) {
-                                nagDialog.dismiss();
-                            }
-                        });
-
-                        nagDialog.show();
-                        break;
+                            nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    nagDialog.dismiss();
+                                }
+                            });
+                            nagDialog.show();
+                            break;
                     }
                 }
         }
@@ -219,27 +243,35 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         GridLayout oldGridView = (GridLayout) draggedImage.getParent();
         switch (event.getAction()) {
             case DragEvent.ACTION_DRAG_STARTED:
+                topTabSpace.getBackground().setAlpha(0);
+                topTabSpace2.getBackground().setAlpha(255);
                 addCatButton.getBackground().setAlpha(0);
+                switchLabelViewButton.getBackground().setAlpha(0);
                 textView.setAlpha(0);
                 view.getBackground().setAlpha(255);
+                dustbinTV.setVisibility(View.VISIBLE);
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
+                topTabSpace.getBackground().setAlpha(255);
+                topTabSpace2.getBackground().setAlpha(0);
                 addCatButton.getBackground().setAlpha(255);
+                switchLabelViewButton.getBackground().setAlpha(255);
                 textView.setAlpha(1);
                 view.getBackground().setAlpha(0);
+                dustbinTV.setVisibility(View.INVISIBLE);
                 break;
             case DragEvent.ACTION_DRAG_ENTERED:
-                view.setScaleX(1.5f);
-                view.setScaleY(1.5f);
+                dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,22);
+                dustbinTV.setTypeface(dustbinTV.getTypeface(), Typeface.BOLD);
                 break;
             case DragEvent.ACTION_DRAG_EXITED:
-                view.setScaleX(1f);
-                view.setScaleY(1f);
+                dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,14);
+                dustbinTV.setTypeface(Typeface.create(dustbinTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
                 break;
             case DragEvent.ACTION_DROP:
+                dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,14);
+                dustbinTV.setTypeface(Typeface.create(dustbinTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
                 // User wants to delete the photo
-                view.setScaleX(1f);
-                view.setScaleY(1f);
                 oldGridView.removeView(draggedImage);
                 boolean hasDeletedData = mydb.deleteRowPTable((String) draggedImage.getPhotoPath());
                 if (hasDeletedData) {

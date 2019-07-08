@@ -140,7 +140,7 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
                         Toast.makeText(context, "Error updating label to database", Toast.LENGTH_LONG).show();
                     }
                     nagDialog.dismiss();
-
+                    ActivityMain.swipeAdaptor.getItem(3).onResume();
                 }
             });
             nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -156,10 +156,12 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
 
     @Override
     public boolean onLongClick(View view) {
-        ClipData data = ClipData.newPlainText("", "");
-        //View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-        View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view);
-        view.startDrag(data, shadowBuilder, view, 0);
+        if (FragmentPage2.ISINLABELVIEWMODE) {
+            ClipData data = ClipData.newPlainText("", "");
+            //View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+            View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view);
+            view.startDrag(data, shadowBuilder, view, 0);
+        }
         return true;
     }
 

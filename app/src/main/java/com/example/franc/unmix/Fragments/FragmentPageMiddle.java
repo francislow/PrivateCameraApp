@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
@@ -75,16 +76,13 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
     @Override
     public void onResume() {
         super.onResume();
-
-        // Remove all existing pictures
+        // Remove all pictures and thumbnails
         LLOfPictures.removeAllViews();
         LLOfThumbnails.removeAllViews();
 
-        // Get database and cursor
+        // Render all pictures and thumbnails
         PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(getActivity());
         final Cursor res = mydb.getAllDataPTable();
-
-        //While there is data in pictures database
         while (res.moveToNext()) {
             //Get current photo path
             String currentPhotoPath = res.getString(1);
@@ -96,7 +94,6 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
             newImageView.setLayoutParams(lp1);
             newImageView.setPadding(20, 0, 20, 0);
             LLOfPictures.addView(newImageView, 0);
-            //Put image into image view
             Glide
                     .with(this.getActivity())
                     .load(currentPhotoPath)
@@ -112,7 +109,6 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
             lp2.setMargins(23, 10, 0, 10);
             newThumbnail.setLayoutParams(lp2);
             LLOfThumbnails.addView(newThumbnail, 0);
-            // Put image into thumbnail (image view)
             Glide
                     .with(getActivity())
                     .load(currentPhotoPath)
@@ -186,8 +182,9 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
 
             // If it is the thumbnails
             case LinearLayout.HORIZONTAL:
+                TextView tv = (TextView) getActivity().findViewById(R.id.recentlyadded);
                 ImageView correspondingIV = (ImageView)view.getTag();
-                vScrollView.smoothScrollTo(0, correspondingIV.getTop());
+                vScrollView.smoothScrollTo(0, correspondingIV.getTop() + tv.getHeight());
                 break;
         }
     }

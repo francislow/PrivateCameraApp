@@ -5,33 +5,39 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/cat_name"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="15dp"
-        android:text="test"
-        android:paddingStart="6dp"
-        android:paddingEnd="0dp"
-        android:paddingTop="5dp"
-        android:textColor="@color/black"
-        android:fontFamily="casual"/>
+        android:layout_height="27dp">
+
+        <TextView
+            android:id="@+id/cat_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:fontFamily="casual"
+            android:paddingEnd="0dp"
+            android:paddingStart="6dp"
+            android:paddingTop="5dp"
+            android:text="test"
+            android:textColor="@color/black"
+            android:textSize="15dp" />
+
+
+    </RelativeLayout>
 
     <GridLayout
         android:id="@+id/grid1"
-        android:columnCount="4"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </GridLayout>
+        android:layout_height="wrap_content"
+        android:columnCount="4"></GridLayout>
 
     <ImageView
         android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginStart="9dp"
         android:layout_marginEnd="9dp"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="15dp"
         android:background="@color/grey"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 
 </LinearLayout>

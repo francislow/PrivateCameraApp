@@ -1,12 +1,11 @@
 package com.example.franc.unmix;
 
 import android.app.Dialog;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Canvas;
-import android.graphics.Point;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
@@ -23,7 +22,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.franc.unmix.Fragments.FragmentPage2;
 import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 import com.example.franc.unmix.Utilities.MyUtilities;
@@ -36,19 +34,19 @@ import java.util.Collections;
  */
 
 public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdaptor.ViewHolder> {
-    private FragmentPage2 fragment;
     private ArrayList<String> categoryNames = new ArrayList<>();
     private ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
     private Context myContext;
-
+    private Fragment associatedFragment;
     private PicturesDatabaseHelper mydb;
 
 
-    public RecyclerViewAdaptor(FragmentPage2 fragment, ArrayList<String> categoryNames, ArrayList<ArrayList<String>> photoPathLists) {
-        this.fragment = fragment;
+    public RecyclerViewAdaptor(Context context, ArrayList<String> categoryNames, ArrayList<ArrayList<String>> photoPathLists) {
         this.categoryNames = categoryNames;
         this.photoPathLists = photoPathLists;
-        this.myContext = fragment.getActivity();
+        this.myContext = context;
+
+        associatedFragment = ActivityMain.swipeAdaptor.getItem(2);
         mydb = new PicturesDatabaseHelper(myContext);
 
     }
@@ -113,13 +111,13 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             draggedPicture.setVisibility(View.VISIBLE);
                             break;
                         case DragEvent.ACTION_DRAG_ENTERED:
-                            categoryTV.setTextColor(fragment.getActivity().getResources().getColor(R.color.green));
+                            categoryTV.setTypeface(categoryTV.getTypeface(), Typeface.BOLD);
                             break;
                         case DragEvent.ACTION_DRAG_EXITED:
-                            categoryTV.setTextColor(fragment.getActivity().getResources().getColor(R.color.black));
+                            categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
                             break;
                         case DragEvent.ACTION_DROP:
-                            categoryTV.setTextColor(fragment.getActivity().getResources().getColor(R.color.black));
+                            categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
 
                             oldGridView.removeView(draggedPicture);
                             newGridView.addView(draggedPicture);
@@ -140,8 +138,8 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                 @Override
                 public void onClick(View v) {
                     //allow on click only it is not in edit label mode and category name is custom
-                    if (!categoryTV.getText().equals(ActivityMain.DEFAULTCATEGORYNAME) && !FragmentPage2.ISINLABELVIEWMODE) {
-                        PopupMenu popupMenu = new PopupMenu(fragment.getActivity(), categoryTV);
+                    if (!categoryTV.getText().equals(ActivityMain.DEFAULTCATEGORYNAME) && FragmentPage2.ISINLABELVIEWMODE) {
+                        PopupMenu popupMenu = new PopupMenu(myContext, categoryTV);
                         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
@@ -159,7 +157,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                             for (String catName : categoryNames) {
                                                 mydb.insertNewRowCTable(catName);
                                             }
-                                            fragment.onResume();
+                                            associatedFragment.onResume();
 
                                         } catch (IndexOutOfBoundsException e) {
                                         }
@@ -177,7 +175,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                             for (String catName : categoryNames) {
                                                 mydb.insertNewRowCTable(catName);
                                             }
-                                            fragment.onResume();
+                                            associatedFragment.onResume();
 
                                         } catch (IndexOutOfBoundsException e) {
                                         }
@@ -214,9 +212,9 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                                         CustomPicture currentPic = (CustomPicture) gridLayout.getChildAt(0);
                                                         boolean hasDeletedPicData = mydb.deleteRowPTable((String) currentPic.getTag());
                                                         if (hasDeletedPicData) {
-                                                            Toast.makeText(fragment.getActivity(), "Successfully deleted all picture", Toast.LENGTH_SHORT).show();
+                                                            Toast.makeText(myContext, "Successfully deleted all picture", Toast.LENGTH_SHORT).show();
                                                         } else {
-                                                            Toast.makeText(fragment.getActivity(), "Error deleting all picture", Toast.LENGTH_SHORT).show();
+                                                            Toast.makeText(myContext, "Error deleting all picture", Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
                                                 }

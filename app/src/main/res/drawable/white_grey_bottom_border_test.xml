@@ -4,8 +4,8 @@
     android:layout_height="1dp">
 
     <item
-        android:bottom="-1dp"
-        android:top="1dp"
+        android:bottom="1dp"
+        android:top="-1dp"
         android:left="-1dp"
         android:right="-1dp">
 
@@ -16,7 +16,7 @@
                 android:color="@color/lightgrey">
             </stroke>
             <solid
-                android:color="@color/redbackground">
+                android:color="@color/red">
             </solid>
         </shape>
     </item>
