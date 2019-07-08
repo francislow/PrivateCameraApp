@@ -33,55 +33,88 @@ import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 public class CustomPicture extends RelativeLayout implements View.OnClickListener, View.OnLongClickListener {
     private Context context;
     private ImageView newImageView;
+    private RelativeLayout whiteSpace;
     private TextView labelNameTV;
+    private TextView labelNameTV2;
     private String photoPath;
+    private String currentLabel;
 
-    public CustomPicture(Context context) {
+    private int gridWidth;
+    private int customPictureLength;
+    private int whiteSpaceHeight;
+    private static final int picturePadding = 7;
+
+    public CustomPicture(Context context, String photoPath) {
         super(context);
         this.context = context;
+        this.photoPath = photoPath;
+
+        gridWidth = context.getResources().getDisplayMetrics().widthPixels;
+        customPictureLength = gridWidth / 4;
+        whiteSpaceHeight = customPictureLength / 3;
+
+        PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(context);
+        Cursor res = mydb.getLabelFromPathPTable(photoPath);
+        res.moveToNext();
+        currentLabel = res.getString(3);
+
         init();
     }
 
     public void init() {
-
-        int gridWidth = context.getResources().getDisplayMetrics().widthPixels;
-
-        // Set up linear layout
-        ViewGroup.LayoutParams lp1 = new ViewGroup.LayoutParams(gridWidth / 4, gridWidth / 4);
+        // Set up relative layout
+        ViewGroup.LayoutParams lp1 = new ViewGroup.LayoutParams(customPictureLength, customPictureLength);
         this.setLayoutParams(lp1);
-        this.setPadding(7, 7, 7, 7);
+        this.setPadding(picturePadding, picturePadding, picturePadding, picturePadding);
 
         // Set up image view
         newImageView = new ImageView(context);
         newImageView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         this.addView(newImageView);
-
-        // Set up label name
-        labelNameTV = new TextView(context);
-        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        labelNameTV.setLayoutParams(lp2);
-        labelNameTV.setGravity(Gravity.CENTER);
-        labelNameTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        this.addView(labelNameTV);
     }
 
-    public void displayImage(String photoPath) {
-        this.photoPath = photoPath;
+    public void displayImage() {
         Glide
                 .with(context)
                 .load(photoPath)
                 .transform(new CenterCrop(), new RoundedCorners(15))
                 .into(newImageView);
 
-        // If it is currently in labelview
-        if (FragmentPage2.ISINLABELVIEWMODE) {
+        // NORMAL MODE
+        if (!FragmentPage2.ISINLABELVIEWMODE) {
+            //add a layer to show each picture label
+            // Set up white space to show label (normal mode)
+            whiteSpace = new RelativeLayout(context);
+            whiteSpace.setBackground(context.getResources().getDrawable(R.drawable.white_rectangle));
+            whiteSpace.getBackground().setAlpha(150);
+
+            RelativeLayout.LayoutParams lp3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, whiteSpaceHeight);
+            lp3.setMargins(0, customPictureLength - whiteSpaceHeight, 0, 0);
+            whiteSpace.setLayoutParams(lp3);
+            this.addView(whiteSpace);
+
+            // Set up label name (display mode)
+            labelNameTV2 = new TextView(context);
+            LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            labelNameTV2.setLayoutParams(lp2);
+            labelNameTV2.setGravity(Gravity.CENTER);
+            labelNameTV2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
+            whiteSpace.addView(labelNameTV2);
+            if (currentLabel != null) {
+                labelNameTV2.setText(currentLabel);
+            }
+        }
+        // LABELVIEW MODE
+        else {
             newImageView.setAlpha(50);
 
-            PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(context);
-            Cursor res = mydb.getLabelFromPathPTable(photoPath);
-            res.moveToNext();
-            String currentLabel = res.getString(3);
-
+            // Set up label name (Edit mode)
+            labelNameTV = new TextView(context);
+            LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            labelNameTV.setLayoutParams(lp2);
+            labelNameTV.setGravity(Gravity.CENTER);
+            labelNameTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+            this.addView(labelNameTV);
             // If picture has a label
             if (currentLabel != null) {
                 labelNameTV.setText(currentLabel);
@@ -124,7 +157,7 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
             nagDialog.setContentView(R.layout.dialog_edit_label_name);
 
             final EditText labelNameET = (EditText) nagDialog.findViewById(R.id.editT4);
-            labelNameET.setText(labelNameTV.getText());
+            labelNameET.setText(currentLabel);
 
             //Set add category button on click listener
             Button submitButton = (Button) nagDialog.findViewById(R.id.button4);
@@ -171,8 +204,8 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
     }
 
     // Must be run after displayPicture() is called
-    public String getTextString() {
-        return this.labelNameTV.getText().toString();
+    public String getLabel() {
+        return this.currentLabel;
     }
 
 

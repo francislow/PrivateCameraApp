@@ -67,8 +67,8 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
         ArrayList<String> currentPhotoPathList = photoPathLists.get(position);
 
         for (final String currentPhotoPath : currentPhotoPathList) {
-            CustomPicture newCustomPicture = new CustomPicture(myContext);
-            newCustomPicture.displayImage(currentPhotoPath);
+            CustomPicture newCustomPicture = new CustomPicture(myContext, currentPhotoPath);
+            newCustomPicture.displayImage();
             newCustomPicture.setCustomListener();
 
             holder.gridLayout.addView(newCustomPicture);
