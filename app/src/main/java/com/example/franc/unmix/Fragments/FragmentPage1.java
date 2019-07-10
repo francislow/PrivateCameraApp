@@ -13,10 +13,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.example.franc.unmix.ActivityNewNote;
-import com.example.franc.unmix.SQLiteDatabases.NotesDatabaseHelper;
 import com.example.franc.unmix.R;
-import com.example.franc.unmix.StickyNoteWidget;
 
 import java.util.ArrayList;
 
@@ -27,8 +24,6 @@ import java.util.ArrayList;
 public class FragmentPage1 extends Fragment {
     private RelativeLayout rlayout;
     private Button addNoteButton;
-    private NotesDatabaseHelper mydb;
-    private ArrayList<StickyNoteWidget> stickyNoteWidgetsList;
 
     //Runs first
     //Mainly to setup variables
@@ -36,10 +31,6 @@ public class FragmentPage1 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Set up database
-        mydb = new NotesDatabaseHelper(getActivity());
-
-        //Set up sticky notes list
-        stickyNoteWidgetsList = new ArrayList<>();
     }
 
     //Mainly to setup layout
@@ -55,19 +46,6 @@ public class FragmentPage1 extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        //Relative Layout
-        rlayout = (RelativeLayout) getActivity().findViewById(R.id.rlayout);
-
-        //Add note button
-        addNoteButton = (Button) getActivity().findViewById(R.id.addnotebutton);
-        addNoteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), ActivityNewNote.class);
-                startActivity(intent);
-            }
-        });
 
         /*
         //Setup Top Tab
@@ -132,54 +110,10 @@ public class FragmentPage1 extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        //GET DATA FROM DATABASE: properties of each note
-        Cursor res = mydb.getAllData();
-        //If there are sticky notes which user saved previously
-        if (res.getCount() != 0) {
-            //Cycle through each row (each row represents a stickynote)
-            while (res.moveToNext()) {
-                StickyNoteWidget snw = new StickyNoteWidget(getActivity(), rlayout, res);
-                snw.addViewGroup();
-                snw.setListener();
-
-                //Create a reference to each stick note to save properties into database when activity pauses
-                stickyNoteWidgetsList.add(snw);
-            }
-        }
     }
 
     @Override
     public void onPause() {
-        Cursor res = mydb.getAllData();
-
-        //UPDATE DATABASE: position, size from sticky notes' text view itself
-        //If there are sticky notes that user created
-        if (res.getCount() != 0) {
-            for (StickyNoteWidget SNW : stickyNoteWidgetsList) {
-                if (res.moveToNext()) {
-                    RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) SNW.getViewGroup().getLayoutParams();
-                    //position
-                    boolean hasUpdatedPositionData = mydb.updatePositionData(res.getInt(0), lp.leftMargin, lp.rightMargin, lp.topMargin, lp.bottomMargin);
-                    //size
-                    boolean hasUpdatedSizeData = mydb.updateSizeData(res.getInt(0), lp.width, lp.height);
-
-                    if (hasUpdatedPositionData) {
-                        Toast.makeText(getActivity(), "Updated postion", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity(), "Error updating position", Toast.LENGTH_SHORT).show();
-                    }
-
-                    if (hasUpdatedSizeData) {
-                        Toast.makeText(getActivity(), "Updated size", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity(), "Error updating size", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        }
-
-        System.out.println("fragmentpage1 PAUSED");
         super.onPause();
     }
 }
