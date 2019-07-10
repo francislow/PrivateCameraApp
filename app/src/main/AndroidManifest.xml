@@ -44,10 +44,6 @@
         </activity>
 
         <!-- Activity 2 -->
-        <activity
-            android:name="com.example.franc.unmix.ActivityNewNote"
-            android:theme="@style/AppTheme.YourSlidrTheme">
-        </activity>
     </application>
 
 </manifest>

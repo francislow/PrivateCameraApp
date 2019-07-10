@@ -49,6 +49,10 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
 
     public static boolean ISINLABELVIEWMODE = false;
 
+    // Constants when drag of a specific picture started
+    public static GridLayout oldGridLayout;
+    public static CustomPicture draggedPicture;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -190,7 +194,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                                 // Refreshes this page
                                 onResume();
                             //}
-
                             break;
 
                         case R.id.add_cat_button:
@@ -245,6 +248,8 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
             case DragEvent.ACTION_DRAG_STARTED:
                 topTabSpace.getBackground().setAlpha(0);
                 topTabSpace2.getBackground().setAlpha(255);
+                //topTabSpace2.animate().alpha(1);
+                //topTabSpace2.setAlpha(1);
                 addCatButton.getBackground().setAlpha(0);
                 switchLabelViewButton.getBackground().setAlpha(0);
                 textView.setAlpha(0);

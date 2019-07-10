@@ -68,11 +68,10 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
         for (final String currentPhotoPath : currentPhotoPathList) {
             CustomPicture newCustomPicture = new CustomPicture(myContext, currentPhotoPath);
-            newCustomPicture.displayImage();
-            newCustomPicture.setCustomListener();
+            newCustomPicture.displayImageBasedOnMode();
+            newCustomPicture.setCustomListener(holder.categoryTV, holder.line);
 
             holder.gridLayout.addView(newCustomPicture);
-
         }
     }
 
@@ -97,31 +96,39 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             parentLayout.setOnDragListener(new View.OnDragListener() {
                 @Override          // v -> parentlayout
                 public boolean onDrag(View v, DragEvent event) {
-                    CustomPicture draggedPicture = (CustomPicture) event.getLocalState();
-                    GridLayout oldGridView = (GridLayout) draggedPicture.getParent();
                     GridLayout newGridView = (GridLayout) ((LinearLayout) v).getChildAt(1);
 
                     switch (event.getAction()) {
                         case DragEvent.ACTION_DRAG_STARTED:
-                            line.setVisibility(View.VISIBLE);
-                            draggedPicture.setVisibility(View.INVISIBLE);
                             break;
                         case DragEvent.ACTION_DRAG_ENDED:
-                            line.setVisibility(View.INVISIBLE);
-                            draggedPicture.setVisibility(View.VISIBLE);
+                            // if user dropped at picture frame instead of layout
+                            if (event.getResult() == false) {
+                                System.out.println("no drop detected");
+                                // This is freakin weird, why would dragged pic have a parent only when its the oni child
+                                if (FragmentPage2.draggedPicture.getParent() != null) {
+                                    ((GridLayout)FragmentPage2.draggedPicture.getParent()).removeView(FragmentPage2.draggedPicture);
+                                }
+                                FragmentPage2.oldGridLayout.addView(FragmentPage2.draggedPicture);
+                            }
+                            else {
+                                System.out.println("drop detected");
+                            }
                             break;
                         case DragEvent.ACTION_DRAG_ENTERED:
                             categoryTV.setTypeface(categoryTV.getTypeface(), Typeface.BOLD);
+                            line.setVisibility(View.VISIBLE);
                             break;
                         case DragEvent.ACTION_DRAG_EXITED:
                             categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
+                            line.setVisibility(View.INVISIBLE);
                             break;
                         case DragEvent.ACTION_DROP:
                             categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
+                            line.setVisibility(View.INVISIBLE);
 
-                            oldGridView.removeView(draggedPicture);
-                            newGridView.addView(draggedPicture);
-                            boolean hasInsertedData = mydb.updateCategoryNamePTable((String) draggedPicture.getPhotoPath(), categoryTV.getText().toString());
+                            newGridView.addView(FragmentPage2.draggedPicture);
+                            boolean hasInsertedData = mydb.updateCategoryNamePTable((String) FragmentPage2.draggedPicture.getPhotoPath(), categoryTV.getText().toString());
                             if (hasInsertedData) {
                                 Toast.makeText(myContext, "Successfully updated cat name", Toast.LENGTH_SHORT).show();
                             } else {
@@ -134,6 +141,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                     return true;
                 }
             });
+
             categoryTV.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -7,13 +7,16 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.util.TypedValue;
+import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -30,7 +33,7 @@ import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
  * Created by franc on 2/7/2019.
  */
 
-public class CustomPicture extends RelativeLayout implements View.OnClickListener, View.OnLongClickListener {
+public class CustomPicture extends RelativeLayout implements View.OnClickListener, View.OnLongClickListener, View.OnDragListener {
     private Context context;
     private ImageView newImageView;
     private RelativeLayout whiteSpace;
@@ -38,6 +41,9 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
     private TextView labelNameTV2;
     private String photoPath;
     private String currentLabel;
+    private PicturesDatabaseHelper mydb;
+    private TextView categoryTV;
+    private ImageView line;
 
     private int gridWidth;
     private int customPictureLength;
@@ -49,40 +55,37 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
         this.context = context;
         this.photoPath = photoPath;
 
+        // Initialising picture properties
         gridWidth = context.getResources().getDisplayMetrics().widthPixels;
         customPictureLength = gridWidth / 4;
         whiteSpaceHeight = customPictureLength / 3;
 
-        PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(context);
+        // Get the photopath for this custom picture
+        mydb = new PicturesDatabaseHelper(context);
         Cursor res = mydb.getLabelFromPathPTable(photoPath);
         res.moveToNext();
         currentLabel = res.getString(3);
 
-        init();
-    }
-
-    public void init() {
-        // Set up relative layout
+        // Set up custompicture (Relativelayout) width and height
         ViewGroup.LayoutParams lp1 = new ViewGroup.LayoutParams(customPictureLength, customPictureLength);
         this.setLayoutParams(lp1);
         this.setPadding(picturePadding, picturePadding, picturePadding, picturePadding);
 
-        // Set up image view
+        // Add an filled image view to fill whole of this custom picture
         newImageView = new ImageView(context);
         newImageView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         this.addView(newImageView);
-    }
-
-    public void displayImage() {
         Glide
                 .with(context)
                 .load(photoPath)
                 .transform(new CenterCrop(), new RoundedCorners(15))
                 .into(newImageView);
+    }
 
+    public void displayImageBasedOnMode() {
         // NORMAL MODE
         if (!FragmentPage2.ISINLABELVIEWMODE) {
-            //add a layer to show each picture label
+            // Add a layer to show each picture label
             // Set up white space to show label (normal mode)
             whiteSpace = new RelativeLayout(context);
             whiteSpace.setBackground(context.getResources().getDrawable(R.drawable.white_rectangle));
@@ -99,6 +102,7 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
             labelNameTV2.setLayoutParams(lp2);
             labelNameTV2.setGravity(Gravity.CENTER);
             labelNameTV2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
+            labelNameTV2.setTypeface(labelNameTV2.getTypeface(), Typeface.ITALIC);
             whiteSpace.addView(labelNameTV2);
             if (currentLabel != null) {
                 labelNameTV2.setText(currentLabel);
@@ -106,14 +110,15 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
         }
         // LABELVIEW MODE
         else {
-            newImageView.setAlpha(50);
+            newImageView.setAlpha(100);
 
             // Set up label name (Edit mode)
             labelNameTV = new TextView(context);
             LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             labelNameTV.setLayoutParams(lp2);
             labelNameTV.setGravity(Gravity.CENTER);
-            labelNameTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+            labelNameTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+            labelNameTV.setTypeface(labelNameTV.getTypeface(), Typeface.BOLD_ITALIC);
             this.addView(labelNameTV);
             // If picture has a label
             if (currentLabel != null) {
@@ -123,9 +128,12 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
     }
 
     // Must be run after displayPicture() is called
-    public void setCustomListener() {
+    public void setCustomListener(TextView categoryTV, ImageView line) {
+        this.categoryTV = categoryTV;
+        this.line = line;
         this.setOnClickListener(this);
         this.setOnLongClickListener(this);
+        this.setOnDragListener(this);
     }
 
     @Override
@@ -166,7 +174,7 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
                 public void onClick(View v) {
                     String newLabelName = labelNameET.getText().toString().trim();
                     PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(context);
-                    boolean hasInsertedData = mydb.updateLabelNamePTable(getPhotoPath(),newLabelName);
+                    boolean hasInsertedData = mydb.updateLabelNamePTable(getPhotoPath(), newLabelName);
                     if (hasInsertedData) {
                         Toast.makeText(context, "successfully updated label to database", Toast.LENGTH_LONG).show();
                     } else {
@@ -194,8 +202,55 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
             //View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
             View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view);
             view.startDrag(data, shadowBuilder, view, 0);
+
+            // Drag started
+
+            // Set constants after drag started
+            FragmentPage2.oldGridLayout = (GridLayout) view.getParent();
+            FragmentPage2.draggedPicture = (CustomPicture) view;
+
+            // Remove dragged picture form old layout
+            FragmentPage2.oldGridLayout.removeView(view);
+
         }
         return true;
+    }
+
+    @Override
+    public boolean onDrag(View v, DragEvent event) {
+        // v -> each custom picture
+        switch (event.getAction()) {
+            case DragEvent.ACTION_DRAG_STARTED:
+                System.out.println("picture drag started");
+                break;
+            case DragEvent.ACTION_DRAG_ENDED:
+                break;
+            case DragEvent.ACTION_DRAG_ENTERED:
+                System.out.println("entred picture frame");
+                //newGridLayout.addView(draggedPicture, newGridLayout.indexOfChild(v));
+                break;
+            case DragEvent.ACTION_DRAG_EXITED:
+                System.out.println("exited picture frame");
+                //newGridLayout.removeView(draggedPicture);
+                break;
+            case DragEvent.ACTION_DROP:
+                categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
+                line.setVisibility(View.INVISIBLE);
+
+                GridLayout newGridLayout = (GridLayout) v.getParent();
+                newGridLayout.addView(FragmentPage2.draggedPicture, newGridLayout.indexOfChild(v));
+                boolean hasInsertedData = mydb.updateCategoryNamePTable((String) FragmentPage2.draggedPicture.getPhotoPath(), categoryTV.getText().toString());
+                if (hasInsertedData) {
+                    Toast.makeText(context, "Successfully updated cat name", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Error updating cat name", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+        return true;
+
     }
 
     // Must be run after displayPicture() is called
@@ -207,6 +262,19 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
     public String getLabel() {
         return this.currentLabel;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     private static class MyDragShadowBuilder extends View.DragShadowBuilder {

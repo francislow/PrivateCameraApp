@@ -16,7 +16,8 @@ xmlns:app="http://schemas.android.com/apk/res-auto">
         android:id="@+id/top_tab_space_2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/white_grey_bottom_border_test" />
+        android:background="@drawable/white_grey_bottom_border_test"
+        android:animateLayoutChanges="true"/>
 
     <Button
         android:id="@+id/switch_to_label_button"
