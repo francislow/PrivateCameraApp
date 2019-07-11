@@ -106,8 +106,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         if (FragmentPage2.ISINLABELVIEWMODE) {
             addCatButton.setVisibility(View.VISIBLE);
 
-        }
-        else {
+        } else {
             addCatButton.setVisibility(View.INVISIBLE);
         }
 
@@ -147,6 +146,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         return distinctCategoryNames;
     }
 
+    /*
     // Set up photo path list
     public ArrayList<ArrayList<String>> setUpPhotoPathList(ArrayList<String> distinctCategoryNames) {
         ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
@@ -160,6 +160,21 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 if (res2.getString(2).equals(distinctCategoryNames.get(i))) {
                     photoPaths.add(res2.getString(1));
                 }
+            }
+            photoPathLists.add(photoPaths);
+        }
+        return photoPathLists;
+    }
+    */
+
+    // Set up photo path list
+    public ArrayList<ArrayList<String>> setUpPhotoPathList(ArrayList<String> distinctCategoryNames) {
+        ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
+        for (int i = 0; i < distinctCategoryNames.size(); i++) {
+            Cursor res2 = mydb.getBasedOnCategoryPTable(distinctCategoryNames.get(i));
+            ArrayList<String> photoPaths = new ArrayList<>();
+            while (res2.moveToNext()) {
+                photoPaths.add(res2.getString(1));
             }
             photoPathLists.add(photoPaths);
         }
@@ -198,10 +213,10 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                             }
 
                             //if (user pressed for the first time / user wants information to be repeated) {
-                                //display dialog
-                                //on cancel
-                                // Refreshes this page
-                                onResume();
+                            //display dialog
+                            //on cancel
+                            // Refreshes this page
+                            onResume();
                             //}
                             break;
 
@@ -273,15 +288,15 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 dustbinTV.setVisibility(View.INVISIBLE);
                 break;
             case DragEvent.ACTION_DRAG_ENTERED:
-                dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,22);
+                dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 22);
                 dustbinTV.setTypeface(dustbinTV.getTypeface(), Typeface.BOLD);
                 break;
             case DragEvent.ACTION_DRAG_EXITED:
-                dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,14);
+                dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
                 dustbinTV.setTypeface(Typeface.create(dustbinTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
                 break;
             case DragEvent.ACTION_DROP:
-                dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,14);
+                dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
                 dustbinTV.setTypeface(Typeface.create(dustbinTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
                 // User wants to delete the photo
                 oldGridLayout.removeView(draggedPicture);

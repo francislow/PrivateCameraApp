@@ -85,33 +85,33 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
     public void displayImageBasedOnMode() {
         // NORMAL MODE
         if (!FragmentPage2.ISINLABELVIEWMODE) {
-            // Add a layer to show each picture label
-            // Set up white space to show label (normal mode)
-            whiteSpace = new RelativeLayout(context);
-            whiteSpace.setBackground(context.getResources().getDrawable(R.drawable.white_rectangle));
-            whiteSpace.getBackground().setAlpha(150);
-
-            RelativeLayout.LayoutParams lp3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, whiteSpaceHeight);
-            lp3.setMargins(0, customPictureLength - whiteSpaceHeight, 0, 0);
-            whiteSpace.setLayoutParams(lp3);
-            this.addView(whiteSpace);
-
-            // Set up label name (display mode)
-            labelNameTV2 = new TextView(context);
-            LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            labelNameTV2.setLayoutParams(lp2);
-            labelNameTV2.setGravity(Gravity.CENTER);
-            labelNameTV2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
-            labelNameTV2.setTypeface(labelNameTV2.getTypeface(), Typeface.ITALIC);
-            whiteSpace.addView(labelNameTV2);
             if (currentLabel != null) {
+                // Add a layer to show each picture label
+                // Set up white space to show label (normal mode)
+                whiteSpace = new RelativeLayout(context);
+                whiteSpace.setBackground(context.getResources().getDrawable(R.drawable.white_rectangle));
+                whiteSpace.getBackground().setAlpha(150);
+
+                RelativeLayout.LayoutParams lp3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, whiteSpaceHeight);
+                lp3.setMargins(0, customPictureLength - whiteSpaceHeight, 0, 0);
+                whiteSpace.setLayoutParams(lp3);
+                this.addView(whiteSpace);
+
+                // Set up label name (display mode)
+                labelNameTV2 = new TextView(context);
+                LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                labelNameTV2.setLayoutParams(lp2);
+                labelNameTV2.setGravity(Gravity.CENTER);
+                labelNameTV2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
+                labelNameTV2.setTypeface(labelNameTV2.getTypeface(), Typeface.ITALIC);
+                whiteSpace.addView(labelNameTV2);
+
                 labelNameTV2.setText(currentLabel);
             }
         }
         // LABELVIEW MODE
         else {
             newImageView.setAlpha(100);
-
             // Set up label name (Edit mode)
             labelNameTV = new TextView(context);
             LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -229,7 +229,7 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
                     System.out.println("no drop detected");
                     // This is freakin weird, why would dragged pic have a parent only when its the oni child
                     if (FragmentPage2.draggedPicture.getParent() != null) {
-                        ((GridLayout)FragmentPage2.draggedPicture.getParent()).removeView(FragmentPage2.draggedPicture);
+                        ((GridLayout) FragmentPage2.draggedPicture.getParent()).removeView(FragmentPage2.draggedPicture);
                     }
                     FragmentPage2.oldGridLayout.addView(FragmentPage2.draggedPicture);
                 }
@@ -271,19 +271,6 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
     public String getLabel() {
         return this.currentLabel;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     private static class MyDragShadowBuilder extends View.DragShadowBuilder {

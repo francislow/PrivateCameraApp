@@ -152,6 +152,13 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    public Cursor getBasedOnCategoryPTable(String categoryName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        //Cursor res = db.rawQuery("select * from " + PICTURES_TABLE_NAME + " WHERE " + COL_P_3 + " = " + categoryName, new String[] {categoryName});
+        Cursor res = db.query(PICTURES_TABLE_NAME, null, "CATEGORYNAME = ?", new String[] {categoryName}, null, null, null);
+        return res;
+    }
+
     /* Categories Table ----------------------------------------------------------------------------*/
     public boolean insertNewRowCTable (String categoryName) {
         SQLiteDatabase db = this.getWritableDatabase();
