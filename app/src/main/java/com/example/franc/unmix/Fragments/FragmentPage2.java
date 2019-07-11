@@ -146,27 +146,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         return distinctCategoryNames;
     }
 
-    /*
-    // Set up photo path list
-    public ArrayList<ArrayList<String>> setUpPhotoPathList(ArrayList<String> distinctCategoryNames) {
-        ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
-        Cursor res2 = mydb.getAllDataPTable();
-        for (int i = 0; i < distinctCategoryNames.size(); i++) {
-            res2.moveToFirst();
-            res2.moveToPrevious();
-            ArrayList<String> photoPaths = new ArrayList<>();
-            while (res2.moveToNext()) {
-                // If picture belongs to the category
-                if (res2.getString(2).equals(distinctCategoryNames.get(i))) {
-                    photoPaths.add(res2.getString(1));
-                }
-            }
-            photoPathLists.add(photoPaths);
-        }
-        return photoPathLists;
-    }
-    */
-
     // Set up photo path list
     public ArrayList<ArrayList<String>> setUpPhotoPathList(ArrayList<String> distinctCategoryNames) {
         ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();

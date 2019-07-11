@@ -63,17 +63,18 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         System.out.println("detached");
-        /*
+
+
         for (int i = 0; i < getItemCount(); i++) {
             ViewHolder currentViewHolder = (ViewHolder) recyclerView.findViewHolderForLayoutPosition(i);
             GridLayout currentGridLayout = currentViewHolder.gridLayout;
             for (int g = 0; g < currentGridLayout.getChildCount(); g++){
                 // Update database to save positions of pictures
                 CustomPicture currentCP = (CustomPicture) currentGridLayout.getChildAt(g);
-                mydb.updatePostionPTable(currentCP.getPhotoPath(), g);
+                mydb.deleteRowPTable(currentCP.getPhotoPath());
+                mydb.insertNewRowPTable(currentCP.getPhotoPath(), currentViewHolder.categoryTV.getText().toString(), currentCP.getLabel(), null, null);
             }
         }
-        */
     }
 
     @Override
