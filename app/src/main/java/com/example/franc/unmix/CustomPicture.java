@@ -224,6 +224,15 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
                 System.out.println("picture drag started");
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
+                System.out.println("drag custom pic ended");
+                if (event.getResult() == false) {
+                    System.out.println("no drop detected");
+                    // This is freakin weird, why would dragged pic have a parent only when its the oni child
+                    if (FragmentPage2.draggedPicture.getParent() != null) {
+                        ((GridLayout)FragmentPage2.draggedPicture.getParent()).removeView(FragmentPage2.draggedPicture);
+                    }
+                    FragmentPage2.oldGridLayout.addView(FragmentPage2.draggedPicture);
+                }
                 break;
             case DragEvent.ACTION_DRAG_ENTERED:
                 System.out.println("entred picture frame");

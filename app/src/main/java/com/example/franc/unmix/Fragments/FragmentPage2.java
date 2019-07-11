@@ -47,6 +47,8 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     private RelativeLayout topTabSpace2;
     private TextView dustbinTV;
 
+    private RecyclerView recyclerView;
+
     public static boolean ISINLABELVIEWMODE = false;
 
     // Constants when drag of a specific picture started
@@ -89,6 +91,13 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         addCatButton.setOnTouchListener(this);
 
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        recyclerView.setAdapter(null);
+        System.out.println("addaptor is set to null");
     }
 
     @Override
@@ -158,7 +167,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     }
 
     public void initRecyclerView(ArrayList<String> distinctCategoryNames, ArrayList<ArrayList<String>> photoPathLists) {
-        RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv);
+        recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv);
         RecyclerViewAdaptor recyclerViewAdaptor = new RecyclerViewAdaptor(this.getActivity(), distinctCategoryNames, photoPathLists);
         recyclerView.setAdapter(recyclerViewAdaptor);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -242,8 +251,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     @Override
     public boolean onDrag(View view, DragEvent event) {
         // view -> the dustbin
-        CustomPicture draggedImage = (CustomPicture) event.getLocalState();
-        GridLayout oldGridView = (GridLayout) draggedImage.getParent();
         switch (event.getAction()) {
             case DragEvent.ACTION_DRAG_STARTED:
                 topTabSpace.getBackground().setAlpha(0);
@@ -277,8 +284,8 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP,14);
                 dustbinTV.setTypeface(Typeface.create(dustbinTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
                 // User wants to delete the photo
-                oldGridView.removeView(draggedImage);
-                boolean hasDeletedData = mydb.deleteRowPTable((String) draggedImage.getPhotoPath());
+                oldGridLayout.removeView(draggedPicture);
+                boolean hasDeletedData = mydb.deleteRowPTable((String) draggedPicture.getPhotoPath());
                 if (hasDeletedData) {
                     Toast.makeText(getActivity(), "Successfully deleted picture", Toast.LENGTH_SHORT).show();
                 } else {

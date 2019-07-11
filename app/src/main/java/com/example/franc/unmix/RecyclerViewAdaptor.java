@@ -48,7 +48,6 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
         associatedFragment = ActivityMain.swipeAdaptor.getItem(2);
         mydb = new PicturesDatabaseHelper(myContext);
-
     }
 
     @NonNull
@@ -56,6 +55,25 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_page2_item_layout, parent, false);
         return new ViewHolder(view);
+    }
+
+    // This is called when adaptor is set to null in onPause() of fragment/ activity
+    // Thus will be called when fragment is onPaused();
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        System.out.println("detached");
+        /*
+        for (int i = 0; i < getItemCount(); i++) {
+            ViewHolder currentViewHolder = (ViewHolder) recyclerView.findViewHolderForLayoutPosition(i);
+            GridLayout currentGridLayout = currentViewHolder.gridLayout;
+            for (int g = 0; g < currentGridLayout.getChildCount(); g++){
+                // Update database to save positions of pictures
+                CustomPicture currentCP = (CustomPicture) currentGridLayout.getChildAt(g);
+                mydb.updatePostionPTable(currentCP.getPhotoPath(), g);
+            }
+        }
+        */
     }
 
     @Override
@@ -80,6 +98,11 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
         return categoryNames.size();
     }
 
+
+
+
+
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout parentLayout;
         TextView categoryTV;
@@ -102,7 +125,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                         case DragEvent.ACTION_DRAG_STARTED:
                             break;
                         case DragEvent.ACTION_DRAG_ENDED:
-                            // if user dropped at picture frame instead of layout
+                            // if user did not drop in any on drag detection areas
                             if (event.getResult() == false) {
                                 System.out.println("no drop detected");
                                 // This is freakin weird, why would dragged pic have a parent only when its the oni child
@@ -113,6 +136,16 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             }
                             else {
                                 System.out.println("drop detected");
+                                // Update position for old and new gridview
+                                /*
+                                boolean hasInsertedData = mydb.updatePostionPTable();
+                                if (hasInsertedData) {
+                                    Toast.makeText(myContext, "Successfully updated cat name", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(myContext, "Error updating cat name", Toast.LENGTH_SHORT).show();
+                                }
+                                */
+
                             }
                             break;
                         case DragEvent.ACTION_DRAG_ENTERED:

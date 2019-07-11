@@ -13,16 +13,16 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class PicturesDatabaseHelper extends SQLiteOpenHelper {
 
     //database values
-    private static final int versionNumber = 1;
+    private static final int versionNumber = 2;
     private static final String DATABASE_NAME = "pictures.db";
 
-    //ID | getAbsolutePath() | categoryName | label | month | day
+    //ID | getAbsolutePath() | categoryName | label | position | day
     private static final String PICTURES_TABLE_NAME = "pictures_table";
     private static final String COL_P_1 = "ID";
     private static final String COL_P_2 = "ABSPATH";
     private static final String COL_P_3 = "CATEGORYNAME";
     private static final String COL_P_4 = "LABEL";
-    private static final String COL_P_5 = "MONTH";
+    private static final String COL_P_5 = "POSITION";
     private static final String COL_P_6 = "DAY";
 
     //ID | categoryName
@@ -40,7 +40,7 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
         //Creates pictures table
         db.execSQL("CREATE TABLE IF NOT EXISTS " + PICTURES_TABLE_NAME +
                 " (ID INTEGER PRIMARY KEY AUTOINCREMENT, ABSPATH TEXT, CATEGORYNAME TEXT, " +
-                "LABEL TEXT, MONTH INTEGER, DAY INTEGER);");
+                "LABEL TEXT, POSITION INTEGER, DAY INTEGER);");
 
         //Creates category table
         db.execSQL("CREATE TABLE IF NOT EXISTS " + CATEGORIES_TABLE_NAME +
@@ -55,14 +55,14 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
     }
 
     /* Pictures Table ----------------------------------------------------------------------------*/
-    public boolean insertNewRowPTable(String absPath, String categoryName, String label, String month, String day) {
+    public boolean insertNewRowPTable(String absPath, String categoryName, String label, String position, String day) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_P_2, absPath);
         contentValues.put(COL_P_3, categoryName);
         contentValues.put(COL_P_4, label);
-        contentValues.put(COL_P_5, month);
+        contentValues.put(COL_P_5, position);
         contentValues.put(COL_P_6, day);
 
         long result = db.insert(PICTURES_TABLE_NAME, null, contentValues);
@@ -79,6 +79,20 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_P_2, pathName);
 
         contentValues.put(COL_P_3, newCategoryName);
+        long result = db.update(PICTURES_TABLE_NAME, contentValues, "ABSPATH = ?", new String[] {pathName});
+
+        if (result == -1) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean updatePostionPTable(String pathName, int position) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_P_2, pathName);
+
+        contentValues.put(COL_P_5, position);
         long result = db.update(PICTURES_TABLE_NAME, contentValues, "ABSPATH = ?", new String[] {pathName});
 
         if (result == -1) {
