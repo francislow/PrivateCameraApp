@@ -37,15 +37,14 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
     private Context context;
     private ImageView newImageView;
     private RelativeLayout whiteSpace;
-    private TextView labelNameTV;
-    private TextView labelNameTV2;
+    private TextView labelNameTVE;
+    private TextView labelNameTVN;
     private String photoPath;
     private String currentLabel;
     private PicturesDatabaseHelper mydb;
     private TextView categoryTV;
     private ImageView line;
 
-    private int gridWidth;
     private int customPictureLength;
     private int whiteSpaceHeight;
     private static final int picturePadding = 7;
@@ -56,7 +55,7 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
         this.photoPath = photoPath;
 
         // Initialising picture properties
-        gridWidth = context.getResources().getDisplayMetrics().widthPixels;
+        int gridWidth = context.getResources().getDisplayMetrics().widthPixels;
         customPictureLength = gridWidth / 4;
         whiteSpaceHeight = customPictureLength / 3;
 
@@ -67,8 +66,8 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
         currentLabel = res.getString(3);
 
         // Set up custompicture (Relativelayout) width and height
-        ViewGroup.LayoutParams lp1 = new ViewGroup.LayoutParams(customPictureLength, customPictureLength);
-        this.setLayoutParams(lp1);
+        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(customPictureLength, customPictureLength);
+        this.setLayoutParams(lp);
         this.setPadding(picturePadding, picturePadding, picturePadding, picturePadding);
 
         // Add an filled image view to fill whole of this custom picture
@@ -97,32 +96,35 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
                 whiteSpace.setLayoutParams(lp3);
                 this.addView(whiteSpace);
 
-                // Set up label name (display mode)
-                labelNameTV2 = new TextView(context);
+                // Set up label name
+                labelNameTVN = new TextView(context);
                 LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                labelNameTV2.setLayoutParams(lp2);
-                labelNameTV2.setGravity(Gravity.CENTER);
-                labelNameTV2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
-                labelNameTV2.setTypeface(labelNameTV2.getTypeface(), Typeface.ITALIC);
-                whiteSpace.addView(labelNameTV2);
+                labelNameTVN.setLayoutParams(lp2);
+                labelNameTVN.setGravity(Gravity.CENTER);
+                labelNameTVN.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
+                labelNameTVN.setTypeface(labelNameTVN.getTypeface(), Typeface.ITALIC);
+                whiteSpace.addView(labelNameTVN);
 
-                labelNameTV2.setText(currentLabel);
+                labelNameTVN.setText(currentLabel);
             }
         }
         // LABELVIEW MODE
         else {
             newImageView.setAlpha(100);
             // Set up label name (Edit mode)
-            labelNameTV = new TextView(context);
+            labelNameTVE = new TextView(context);
             LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            labelNameTV.setLayoutParams(lp2);
-            labelNameTV.setGravity(Gravity.CENTER);
-            labelNameTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-            labelNameTV.setTypeface(labelNameTV.getTypeface(), Typeface.BOLD_ITALIC);
-            this.addView(labelNameTV);
+            labelNameTVE.setLayoutParams(lp2);
+            labelNameTVE.setGravity(Gravity.CENTER);
+            labelNameTVE.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+            labelNameTVE.setTypeface(labelNameTVE.getTypeface(), Typeface.BOLD_ITALIC);
+            this.addView(labelNameTVE);
             // If picture has a label
             if (currentLabel != null) {
-                labelNameTV.setText(currentLabel);
+                labelNameTVE.setText(currentLabel);
+            }
+            else {
+                System.out.println("curretn label is null");
             }
         }
     }
@@ -144,12 +146,10 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
             final Dialog nagDialog = new Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
             nagDialog.setContentView(R.layout.dialog_preview_image);
             ImageView previewImage = (ImageView) nagDialog.findViewById(R.id.preview_image);
-
             Glide
                     .with(context)
                     .load(photoPath)
                     .into(previewImage);
-
             nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
@@ -159,7 +159,6 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
             nagDialog.show();
         } else {
             // Edit label function
-            //Add a category
             final Dialog nagDialog = new Dialog(context);
             nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             nagDialog.setContentView(R.layout.dialog_edit_label_name);
@@ -173,14 +172,10 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
                 @Override
                 public void onClick(View v) {
                     String newLabelName = labelNameET.getText().toString().trim();
-                    PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(context);
-                    boolean hasInsertedData = mydb.updateLabelNamePTable(getPhotoPath(), newLabelName);
-                    if (hasInsertedData) {
-                        Toast.makeText(context, "successfully updated label to database", Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(context, "Error updating label to database", Toast.LENGTH_LONG).show();
-                    }
                     nagDialog.dismiss();
+
+                    // Note: dont need to update database since detached is called
+                    currentLabel = newLabelName;
                     ActivityMain.swipeAdaptor.getItem(3).onResume();
                 }
             });
@@ -190,7 +185,6 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
                     nagDialog.dismiss();
                 }
             });
-
             nagDialog.show();
         }
     }
@@ -221,12 +215,12 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
         // v -> each custom picture
         switch (event.getAction()) {
             case DragEvent.ACTION_DRAG_STARTED:
-                System.out.println("picture drag started");
+                System.out.println("Custom Picture Drag Started");
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
-                System.out.println("drag custom pic ended");
-                if (event.getResult() == false) {
-                    System.out.println("no drop detected");
+                System.out.println("Custom Picture Drag Ended");
+                if (!event.getResult()) {
+                    System.out.println("Custom Picture did not detect drop");
                     // This is freakin weird, why would dragged pic have a parent only when its the oni child
                     if (FragmentPage2.draggedPicture.getParent() != null) {
                         ((GridLayout) FragmentPage2.draggedPicture.getParent()).removeView(FragmentPage2.draggedPicture);
@@ -235,12 +229,10 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
                 }
                 break;
             case DragEvent.ACTION_DRAG_ENTERED:
-                System.out.println("entred picture frame");
-                //newGridLayout.addView(draggedPicture, newGridLayout.indexOfChild(v));
+                System.out.println("Entered Custom Picture Detection Frame");
                 break;
             case DragEvent.ACTION_DRAG_EXITED:
-                System.out.println("exited picture frame");
-                //newGridLayout.removeView(draggedPicture);
+                System.out.println("Exited Custom Picture Detection Frame");
                 break;
             case DragEvent.ACTION_DROP:
                 categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);

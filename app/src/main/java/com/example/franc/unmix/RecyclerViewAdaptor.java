@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -28,6 +29,8 @@ import com.example.franc.unmix.Utilities.MyUtilities;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by franc on 27/6/2019.
@@ -53,6 +56,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Log.d(TAG, "onCreateViewHolder: ran");
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_page2_item_layout, parent, false);
         return new ViewHolder(view);
     }
@@ -62,8 +66,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
-        System.out.println("detached");
-
+        Log.d(TAG, "onDetachedFromRecyclerView: ran");
 
         for (int i = 0; i < getItemCount(); i++) {
             ViewHolder currentViewHolder = (ViewHolder) recyclerView.findViewHolderForLayoutPosition(i);
@@ -79,6 +82,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Log.d(TAG, "onBindViewHolder: ran");
         // Set label names
         holder.categoryTV.setText(categoryNames.get(position));
 
@@ -96,6 +100,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
     @Override
     public int getItemCount() {
+        Log.d(TAG, "getItemCount: ran");
         return categoryNames.size();
     }
 
@@ -137,16 +142,6 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             }
                             else {
                                 System.out.println("drop detected");
-                                // Update position for old and new gridview
-                                /*
-                                boolean hasInsertedData = mydb.updatePostionPTable();
-                                if (hasInsertedData) {
-                                    Toast.makeText(myContext, "Successfully updated cat name", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(myContext, "Error updating cat name", Toast.LENGTH_SHORT).show();
-                                }
-                                */
-
                             }
                             break;
                         case DragEvent.ACTION_DRAG_ENTERED:
