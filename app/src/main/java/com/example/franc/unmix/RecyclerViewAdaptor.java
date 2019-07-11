@@ -132,16 +132,16 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             break;
                         case DragEvent.ACTION_DRAG_ENDED:
                             // if user did not drop in any on drag detection areas
-                            if (event.getResult() == false) {
-                                System.out.println("no drop detected");
+                            if (!event.getResult()) {
+                                System.out.println("Parent Layout did not detect drop");
                                 // This is freakin weird, why would dragged pic have a parent only when its the oni child
                                 if (FragmentPage2.draggedPicture.getParent() != null) {
-                                    ((GridLayout)FragmentPage2.draggedPicture.getParent()).removeView(FragmentPage2.draggedPicture);
+                                    ((GridLayout) FragmentPage2.draggedPicture.getParent()).removeView(FragmentPage2.draggedPicture);
                                 }
                                 FragmentPage2.oldGridLayout.addView(FragmentPage2.draggedPicture);
                             }
                             else {
-                                System.out.println("drop detected");
+                                System.out.println("parent layout drop detected");
                             }
                             break;
                         case DragEvent.ACTION_DRAG_ENTERED:
@@ -156,13 +156,8 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
                             line.setVisibility(View.INVISIBLE);
 
+                            // Update
                             newGridView.addView(FragmentPage2.draggedPicture);
-                            boolean hasInsertedData = mydb.updateCategoryNamePTable((String) FragmentPage2.draggedPicture.getPhotoPath(), categoryTV.getText().toString());
-                            if (hasInsertedData) {
-                                Toast.makeText(myContext, "Successfully updated cat name", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(myContext, "Error updating cat name", Toast.LENGTH_SHORT).show();
-                            }
                             break;
                         default:
                             break;

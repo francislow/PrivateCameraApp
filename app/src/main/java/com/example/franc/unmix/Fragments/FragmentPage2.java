@@ -75,11 +75,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         // App name textview
         textView = (TextView) getActivity().findViewById(R.id.appname2);
         // Dustbin imageview
-        /*
-        final ImageView dustbin = (ImageView) getActivity().findViewById(R.id.dustbin);
-        dustbin.getBackground().setAlpha(0);
-        dustbin.setOnDragListener(this);
-        */
         dustbinTV = (TextView) getActivity().findViewById(R.id.dustbin);
         dustbinTV.setVisibility(View.INVISIBLE);
 
@@ -142,7 +137,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
             String currentCatName = res1.getString(1);
             distinctCategoryNames.add(currentCatName);
         }
-
         return distinctCategoryNames;
     }
 
