@@ -37,15 +37,13 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
     private Context context;
     private ImageView newImageView;
     private RelativeLayout whiteSpace;
-    private String photoPath;
-    private PicturesDatabaseHelper mydb;
-    private ImageView line;
-    private TextView categoryTV;
-
-    // To always update if value changes
     private TextView labelNameTVE;
     private TextView labelNameTVN;
+    private String photoPath;
     private String currentLabel;
+    private PicturesDatabaseHelper mydb;
+    private TextView categoryTV;
+    private ImageView line;
 
     private int customPictureLength;
     private int whiteSpaceHeight;
@@ -61,13 +59,13 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
         customPictureLength = gridWidth / 4;
         whiteSpaceHeight = customPictureLength / 3;
 
-        // Get the photo path for this custom picture
+        // Get the photopath for this custom picture
         mydb = new PicturesDatabaseHelper(context);
         Cursor res = mydb.getLabelFromPathPTable(photoPath);
         res.moveToNext();
         currentLabel = res.getString(3);
 
-        // Set up custom picture (Relativelayout) width and height
+        // Set up custompicture (Relativelayout) width and height
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(customPictureLength, customPictureLength);
         this.setLayoutParams(lp);
         this.setPadding(picturePadding, picturePadding, picturePadding, picturePadding);
@@ -176,9 +174,9 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
                     String newLabelName = labelNameET.getText().toString().trim();
                     nagDialog.dismiss();
 
-                    // Update
+                    // Note: dont need to update database since detached is called
                     currentLabel = newLabelName;
-                    labelNameTVE.setText(newLabelName);
+                    ActivityMain.swipeAdaptor.getItem(2).onResume();
                 }
             });
             nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -240,9 +238,14 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
                 categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
                 line.setVisibility(View.INVISIBLE);
 
-                // Update
                 GridLayout newGridLayout = (GridLayout) v.getParent();
                 newGridLayout.addView(FragmentPage2.draggedPicture, newGridLayout.indexOfChild(v));
+                boolean hasInsertedData = mydb.updateCategoryNamePTable((String) FragmentPage2.draggedPicture.getPhotoPath(), categoryTV.getText().toString());
+                if (hasInsertedData) {
+                    Toast.makeText(context, "Successfully updated cat name", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Error updating cat name", Toast.LENGTH_SHORT).show();
+                }
                 break;
             default:
                 break;

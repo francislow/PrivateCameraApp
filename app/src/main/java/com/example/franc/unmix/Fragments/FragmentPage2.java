@@ -75,6 +75,11 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         // App name textview
         textView = (TextView) getActivity().findViewById(R.id.appname2);
         // Dustbin imageview
+        /*
+        final ImageView dustbin = (ImageView) getActivity().findViewById(R.id.dustbin);
+        dustbin.getBackground().setAlpha(0);
+        dustbin.setOnDragListener(this);
+        */
         dustbinTV = (TextView) getActivity().findViewById(R.id.dustbin);
         dustbinTV.setVisibility(View.INVISIBLE);
 
@@ -92,7 +97,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     public void onPause() {
         super.onPause();
         recyclerView.setAdapter(null);
-        System.out.println("addaptor is set to null");
+        System.out.println("fragm 2 paused");
     }
 
     @Override
@@ -137,6 +142,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
             String currentCatName = res1.getString(1);
             distinctCategoryNames.add(currentCatName);
         }
+
         return distinctCategoryNames;
     }
 
@@ -189,6 +195,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                             //display dialog
                             //on cancel
                             // Refreshes this page
+                            onPause();
                             onResume();
                             //}
                             break;
