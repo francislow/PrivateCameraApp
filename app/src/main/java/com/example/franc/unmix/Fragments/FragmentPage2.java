@@ -110,10 +110,8 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
             addCatButton.setVisibility(View.INVISIBLE);
         }
 
-        // Set up distinctCategoryNames list
+        // Get data from database
         ArrayList<String> distinctCategoryNames = setUpDistinctCategoryNamesList();
-
-        // Set up photoPath list
         ArrayList<ArrayList<String>> photoPathLists = setUpPhotoPathList(distinctCategoryNames);
 
         // Initialise recycler view
@@ -201,6 +199,8 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                             break;
 
                         case R.id.add_cat_button:
+                            MyUtilities.printOutPTable(this.getActivity());
+                            MyUtilities.printOutCTable(this.getActivity());
                             //Add a category
                             final Dialog nagDialog = new Dialog(getActivity());
                             nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -218,6 +218,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                                         if (hasInsertedData) {
                                             Toast.makeText(getActivity(), "successfully added to database", Toast.LENGTH_LONG).show();
                                             // Refreshes this page
+                                            onPause();
                                             onResume();
                                         } else {
                                             Toast.makeText(getActivity(), "Error adding to database", Toast.LENGTH_LONG).show();

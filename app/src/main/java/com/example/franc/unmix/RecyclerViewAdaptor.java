@@ -66,15 +66,15 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         Log.d(TAG, "onDetachedFromRecyclerView: ran");
-        System.out.println("detached");
 
+        // Update pictures
+        mydb.deleteAllRowsPTable();
         for (int i = 0; i < getItemCount(); i++) {
             ViewHolder currentViewHolder = (ViewHolder) recyclerView.findViewHolderForLayoutPosition(i);
             GridLayout currentGridLayout = currentViewHolder.gridLayout;
-            for (int g = 0; g < currentGridLayout.getChildCount(); g++){
+            for (int g = 0; g < currentGridLayout.getChildCount(); g++) {
                 // Update database to save positions of pictures
                 CustomPicture currentCP = (CustomPicture) currentGridLayout.getChildAt(g);
-                mydb.deleteRowPTable(currentCP.getPhotoPath());
                 mydb.insertNewRowPTable(currentCP.getPhotoPath(), currentViewHolder.categoryTV.getText().toString(), currentCP.getLabel(), null, null);
             }
         }
@@ -241,18 +241,13 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                                     Toast.makeText(myContext, "Error deleted cat name", Toast.LENGTH_SHORT).show();
                                                 }
                                                 parentLayout.removeAllViews();
-                                                // If gridlayout has pictures in it
-                                                if (gridLayout.getChildCount() != 0) {
-                                                    for (int i = 0; i < gridLayout.getChildCount(); i++) {
-                                                        CustomPicture currentPic = (CustomPicture) gridLayout.getChildAt(0);
-                                                        boolean hasDeletedPicData = mydb.deleteRowPTable((String) currentPic.getTag());
-                                                        if (hasDeletedPicData) {
-                                                            Toast.makeText(myContext, "Successfully deleted all picture", Toast.LENGTH_SHORT).show();
-                                                        } else {
-                                                            Toast.makeText(myContext, "Error deleting all picture", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    }
-                                                }
+                                                gridLayout.removeAllViews();
+
+                                                ActivityMain.swipeAdaptor.getItem(2).onPause();
+                                                ActivityMain.swipeAdaptor.getItem(2).onResume();
+                                                // Refresh middle page
+                                                ActivityMain.swipeAdaptor.getItem(1).onResume();
+
                                                 myDialog.dismiss();
                                             }
                                         });

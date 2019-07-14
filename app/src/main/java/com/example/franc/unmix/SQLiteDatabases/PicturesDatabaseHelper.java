@@ -55,6 +55,11 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
     }
 
     /* Pictures Table ----------------------------------------------------------------------------*/
+    public void deleteAllRowsPTable() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + PICTURES_TABLE_NAME);
+        onCreate(db);
+    }
     public boolean insertNewRowPTable(String absPath, String categoryName, String label, String position, String day) {
 
         SQLiteDatabase db = this.getWritableDatabase();

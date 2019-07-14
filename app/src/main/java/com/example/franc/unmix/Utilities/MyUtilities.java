@@ -33,6 +33,29 @@ public class MyUtilities {
         return false;
     }
 
+    // Prints out picture database
+    public static void printOutPTable(Context myContext) {
+        PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(myContext);
+        Cursor res = mydb.getAllDataPTable();
+        while (res.moveToNext()) {
+            System.out.print(res.getString(0) + " ");
+            System.out.print(res.getString(1) + " ");
+            System.out.print(res.getString(2) + " ");
+            System.out.print(res.getString(3) + " ");
+            System.out.print(res.getString(4) + " ");
+            System.out.print(res.getString(5) + "\n");
+        }
+    }
+    // Prints out picture database
+    public static void printOutCTable(Context myContext) {
+        PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(myContext);
+        Cursor res = mydb.getAllDataCTable();
+        while (res.moveToNext()) {
+            System.out.print(res.getString(0) + " ");
+            System.out.print(res.getString(1) + "\n");
+        }
+    }
+
     //If user touched down and up a button within button space
     public static boolean touchUpInButton(MotionEvent motionEvent, Button button) {
         int[] buttonPosition = new int[2];

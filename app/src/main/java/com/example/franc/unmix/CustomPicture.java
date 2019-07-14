@@ -145,7 +145,17 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
             // Show preview image function
             final Dialog nagDialog = new Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
             nagDialog.setContentView(R.layout.dialog_preview_image);
+            //RelativeLayout dialoglayout = (RelativeLayout) nagDialog.findViewById(R.id.dialoglayout);
+
+
             ImageView previewImage = (ImageView) nagDialog.findViewById(R.id.preview_image);
+            previewImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    System.out.println("clicked preview layout");
+                    // Show action bar
+                }
+            });
             Glide
                     .with(context)
                     .load(photoPath)
@@ -240,7 +250,7 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
 
                 GridLayout newGridLayout = (GridLayout) v.getParent();
                 newGridLayout.addView(FragmentPage2.draggedPicture, newGridLayout.indexOfChild(v));
-                boolean hasInsertedData = mydb.updateCategoryNamePTable((String) FragmentPage2.draggedPicture.getPhotoPath(), categoryTV.getText().toString());
+                boolean hasInsertedData = mydb.updateCategoryNamePTable(FragmentPage2.draggedPicture.getPhotoPath(), categoryTV.getText().toString());
                 if (hasInsertedData) {
                     Toast.makeText(context, "Successfully updated cat name", Toast.LENGTH_SHORT).show();
                 } else {
