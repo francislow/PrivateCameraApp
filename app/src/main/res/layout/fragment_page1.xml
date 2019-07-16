@@ -16,16 +16,4 @@
         <include layout="@layout/fragment_page_middle_top_tab" />
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/addnotebutton"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="134dp"
-        android:layout_marginEnd="101dp"
-        android:layout_marginRight="101dp"
-        android:background="@drawable/ic_add_photo" />
-
 </RelativeLayout>

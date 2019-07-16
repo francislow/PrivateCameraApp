@@ -1,5 +1,7 @@
 package com.example.franc.unmix.Fragments;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -17,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.webkit.WebSettings;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -41,7 +44,7 @@ import java.util.ArrayList;
 public class FragmentPage2 extends Fragment implements View.OnTouchListener, View.OnDragListener {
     private PicturesDatabaseHelper mydb;
     private Button addCatButton;
-    private TextView textView;
+    private TextView appNameTV;
     private Button switchLabelViewButton;
     private RelativeLayout topTabSpace;
     private RelativeLayout topTabSpace2;
@@ -71,17 +74,12 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         topTabSpace = (RelativeLayout) getActivity().findViewById(R.id.top_tab_space);
         topTabSpace2 = (RelativeLayout) getActivity().findViewById(R.id.top_tab_space_2);
         topTabSpace2.setOnDragListener(this);
-        topTabSpace2.getBackground().setAlpha(0);
-        // App name textview
-        textView = (TextView) getActivity().findViewById(R.id.appname2);
+        topTabSpace2.setAlpha(0);
         // Dustbin imageview
-        /*
-        final ImageView dustbin = (ImageView) getActivity().findViewById(R.id.dustbin);
-        dustbin.getBackground().setAlpha(0);
-        dustbin.setOnDragListener(this);
-        */
         dustbinTV = (TextView) getActivity().findViewById(R.id.dustbin);
-        dustbinTV.setVisibility(View.INVISIBLE);
+        dustbinTV.setAlpha(0);
+        // App name textview
+        appNameTV = (TextView) getActivity().findViewById(R.id.appname2);
 
         // Switch to label view button
         switchLabelViewButton = (Button) getActivity().findViewById(R.id.switch_to_label_button);
@@ -246,29 +244,41 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
 
     @Override
     public boolean onDrag(View view, DragEvent event) {
-        // view -> the dustbin
+        // view -> topTabSpace2
+        PropertyValuesHolder scaleXUp = PropertyValuesHolder.ofFloat(View.SCALE_X, 0.5f, 1f);
+        PropertyValuesHolder scaleYUp = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.5f, 1f);
+        PropertyValuesHolder alphaUp = PropertyValuesHolder.ofFloat(View.ALPHA, 0f, 1f);
+
+        PropertyValuesHolder scaleXDown = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0.5f);
+        PropertyValuesHolder scaleYDown = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0.5f);
+        PropertyValuesHolder alphaDown = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0f);
         switch (event.getAction()) {
             case DragEvent.ACTION_DRAG_STARTED:
-                topTabSpace.getBackground().setAlpha(0);
-                topTabSpace2.getBackground().setAlpha(255);
-                //topTabSpace2.animate().alpha(1);
-                //topTabSpace2.setAlpha(1);
-                addCatButton.getBackground().setAlpha(0);
-                switchLabelViewButton.getBackground().setAlpha(0);
-                textView.setAlpha(0);
-                view.getBackground().setAlpha(255);
-                dustbinTV.setVisibility(View.VISIBLE);
+                // Remove
+                ObjectAnimator.ofPropertyValuesHolder(topTabSpace, alphaDown).start();
+                ObjectAnimator.ofPropertyValuesHolder(addCatButton, alphaDown).start();
+                ObjectAnimator.ofPropertyValuesHolder(appNameTV, alphaDown).start();
+                ObjectAnimator.ofPropertyValuesHolder(switchLabelViewButton, alphaDown).start();
+
+                // Appear
+                ObjectAnimator.ofPropertyValuesHolder(dustbinTV, scaleXUp, scaleYUp, alphaUp).start();
+                ObjectAnimator.ofPropertyValuesHolder(topTabSpace2, alphaUp).start();
+
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
-                topTabSpace.getBackground().setAlpha(255);
-                topTabSpace2.getBackground().setAlpha(0);
-                addCatButton.getBackground().setAlpha(255);
-                switchLabelViewButton.getBackground().setAlpha(255);
-                textView.setAlpha(1);
-                view.getBackground().setAlpha(0);
-                dustbinTV.setVisibility(View.INVISIBLE);
+                // Remove
+                ObjectAnimator.ofPropertyValuesHolder(dustbinTV, scaleXDown, scaleYDown, alphaDown).start();
+                ObjectAnimator.ofPropertyValuesHolder(topTabSpace2, alphaDown).start();
+
+                // Appear
+                ObjectAnimator.ofPropertyValuesHolder(topTabSpace, alphaUp).start();
+                ObjectAnimator.ofPropertyValuesHolder(addCatButton, alphaUp).start();
+                ObjectAnimator.ofPropertyValuesHolder(appNameTV, alphaUp).start();
+                ObjectAnimator.ofPropertyValuesHolder(switchLabelViewButton, alphaUp).start();
+
                 break;
             case DragEvent.ACTION_DRAG_ENTERED:
+                PropertyValuesHolder textSizeUp = PropertyValuesHolder.ofFloat(TextView.SCALE_X, 1f, 0.5f);
                 dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 22);
                 dustbinTV.setTypeface(dustbinTV.getTypeface(), Typeface.BOLD);
                 break;
@@ -283,9 +293,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 oldGridLayout.removeView(draggedPicture);
                 boolean hasDeletedData = mydb.deleteRowPTable((String) draggedPicture.getPhotoPath());
                 if (hasDeletedData) {
-                    Toast.makeText(getActivity(), "Successfully deleted picture", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), "Error deleting picture", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Successfully deleted the picture", Toast.LENGTH_SHORT).show();
                 }
                 // Refresh middle page
                 ActivityMain.swipeAdaptor.getItem(1).onResume();

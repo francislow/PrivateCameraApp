@@ -1,19 +1,27 @@
 package com.example.franc.unmix;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
 import android.view.DragEvent;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -37,7 +45,7 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
     private Context context;
     private ImageView newImageView;
     private RelativeLayout whiteSpace;
-    private TextView labelNameTVE;
+    TextView labelNameTVE;
     private TextView labelNameTVN;
     private String photoPath;
     private String currentLabel;
@@ -102,7 +110,7 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
                 labelNameTVN.setLayoutParams(lp2);
                 labelNameTVN.setGravity(Gravity.CENTER);
                 labelNameTVN.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
-                labelNameTVN.setTypeface(labelNameTVN.getTypeface(), Typeface.ITALIC);
+                labelNameTVN.setTypeface(labelNameTVN.getTypeface(), Typeface.BOLD_ITALIC);
                 whiteSpace.addView(labelNameTVN);
 
                 labelNameTVN.setText(currentLabel);
@@ -110,22 +118,41 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
         }
         // LABELVIEW MODE
         else {
-            newImageView.setAlpha(100);
+            /*
+            Button longclickButton = new Button(context);
+            LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            longclickButton.setLayoutParams(lp1);
+            longclickButton.setBackground(getResources().getDrawable(R.drawable.ripple));
+            //longclickButton.setBackgroundColor(getResources().getColor(R.color.white));
+            //longclickButton.setAlpha();
+            //buttonEffect(longclickButton);
+            this.addView(longclickButton);
+            */
+
             // Set up label name (Edit mode)
             labelNameTVE = new TextView(context);
             LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             labelNameTVE.setLayoutParams(lp2);
             labelNameTVE.setGravity(Gravity.CENTER);
             labelNameTVE.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-            labelNameTVE.setTypeface(labelNameTVE.getTypeface(), Typeface.BOLD_ITALIC);
+            labelNameTVE.setTypeface(labelNameTVE.getTypeface(), Typeface.ITALIC);
+            labelNameTVE.setPaintFlags(labelNameTVE.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
             this.addView(labelNameTVE);
             // If picture has a label
             if (currentLabel != null) {
                 labelNameTVE.setText(currentLabel);
             }
-            else {
-                System.out.println("curretn label is null");
-            }
+
+            // Animate
+            PropertyValuesHolder alphaDown = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0.3f);
+            ObjectAnimator.ofPropertyValuesHolder(newImageView, alphaDown).start();
+
+            Animation anim = new AlphaAnimation(0.0f, 1.0f);
+            anim.setDuration(1400); //You can manage the blinking time with this parameter
+            anim.setStartOffset(20);
+            anim.setRepeatMode(Animation.REVERSE);
+            anim.setRepeatCount(Animation.INFINITE);
+            labelNameTVE.startAnimation(anim);
         }
     }
 
@@ -235,7 +262,13 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
                     if (FragmentPage2.draggedPicture.getParent() != null) {
                         ((GridLayout) FragmentPage2.draggedPicture.getParent()).removeView(FragmentPage2.draggedPicture);
                     }
+                    Animation anim = new AlphaAnimation(0.0f, 1.0f);
+                    anim.setDuration(1400); //You can manage the blinking time with this parameter
+                    anim.setStartOffset(20);
+                    anim.setRepeatMode(Animation.REVERSE);
+                    anim.setRepeatCount(Animation.INFINITE);
                     FragmentPage2.oldGridLayout.addView(FragmentPage2.draggedPicture);
+                    FragmentPage2.draggedPicture.labelNameTVE.startAnimation(anim);
                 }
                 break;
             case DragEvent.ACTION_DRAG_ENTERED:
@@ -249,7 +282,13 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
                 line.setVisibility(View.INVISIBLE);
 
                 GridLayout newGridLayout = (GridLayout) v.getParent();
+                Animation anim = new AlphaAnimation(0.0f, 1.0f);
+                anim.setDuration(1400); //You can manage the blinking time with this parameter
+                anim.setStartOffset(20);
+                anim.setRepeatMode(Animation.REVERSE);
+                anim.setRepeatCount(Animation.INFINITE);
                 newGridLayout.addView(FragmentPage2.draggedPicture, newGridLayout.indexOfChild(v));
+                FragmentPage2.draggedPicture.labelNameTVE.startAnimation(anim);
                 boolean hasInsertedData = mydb.updateCategoryNamePTable(FragmentPage2.draggedPicture.getPhotoPath(), categoryTV.getText().toString());
                 if (hasInsertedData) {
                     Toast.makeText(context, "Successfully updated cat name", Toast.LENGTH_SHORT).show();
@@ -274,6 +313,26 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
         return this.currentLabel;
     }
 
+    public void buttonEffect(View button){
+        button.setOnTouchListener(new OnTouchListener() {
+
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        v.getBackground().setColorFilter(0xe0f47521, PorterDuff.Mode.SRC_ATOP);
+                        v.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        v.getBackground().clearColorFilter();
+                        v.invalidate();
+                        break;
+                    }
+                }
+                return false;
+            }
+        });
+    }
 
     private static class MyDragShadowBuilder extends View.DragShadowBuilder {
         private Point mScaleFactor;

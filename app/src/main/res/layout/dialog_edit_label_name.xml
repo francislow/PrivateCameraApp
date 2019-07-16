@@ -15,7 +15,8 @@
         android:id="@+id/button4"
         android:layout_width="100dp"
         android:layout_height="40dp"
-        android:text="Edit"
+        android:text="Edit Label Name"
+        android:textSize="8dp"
         android:layout_toRightOf="@id/editT4"/>
 
 </RelativeLayout>

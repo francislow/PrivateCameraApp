@@ -3,6 +3,7 @@ package com.example.franc.unmix;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -117,6 +120,10 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             super(itemView);
             parentLayout = (LinearLayout) itemView.findViewById(R.id.parent_layout);
             categoryTV = (TextView) itemView.findViewById(R.id.cat_name);
+            if (FragmentPage2.ISINLABELVIEWMODE) {
+                categoryTV.setPaintFlags(categoryTV.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.ITALIC), Typeface.ITALIC);
+            }
             gridLayout = (GridLayout) itemView.findViewById(R.id.grid1);
             line = (ImageView) itemView.findViewById(R.id.line);
 
@@ -130,13 +137,19 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             break;
                         case DragEvent.ACTION_DRAG_ENDED:
                             // if user did not drop in any on drag detection areas
-                            if (event.getResult() == false) {
+                            if (!event.getResult()) {
                                 System.out.println("no drop detected");
                                 // This is freakin weird, why would dragged pic have a parent only when its the oni child
                                 if (FragmentPage2.draggedPicture.getParent() != null) {
                                     ((GridLayout)FragmentPage2.draggedPicture.getParent()).removeView(FragmentPage2.draggedPicture);
                                 }
+                                Animation anim = new AlphaAnimation(0.0f, 1.0f);
+                                anim.setDuration(1400); //You can manage the blinking time with this parameter
+                                anim.setStartOffset(20);
+                                anim.setRepeatMode(Animation.REVERSE);
+                                anim.setRepeatCount(Animation.INFINITE);
                                 FragmentPage2.oldGridLayout.addView(FragmentPage2.draggedPicture);
+                                FragmentPage2.draggedPicture.labelNameTVE.startAnimation(anim);
                             }
                             else {
                                 System.out.println("drop detected");
@@ -154,7 +167,13 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
                             line.setVisibility(View.INVISIBLE);
 
+                            Animation anim = new AlphaAnimation(0.0f, 1.0f);
+                            anim.setDuration(1400); //You can manage the blinking time with this parameter
+                            anim.setStartOffset(20);
+                            anim.setRepeatMode(Animation.REVERSE);
+                            anim.setRepeatCount(Animation.INFINITE);
                             newGridView.addView(FragmentPage2.draggedPicture);
+                            FragmentPage2.draggedPicture.labelNameTVE.startAnimation(anim);
                             boolean hasInsertedData = mydb.updateCategoryNamePTable((String) FragmentPage2.draggedPicture.getPhotoPath(), categoryTV.getText().toString());
                             if (hasInsertedData) {
                                 Toast.makeText(myContext, "Successfully updated cat name", Toast.LENGTH_SHORT).show();
@@ -173,7 +192,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                 @Override
                 public void onClick(View v) {
                     //allow on click only it is not in edit label mode and category name is custom
-                    if (!categoryTV.getText().equals(ActivityMain.DEFAULTCATEGORYNAME) && FragmentPage2.ISINLABELVIEWMODE) {
+                    if (FragmentPage2.ISINLABELVIEWMODE) {
                         PopupMenu popupMenu = new PopupMenu(myContext, categoryTV);
                         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                             @Override
