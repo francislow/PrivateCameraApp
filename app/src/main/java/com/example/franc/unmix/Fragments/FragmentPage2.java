@@ -19,11 +19,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.webkit.WebSettings;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,15 +42,13 @@ import java.util.ArrayList;
 public class FragmentPage2 extends Fragment implements View.OnTouchListener, View.OnDragListener {
     private PicturesDatabaseHelper mydb;
     private Button addCatButton;
+    private Button informationButton;
     private TextView appNameTV;
-    private Button switchLabelViewButton;
     private RelativeLayout topTabSpace;
     private RelativeLayout topTabSpace2;
     private TextView dustbinTV;
 
     private RecyclerView recyclerView;
-
-    public static boolean ISINLABELVIEWMODE = false;
 
     // Constants when drag of a specific picture started
     public static GridLayout oldGridLayout;
@@ -85,6 +81,10 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         addCatButton = (Button) getActivity().findViewById(R.id.add_cat_button);
         addCatButton.setOnTouchListener(this);
 
+        informationButton = (Button) getActivity().findViewById(R.id.information_button);
+        informationButton.setOnTouchListener(this);
+
+
     }
 
     @Override
@@ -97,7 +97,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     @Override
     public void onResume() {
         super.onResume();
-
         // Get data from database
         ArrayList<String> distinctCategoryNames = setUpDistinctCategoryNamesList();
         ArrayList<ArrayList<String>> photoPathLists = setUpPhotoPathList(distinctCategoryNames);
@@ -106,53 +105,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         initRecyclerView(distinctCategoryNames, photoPathLists);
     }
 
-
-    // Set up distinctCategoryNames list
-    public ArrayList<String> setUpDistinctCategoryNamesList() {
-        ArrayList<String> distinctCategoryNames = new ArrayList<>();
-        Cursor res3 = mydb.getAllDataCTable();
-
-        boolean hasDefaultCatName = false;
-        while (res3.moveToNext()) {
-            String currentCatName = res3.getString(1);
-            if (currentCatName.equals(ActivityMain.DEFAULTCATEGORYNAME)) {
-                hasDefaultCatName = true;
-            }
-        }
-        if (!hasDefaultCatName) {
-            mydb.insertNewRowCTable(ActivityMain.DEFAULTCATEGORYNAME);
-        }
-
-        Cursor res1 = mydb.getAllDataCTable();
-        while (res1.moveToNext()) {
-            String currentCatName = res1.getString(1);
-            distinctCategoryNames.add(currentCatName);
-        }
-
-        return distinctCategoryNames;
-    }
-
-    // Set up photo path list
-    public ArrayList<ArrayList<String>> setUpPhotoPathList(ArrayList<String> distinctCategoryNames) {
-        ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
-        for (int i = 0; i < distinctCategoryNames.size(); i++) {
-            Cursor res2 = mydb.getBasedOnCategoryPTable(distinctCategoryNames.get(i));
-            ArrayList<String> photoPaths = new ArrayList<>();
-            while (res2.moveToNext()) {
-                photoPaths.add(res2.getString(1));
-            }
-            photoPathLists.add(photoPaths);
-        }
-        return photoPathLists;
-    }
-
-    public void initRecyclerView(ArrayList<String> distinctCategoryNames, ArrayList<ArrayList<String>> photoPathLists) {
-        recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv);
-        RecyclerViewAdaptor recyclerViewAdaptor = new RecyclerViewAdaptor(this.getActivity(), distinctCategoryNames, photoPathLists);
-        recyclerView.setAdapter(recyclerViewAdaptor);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-    }
-
+    /* This on touch method is for the add category button on the top tab */
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         switch (motionEvent.getAction()) {
@@ -161,7 +114,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 view.setScaleX(0.5f);
                 view.setScaleY(0.5f);
                 break;
-
             case MotionEvent.ACTION_UP:
                 view.setAlpha(1f);
                 view.setScaleX(1f);
@@ -170,6 +122,8 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 //If user's touch up is still inside button
                 if (MyUtilities.touchUpInButton(motionEvent, (Button) view)) {
                     switch (view.getId()) {
+                        case R.id.information_button:
+                            break;
                         case R.id.add_cat_button:
                             MyUtilities.printOutPTable(this.getActivity());
                             MyUtilities.printOutCTable(this.getActivity());
@@ -216,6 +170,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         return true;
     }
 
+    /* This on drag is for detecting drop for the remove picture top bar */
     @Override
     public boolean onDrag(View view, DragEvent event) {
         // view -> topTabSpace2
@@ -252,15 +207,15 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
             case DragEvent.ACTION_DRAG_ENTERED:
                 PropertyValuesHolder textSizeUp = PropertyValuesHolder.ofFloat(TextView.SCALE_X, 1f, 0.5f);
                 dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 22);
-                dustbinTV.setTypeface(dustbinTV.getTypeface(), Typeface.BOLD);
+                dustbinTV.setTypeface(dustbinTV.getTypeface(), Typeface.BOLD_ITALIC);
                 break;
             case DragEvent.ACTION_DRAG_EXITED:
                 dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-                dustbinTV.setTypeface(Typeface.create(dustbinTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
+                dustbinTV.setTypeface(Typeface.create(dustbinTV.getTypeface(), Typeface.ITALIC), Typeface.ITALIC);
                 break;
             case DragEvent.ACTION_DROP:
                 dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-                dustbinTV.setTypeface(Typeface.create(dustbinTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
+                dustbinTV.setTypeface(Typeface.create(dustbinTV.getTypeface(), Typeface.ITALIC), Typeface.ITALIC);
                 // User wants to delete the photo
                 oldGridLayout.removeView(draggedPicture);
                 boolean hasDeletedData = mydb.deleteRowPTable((String) draggedPicture.getPhotoPath());
@@ -274,5 +229,60 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 break;
         }
         return true;
+    }
+
+
+
+
+
+
+
+
+    /* HELPER METHODS */
+
+    // Set up distinctCategoryNames list
+    public ArrayList<String> setUpDistinctCategoryNamesList() {
+        ArrayList<String> distinctCategoryNames = new ArrayList<>();
+        Cursor res3 = mydb.getAllDataCTable();
+
+        boolean hasDefaultCatName = false;
+        while (res3.moveToNext()) {
+            String currentCatName = res3.getString(1);
+            if (currentCatName.equals(ActivityMain.DEFAULTCATEGORYNAME)) {
+                hasDefaultCatName = true;
+            }
+        }
+        if (!hasDefaultCatName) {
+            mydb.insertNewRowCTable(ActivityMain.DEFAULTCATEGORYNAME);
+        }
+
+        Cursor res1 = mydb.getAllDataCTable();
+        while (res1.moveToNext()) {
+            String currentCatName = res1.getString(1);
+            distinctCategoryNames.add(currentCatName);
+        }
+
+        return distinctCategoryNames;
+    }
+
+    // Set up photopath list
+    public ArrayList<ArrayList<String>> setUpPhotoPathList(ArrayList<String> distinctCategoryNames) {
+        ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
+        for (int i = 0; i < distinctCategoryNames.size(); i++) {
+            Cursor res2 = mydb.getBasedOnCategoryPTable(distinctCategoryNames.get(i));
+            ArrayList<String> photoPaths = new ArrayList<>();
+            while (res2.moveToNext()) {
+                photoPaths.add(res2.getString(1));
+            }
+            photoPathLists.add(photoPaths);
+        }
+        return photoPathLists;
+    }
+
+    public void initRecyclerView(ArrayList<String> distinctCategoryNames, ArrayList<ArrayList<String>> photoPathLists) {
+        recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv);
+        RecyclerViewAdaptor recyclerViewAdaptor = new RecyclerViewAdaptor(this.getActivity(), distinctCategoryNames, photoPathLists);
+        recyclerView.setAdapter(recyclerViewAdaptor);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 }

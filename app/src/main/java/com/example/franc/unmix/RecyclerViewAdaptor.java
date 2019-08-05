@@ -15,8 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -94,7 +92,6 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
         for (final String currentPhotoPath : currentPhotoPathList) {
             CustomPicture newCustomPicture = new CustomPicture(myContext, currentPhotoPath);
             newCustomPicture.setCustomListener(holder.categoryTV, holder.line);
-
             holder.gridLayout.addView(newCustomPicture);
         }
     }
@@ -115,10 +112,8 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             super(itemView);
             parentLayout = (LinearLayout) itemView.findViewById(R.id.parent_layout);
             categoryTV = (TextView) itemView.findViewById(R.id.cat_name);
-            if (FragmentPage2.ISINLABELVIEWMODE) {
-                categoryTV.setPaintFlags(categoryTV.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-                categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.BOLD_ITALIC), Typeface.BOLD_ITALIC);
-            }
+            categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.BOLD), Typeface.BOLD);
+
             gridLayout = (GridLayout) itemView.findViewById(R.id.grid1);
             line = (ImageView) itemView.findViewById(R.id.line);
 
@@ -139,28 +134,20 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                     ((GridLayout) FragmentPage2.draggedPicture.getParent()).removeView(FragmentPage2.draggedPicture);
                                 }
                                 FragmentPage2.oldGridLayout.addView(FragmentPage2.draggedPicture);
-                                /* Animation for label name blink effect
-                                Animation anim = new AlphaAnimation(0.0f, 1.0f);
-                                anim.setDuration(1400); //You can manage the blinking time with this parameter
-                                anim.setStartOffset(20);
-                                anim.setRepeatMode(Animation.REVERSE);
-                                anim.setRepeatCount(Animation.INFINITE);
-                                FragmentPage2.draggedPicture.labelNameTVE.startAnimation(anim);
-                                */
                             } else {
                                 System.out.println("drop detected");
                             }
                             break;
                         case DragEvent.ACTION_DRAG_ENTERED:
-                            categoryTV.setTypeface(categoryTV.getTypeface(), Typeface.BOLD);
+                            categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
                             line.setVisibility(View.VISIBLE);
                             break;
                         case DragEvent.ACTION_DRAG_EXITED:
-                            categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
+                            categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.BOLD), Typeface.BOLD);
                             line.setVisibility(View.INVISIBLE);
                             break;
                         case DragEvent.ACTION_DROP:
-                            categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
+                            categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.BOLD), Typeface.BOLD);
                             line.setVisibility(View.INVISIBLE);
 
                             newGridView.addView(FragmentPage2.draggedPicture);
