@@ -19,17 +19,11 @@ xmlns:app="http://schemas.android.com/apk/res-auto">
         android:background="@drawable/white_grey_bottom_border_test"
         android:animateLayoutChanges="true"/>
 
-    <Button
-        android:id="@+id/switch_to_label_button"
-        android:layout_width="45dp"
-        android:layout_height="match_parent"
-        android:background="@drawable/ic_edit" />
 
     <Button
         android:id="@+id/add_cat_button"
         android:layout_width="45dp"
         android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
         android:background="@drawable/ic_add_category" />
     <!--
     <Button
@@ -66,8 +60,8 @@ xmlns:app="http://schemas.android.com/apk/res-auto">
         android:id="@+id/appname2"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_toRightOf="@+id/switch_to_label_button"
-        android:layout_toEndOf="@+id/switch_to_label_button"
+        android:layout_toRightOf="@+id/add_cat_button"
+        android:layout_toEndOf="@+id/add_cat_button"
         android:gravity="center"
         android:text="@string/app_name"
         android:textColor="@color/black"

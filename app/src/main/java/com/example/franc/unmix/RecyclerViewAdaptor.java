@@ -78,7 +78,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             for (int g = 0; g < currentGridLayout.getChildCount(); g++) {
                 // Update database to save positions of pictures
                 CustomPicture currentCP = (CustomPicture) currentGridLayout.getChildAt(g);
-                mydb.insertNewRowPTable(currentCP.getPhotoPath(), currentViewHolder.categoryTV.getText().toString(), currentCP.getLabel(), null, null);
+                mydb.insertNewRowPTable(currentCP.getPhotoPath(), currentViewHolder.categoryTV.getText().toString(), currentCP.getLabelName(), null, null);
             }
         }
     }
@@ -93,7 +93,6 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
         for (final String currentPhotoPath : currentPhotoPathList) {
             CustomPicture newCustomPicture = new CustomPicture(myContext, currentPhotoPath);
-            newCustomPicture.displayImageBasedOnMode();
             newCustomPicture.setCustomListener(holder.categoryTV, holder.line);
 
             holder.gridLayout.addView(newCustomPicture);
@@ -104,10 +103,6 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
     public int getItemCount() {
         return categoryNames.size();
     }
-
-
-
-
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -122,7 +117,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             categoryTV = (TextView) itemView.findViewById(R.id.cat_name);
             if (FragmentPage2.ISINLABELVIEWMODE) {
                 categoryTV.setPaintFlags(categoryTV.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-                categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.ITALIC), Typeface.ITALIC);
+                categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.BOLD_ITALIC), Typeface.BOLD_ITALIC);
             }
             gridLayout = (GridLayout) itemView.findViewById(R.id.grid1);
             line = (ImageView) itemView.findViewById(R.id.line);
@@ -141,17 +136,18 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                 System.out.println("no drop detected");
                                 // This is freakin weird, why would dragged pic have a parent only when its the oni child
                                 if (FragmentPage2.draggedPicture.getParent() != null) {
-                                    ((GridLayout)FragmentPage2.draggedPicture.getParent()).removeView(FragmentPage2.draggedPicture);
+                                    ((GridLayout) FragmentPage2.draggedPicture.getParent()).removeView(FragmentPage2.draggedPicture);
                                 }
+                                FragmentPage2.oldGridLayout.addView(FragmentPage2.draggedPicture);
+                                /* Animation for label name blink effect
                                 Animation anim = new AlphaAnimation(0.0f, 1.0f);
                                 anim.setDuration(1400); //You can manage the blinking time with this parameter
                                 anim.setStartOffset(20);
                                 anim.setRepeatMode(Animation.REVERSE);
                                 anim.setRepeatCount(Animation.INFINITE);
-                                FragmentPage2.oldGridLayout.addView(FragmentPage2.draggedPicture);
                                 FragmentPage2.draggedPicture.labelNameTVE.startAnimation(anim);
-                            }
-                            else {
+                                */
+                            } else {
                                 System.out.println("drop detected");
                             }
                             break;
@@ -167,13 +163,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
                             line.setVisibility(View.INVISIBLE);
 
-                            Animation anim = new AlphaAnimation(0.0f, 1.0f);
-                            anim.setDuration(1400); //You can manage the blinking time with this parameter
-                            anim.setStartOffset(20);
-                            anim.setRepeatMode(Animation.REVERSE);
-                            anim.setRepeatCount(Animation.INFINITE);
                             newGridView.addView(FragmentPage2.draggedPicture);
-                            FragmentPage2.draggedPicture.labelNameTVE.startAnimation(anim);
                             boolean hasInsertedData = mydb.updateCategoryNamePTable((String) FragmentPage2.draggedPicture.getPhotoPath(), categoryTV.getText().toString());
                             if (hasInsertedData) {
                                 Toast.makeText(myContext, "Successfully updated cat name", Toast.LENGTH_SHORT).show();
@@ -191,130 +181,127 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             categoryTV.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //allow on click only it is not in edit label mode and category name is custom
-                    if (FragmentPage2.ISINLABELVIEWMODE) {
-                        PopupMenu popupMenu = new PopupMenu(myContext, categoryTV);
-                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-                                switch (item.getItemId()) {
-                                    case R.id.popup_down:
-                                        try {
-                                            int oldIndex = categoryNames.indexOf(categoryTV.getText().toString());
-                                            Collections.swap(categoryNames, oldIndex, oldIndex + 1);
-                                            boolean bool = mydb.deleteAllRowsCTable();
-                                            if (bool) {
-                                                Toast.makeText(myContext, "Successfully deleted all cat name", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Toast.makeText(myContext, "Error deleted all cat name", Toast.LENGTH_SHORT).show();
-                                            }
-                                            for (String catName : categoryNames) {
-                                                mydb.insertNewRowCTable(catName);
-                                            }
-                                            associatedFragment.onResume();
-
-                                        } catch (IndexOutOfBoundsException e) {
+                    PopupMenu popupMenu = new PopupMenu(myContext, categoryTV);
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.popup_down:
+                                    try {
+                                        int oldIndex = categoryNames.indexOf(categoryTV.getText().toString());
+                                        Collections.swap(categoryNames, oldIndex, oldIndex + 1);
+                                        boolean bool = mydb.deleteAllRowsCTable();
+                                        if (bool) {
+                                            Toast.makeText(myContext, "Successfully deleted all cat name", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(myContext, "Error deleted all cat name", Toast.LENGTH_SHORT).show();
                                         }
-                                        break;
-                                    case R.id.popup_up:
-                                        try {
-                                            int oldIndex = categoryNames.indexOf(categoryTV.getText().toString());
-                                            Collections.swap(categoryNames, oldIndex, oldIndex - 1);
-                                            boolean bool = mydb.deleteAllRowsCTable();
-                                            if (bool) {
-                                                Toast.makeText(myContext, "Successfully deleted all cat name", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Toast.makeText(myContext, "Error deleted all cat name", Toast.LENGTH_SHORT).show();
-                                            }
-                                            for (String catName : categoryNames) {
-                                                mydb.insertNewRowCTable(catName);
-                                            }
-                                            associatedFragment.onResume();
-
-                                        } catch (IndexOutOfBoundsException e) {
+                                        for (String catName : categoryNames) {
+                                            mydb.insertNewRowCTable(catName);
                                         }
-                                        break;
-                                    case R.id.popup_remove:
-                                        // Prompts user if he really wants to delete all pictures permanently
-                                        final Dialog myDialog = new Dialog(myContext);
-                                        myDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                        myDialog.setContentView(R.layout.dialog_delete_all_data);
-                                        myDialog.setCancelable(false);
+                                        associatedFragment.onResume();
 
-                                        Button noButton = (Button) myDialog.findViewById(R.id.no_button);
-                                        noButton.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                myDialog.dismiss();
+                                    } catch (IndexOutOfBoundsException e) {
+                                    }
+                                    break;
+                                case R.id.popup_up:
+                                    try {
+                                        int oldIndex = categoryNames.indexOf(categoryTV.getText().toString());
+                                        Collections.swap(categoryNames, oldIndex, oldIndex - 1);
+                                        boolean bool = mydb.deleteAllRowsCTable();
+                                        if (bool) {
+                                            Toast.makeText(myContext, "Successfully deleted all cat name", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(myContext, "Error deleted all cat name", Toast.LENGTH_SHORT).show();
+                                        }
+                                        for (String catName : categoryNames) {
+                                            mydb.insertNewRowCTable(catName);
+                                        }
+                                        associatedFragment.onResume();
+
+                                    } catch (IndexOutOfBoundsException e) {
+                                    }
+                                    break;
+                                case R.id.popup_remove:
+                                    // Prompts user if he really wants to delete all pictures permanently
+                                    final Dialog myDialog = new Dialog(myContext);
+                                    myDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                    myDialog.setContentView(R.layout.dialog_delete_all_data);
+                                    myDialog.setCancelable(false);
+
+                                    Button noButton = (Button) myDialog.findViewById(R.id.no_button);
+                                    noButton.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            myDialog.dismiss();
+                                        }
+                                    });
+
+                                    Button yesButton = (Button) myDialog.findViewById(R.id.yes_button);
+                                    yesButton.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            boolean hasDeletedCatNameData = mydb.deleteRowCTable(categoryTV.getText().toString());
+                                            if (hasDeletedCatNameData) {
+                                                Toast.makeText(myContext, "Successfully deleted cat name", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(myContext, "Error deleted cat name", Toast.LENGTH_SHORT).show();
                                             }
-                                        });
+                                            parentLayout.removeAllViews();
+                                            gridLayout.removeAllViews();
 
-                                        Button yesButton = (Button) myDialog.findViewById(R.id.yes_button);
-                                        yesButton.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                boolean hasDeletedCatNameData = mydb.deleteRowCTable(categoryTV.getText().toString());
-                                                if (hasDeletedCatNameData) {
-                                                    Toast.makeText(myContext, "Successfully deleted cat name", Toast.LENGTH_SHORT).show();
+                                            ActivityMain.swipeAdaptor.getItem(2).onPause();
+                                            ActivityMain.swipeAdaptor.getItem(2).onResume();
+                                            // Refresh middle page
+                                            ActivityMain.swipeAdaptor.getItem(1).onResume();
+
+                                            myDialog.dismiss();
+                                        }
+                                    });
+                                    myDialog.show();
+                                    break;
+                                case R.id.popup_edit:
+                                    final Dialog nagDialog = new Dialog(myContext);
+                                    nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                    nagDialog.setContentView(R.layout.dialog_edit_cat_name);
+
+                                    //Set add category button on click listener
+                                    Button submitButton = (Button) nagDialog.findViewById(R.id.button2);
+                                    submitButton.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            EditText categoryNameET = (EditText) nagDialog.findViewById(R.id.editT2);
+                                            String newCategoryName = categoryNameET.getText().toString().trim();
+                                            String oldCategoryName = categoryTV.getText().toString().trim();
+                                            if (!MyUtilities.hasDuplicatedCatNamesInCTable(newCategoryName, myContext)) {
+                                                boolean updated = mydb.updateCategoryNameDataCTable(oldCategoryName, newCategoryName);
+                                                boolean updated2 = mydb.updateAllCategoryNamePTable(oldCategoryName, newCategoryName);
+                                                if (updated && updated2) {
+                                                    categoryTV.setText(newCategoryName);
+                                                    Toast.makeText(myContext, "successfully updated cat name and pic cat name", Toast.LENGTH_LONG).show();
                                                 } else {
-                                                    Toast.makeText(myContext, "Error deleted cat name", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(myContext, "Error updating cat name and pic cat name", Toast.LENGTH_LONG).show();
                                                 }
-                                                parentLayout.removeAllViews();
-                                                gridLayout.removeAllViews();
-
-                                                ActivityMain.swipeAdaptor.getItem(2).onPause();
-                                                ActivityMain.swipeAdaptor.getItem(2).onResume();
-                                                // Refresh middle page
-                                                ActivityMain.swipeAdaptor.getItem(1).onResume();
-
-                                                myDialog.dismiss();
-                                            }
-                                        });
-                                        myDialog.show();
-                                        break;
-                                    case R.id.popup_edit:
-                                        final Dialog nagDialog = new Dialog(myContext);
-                                        nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                        nagDialog.setContentView(R.layout.dialog_edit_cat_name);
-
-                                        //Set add category button on click listener
-                                        Button submitButton = (Button) nagDialog.findViewById(R.id.button2);
-                                        submitButton.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                EditText categoryNameET = (EditText) nagDialog.findViewById(R.id.editT2);
-                                                String newCategoryName = categoryNameET.getText().toString().trim();
-                                                String oldCategoryName = categoryTV.getText().toString().trim();
-                                                if (!MyUtilities.hasDuplicatedCatNamesInCTable(newCategoryName, myContext)) {
-                                                    boolean updated = mydb.updateCategoryNameDataCTable(oldCategoryName, newCategoryName);
-                                                    boolean updated2 = mydb.updateAllCategoryNamePTable(oldCategoryName, newCategoryName);
-                                                    if (updated && updated2) {
-                                                        categoryTV.setText(newCategoryName);
-                                                        Toast.makeText(myContext, "successfully updated cat name and pic cat name", Toast.LENGTH_LONG).show();
-                                                    } else {
-                                                        Toast.makeText(myContext, "Error updating cat name and pic cat name", Toast.LENGTH_LONG).show();
-                                                    }
-                                                    nagDialog.dismiss();
-                                                } else {
-                                                    Toast.makeText(myContext, "Unable to edit label, you already have an exact label", Toast.LENGTH_LONG).show();
-                                                }
-                                            }
-                                        });
-                                        nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                            @Override
-                                            public void onCancel(DialogInterface dialog) {
                                                 nagDialog.dismiss();
+                                            } else {
+                                                Toast.makeText(myContext, "Unable to edit label, you already have an exact label", Toast.LENGTH_LONG).show();
                                             }
-                                        });
+                                        }
+                                    });
+                                    nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                        @Override
+                                        public void onCancel(DialogInterface dialog) {
+                                            nagDialog.dismiss();
+                                        }
+                                    });
 
-                                        nagDialog.show();
-                                }
-                                return true;
+                                    nagDialog.show();
                             }
-                        });
-                        popupMenu.inflate(R.menu.pop_menu);
-                        popupMenu.show();
-                    }
+                            return true;
+                        }
+                    });
+                    popupMenu.inflate(R.menu.pop_menu);
+                    popupMenu.show();
                 }
             });
         }

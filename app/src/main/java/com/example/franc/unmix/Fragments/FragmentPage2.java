@@ -81,13 +81,9 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         // App name textview
         appNameTV = (TextView) getActivity().findViewById(R.id.appname2);
 
-        // Switch to label view button
-        switchLabelViewButton = (Button) getActivity().findViewById(R.id.switch_to_label_button);
-        switchLabelViewButton.setOnTouchListener(this);
         // Photo Button
         addCatButton = (Button) getActivity().findViewById(R.id.add_cat_button);
         addCatButton.setOnTouchListener(this);
-
 
     }
 
@@ -101,12 +97,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     @Override
     public void onResume() {
         super.onResume();
-        if (FragmentPage2.ISINLABELVIEWMODE) {
-            addCatButton.setVisibility(View.VISIBLE);
-
-        } else {
-            addCatButton.setVisibility(View.INVISIBLE);
-        }
 
         // Get data from database
         ArrayList<String> distinctCategoryNames = setUpDistinctCategoryNamesList();
@@ -180,22 +170,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 //If user's touch up is still inside button
                 if (MyUtilities.touchUpInButton(motionEvent, (Button) view)) {
                     switch (view.getId()) {
-                        case R.id.switch_to_label_button:
-                            if (ISINLABELVIEWMODE) {
-                                ISINLABELVIEWMODE = false;
-                            } else {
-                                ISINLABELVIEWMODE = true;
-                            }
-
-                            //if (user pressed for the first time / user wants information to be repeated) {
-                            //display dialog
-                            //on cancel
-                            // Refreshes this page
-                            onPause();
-                            onResume();
-                            //}
-                            break;
-
                         case R.id.add_cat_button:
                             MyUtilities.printOutPTable(this.getActivity());
                             MyUtilities.printOutCTable(this.getActivity());
@@ -258,7 +232,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 ObjectAnimator.ofPropertyValuesHolder(topTabSpace, alphaDown).start();
                 ObjectAnimator.ofPropertyValuesHolder(addCatButton, alphaDown).start();
                 ObjectAnimator.ofPropertyValuesHolder(appNameTV, alphaDown).start();
-                ObjectAnimator.ofPropertyValuesHolder(switchLabelViewButton, alphaDown).start();
 
                 // Appear
                 ObjectAnimator.ofPropertyValuesHolder(dustbinTV, scaleXUp, scaleYUp, alphaUp).start();
@@ -274,7 +247,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 ObjectAnimator.ofPropertyValuesHolder(topTabSpace, alphaUp).start();
                 ObjectAnimator.ofPropertyValuesHolder(addCatButton, alphaUp).start();
                 ObjectAnimator.ofPropertyValuesHolder(appNameTV, alphaUp).start();
-                ObjectAnimator.ofPropertyValuesHolder(switchLabelViewButton, alphaUp).start();
 
                 break;
             case DragEvent.ACTION_DRAG_ENTERED:
