@@ -5,30 +5,35 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="27dp">
+
+        <ImageView
+            android:id="@+id/cat_option"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/cat_option" />
 
         <TextView
             android:id="@+id/cat_name"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:fontFamily="casual"
-            android:paddingEnd="0dp"
-            android:paddingStart="6dp"
-            android:paddingTop="5dp"
+            android:paddingTop="4dp"
             android:text="test"
             android:textColor="@color/black"
             android:textSize="15dp" />
 
-
-    </RelativeLayout>
+    </LinearLayout>
 
     <GridLayout
         android:id="@+id/grid1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:columnCount="4"></GridLayout>
+        android:columnCount="4">
+    </GridLayout>
 
     <ImageView
         android:id="@+id/line"

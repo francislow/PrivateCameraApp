@@ -155,7 +155,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                                     }
                                 }
                             });
-
                             nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                                 @Override
                                 public void onCancel(DialogInterface dialog) {
@@ -186,6 +185,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 // Remove
                 ObjectAnimator.ofPropertyValuesHolder(topTabSpace, alphaDown).start();
                 ObjectAnimator.ofPropertyValuesHolder(addCatButton, alphaDown).start();
+                ObjectAnimator.ofPropertyValuesHolder(informationButton, alphaDown).start();
                 ObjectAnimator.ofPropertyValuesHolder(appNameTV, alphaDown).start();
 
                 // Appear
@@ -201,6 +201,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 // Appear
                 ObjectAnimator.ofPropertyValuesHolder(topTabSpace, alphaUp).start();
                 ObjectAnimator.ofPropertyValuesHolder(addCatButton, alphaUp).start();
+                ObjectAnimator.ofPropertyValuesHolder(informationButton, alphaUp).start();
                 ObjectAnimator.ofPropertyValuesHolder(appNameTV, alphaUp).start();
 
                 break;

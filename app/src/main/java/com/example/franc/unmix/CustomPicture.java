@@ -111,6 +111,30 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
             whiteSpace.addView(labelNameTVN);
             labelNameTVN.setText(currentLabelName);
         }
+        /* If there is no label name */
+        else {
+            // Add a layer to show each picture label
+            // Set up white space to show label (normal mode)
+            whiteSpace = new RelativeLayout(context);
+            whiteSpace.setBackground(context.getResources().getDrawable(R.drawable.white_rectangle));
+            whiteSpace.getBackground().setAlpha(80);
+
+            RelativeLayout.LayoutParams lp3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, whiteSpaceHeight);
+            lp3.setMargins(0, customPictureLength - whiteSpaceHeight, 0, 0);
+            whiteSpace.setLayoutParams(lp3);
+            this.addView(whiteSpace);
+
+            // Set up label name
+            labelNameTVN = new TextView(context);
+            labelNameTVN.setTag("textview");
+            LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            labelNameTVN.setLayoutParams(lp2);
+            labelNameTVN.setGravity(Gravity.CENTER);
+            labelNameTVN.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
+            labelNameTVN.setTypeface(labelNameTVN.getTypeface(), Typeface.BOLD_ITALIC);
+            whiteSpace.addView(labelNameTVN);
+            //labelNameTVN.setText("+");
+        }
     }
 
     // Must be run after displayPicture() is called
@@ -250,7 +274,6 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
                 break;
         }
         return true;
-
     }
 
     // Must be run after displayPicture() is called

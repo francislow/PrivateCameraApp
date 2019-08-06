@@ -107,9 +107,12 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
         TextView categoryTV;
         GridLayout gridLayout;
         ImageView line;
+        ImageView catOption;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            catOption = (ImageView) itemView.findViewById(R.id.cat_option);
+
             parentLayout = (LinearLayout) itemView.findViewById(R.id.parent_layout);
             categoryTV = (TextView) itemView.findViewById(R.id.cat_name);
             categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.BOLD), Typeface.BOLD);
@@ -121,7 +124,6 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                 @Override          // v -> parentlayout
                 public boolean onDrag(View v, DragEvent event) {
                     GridLayout newGridView = (GridLayout) ((LinearLayout) v).getChildAt(1);
-
                     switch (event.getAction()) {
                         case DragEvent.ACTION_DRAG_STARTED:
                             break;
@@ -165,10 +167,10 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                 }
             });
 
-            categoryTV.setOnClickListener(new View.OnClickListener() {
+            catOption.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PopupMenu popupMenu = new PopupMenu(myContext, categoryTV);
+                    PopupMenu popupMenu = new PopupMenu(myContext, catOption);
                     popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
