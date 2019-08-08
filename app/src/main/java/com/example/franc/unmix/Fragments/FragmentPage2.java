@@ -49,7 +49,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     private TextView dustbinTV;
 
     private RecyclerView recyclerView;
-    public static RecyclerViewAdaptor recyclerViewAdaptor;
+    public RecyclerViewAdaptor recyclerViewAdaptor;
 
     // Constants when drag of a specific picture started
     public static GridLayout oldGridLayout;
@@ -140,16 +140,12 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                                 public void onClick(View v) {
                                     EditText categoryNameText = (EditText) nagDialog.findViewById(R.id.editT1);
                                     String newCategoryName = categoryNameText.getText().toString().trim();
-                                    if (!MyUtilities.hasDuplicatedCatNamesInCTable(newCategoryName, getActivity())) {
-                                        boolean hasInsertedData = mydb.insertNewRowCTable(newCategoryName);
-                                        if (hasInsertedData) {
-                                            Toast.makeText(getActivity(), "successfully added to database", Toast.LENGTH_LONG).show();
-                                            // Refreshes this page
-                                            onPause();
-                                            onResume();
-                                        } else {
-                                            Toast.makeText(getActivity(), "Error adding to database", Toast.LENGTH_LONG).show();
-                                        }
+                                    if (!MyUtilities.hasDuplicatedCatNames(newCategoryName, recyclerViewAdaptor.categoryNames)) {
+                                        // Update recycler view
+                                        recyclerViewAdaptor.categoryNames.add(newCategoryName);
+                                        recyclerViewAdaptor.photoPathLists.add(new ArrayList<String>());
+                                        int currentIndex = recyclerViewAdaptor.categoryNames.indexOf(newCategoryName);
+                                        recyclerViewAdaptor.notifyItemInserted(currentIndex);
                                         nagDialog.dismiss();
                                     } else {
                                         Toast.makeText(getActivity(), "Unable to add label, you already have an exact label", Toast.LENGTH_LONG).show();
@@ -218,12 +214,16 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
             case DragEvent.ACTION_DROP:
                 dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
                 dustbinTV.setTypeface(Typeface.create(dustbinTV.getTypeface(), Typeface.ITALIC), Typeface.ITALIC);
+
+                /* Don't need to do this since recyclerview removed the dragged picture already after drag
+                started. If dropped anywhere else except top remove bar, it will add back to original grid
                 // User wants to delete the photo
-                oldGridLayout.removeView(draggedPicture);
-                boolean hasDeletedData = mydb.deleteRowPTable((String) draggedPicture.getPhotoPath());
-                if (hasDeletedData) {
-                    Toast.makeText(getActivity(), "Successfully deleted the picture", Toast.LENGTH_SHORT).show();
-                }
+                // Update recycler view
+                int currentIndex = recyclerViewAdaptor.categoryNames.indexOf(draggedPicture.getCatName());
+                recyclerViewAdaptor.photoPathLists.get(currentIndex).remove(draggedPicture.getPhotoPath());
+                recyclerViewAdaptor.notifyItemChanged(currentIndex);
+                */
+
                 // Refresh middle page
                 ActivityMain.swipeAdaptor.getItem(1).onResume();
                 break;

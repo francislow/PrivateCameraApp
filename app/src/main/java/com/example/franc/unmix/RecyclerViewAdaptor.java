@@ -41,8 +41,8 @@ import static android.content.ContentValues.TAG;
  */
 
 public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdaptor.ViewHolder> {
-    private ArrayList<String> categoryNames = new ArrayList<>();
-    private ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
+    public ArrayList<String> categoryNames = new ArrayList<>();
+    public ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
     private Context myContext;
     // associatedFragment = FragmentPage2
     private Fragment associatedFragment;
