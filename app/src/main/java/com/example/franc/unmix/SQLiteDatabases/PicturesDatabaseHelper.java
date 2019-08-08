@@ -150,6 +150,17 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public boolean deletePicturesPTable(String categoryName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        long result = db.delete(PICTURES_TABLE_NAME, "ABSPATH = ?", new String[] {categoryName});
+
+        if (result == -1) {
+            return false;
+        }
+        return true;
+    }
+
     public Cursor getLabelFromPathPTable(String pathName) {
         SQLiteDatabase db = this.getWritableDatabase();
         //Cursor res = db.rawQuery("select * from " + PICTURES_TABLE_NAME, new String[] {pathName});

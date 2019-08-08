@@ -14,6 +14,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by franc on 24/6/2019.
@@ -27,6 +28,15 @@ public class MyUtilities {
         Cursor res = mydb.getAllDataCTable();
         while (res.moveToNext()) {
             if (res.getString(1).equals(categoryNameToCheck)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasDuplicatedCatNames(String categoryNameToCheck, ArrayList<String> categoryNames) {
+        for (String categoryName : categoryNames) {
+            if (categoryName.equals(categoryNameToCheck)) {
                 return true;
             }
         }

@@ -49,6 +49,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     private TextView dustbinTV;
 
     private RecyclerView recyclerView;
+    public static RecyclerViewAdaptor recyclerViewAdaptor;
 
     // Constants when drag of a specific picture started
     public static GridLayout oldGridLayout;
@@ -282,7 +283,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
 
     public void initRecyclerView(ArrayList<String> distinctCategoryNames, ArrayList<ArrayList<String>> photoPathLists) {
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv);
-        RecyclerViewAdaptor recyclerViewAdaptor = new RecyclerViewAdaptor(this.getActivity(), distinctCategoryNames, photoPathLists);
+        recyclerViewAdaptor = new RecyclerViewAdaptor(this.getActivity(), distinctCategoryNames, photoPathLists);
         recyclerView.setAdapter(recyclerViewAdaptor);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }

@@ -41,7 +41,7 @@ import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
  * Created by franc on 2/7/2019.
  */
 
-public class CustomPicture extends RelativeLayout implements View.OnClickListener, View.OnLongClickListener, View.OnDragListener {
+public class CustomPicture extends RelativeLayout implements View.OnClickListener, View.OnDragListener {
     private Context context;
     private ImageView newImageView;
     private RelativeLayout whiteSpace;
@@ -146,7 +146,6 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
         if (labelNameTVN != null) {
             labelNameTVN.setOnClickListener(this);
         }
-        this.setOnLongClickListener(this);
         this.setOnDragListener(this);
     }
 
@@ -214,23 +213,6 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
     }
 
     @Override
-    public boolean onLongClick(View view) {
-        ClipData data = ClipData.newPlainText("", "");
-        //View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-        View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view);
-        view.startDrag(data, shadowBuilder, view, 0);
-        // Drag started
-        // Set constants after drag started
-        FragmentPage2.oldGridLayout = (GridLayout) view.getParent();
-        FragmentPage2.draggedPicture = (CustomPicture) view;
-
-        // Remove dragged picture form old layout
-        FragmentPage2.oldGridLayout.removeView(view);
-
-        return true;
-    }
-
-    @Override
     public boolean onDrag(View v, DragEvent event) {
         // v -> each custom picture
         switch (event.getAction()) {
@@ -286,42 +268,9 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
         return this.currentLabelName;
     }
 
-
-    private static class MyDragShadowBuilder extends View.DragShadowBuilder {
-        private Point mScaleFactor;
-
-        public MyDragShadowBuilder(View v) {
-            super(v);
-        }
-
-        // Defines a callback that sends the drag shadow dimensions and touch point back to the system.
-        @Override
-        public void onProvideShadowMetrics(Point size, Point touch) {
-            // Defines local variables
-            int width;
-            int height;
-
-            // Sets the width of the shadow to half the width of the original View
-            width = getView().getWidth() * 2 / 5;
-
-            // Sets the height of the shadow to half the height of the original View
-            height = getView().getHeight() * 2 / 5;
-
-            // Sets the size parameter's width and height values. These get back to the system
-            // through the size parameter.
-            size.set(width, height);
-            // Sets size parameter to member that will be used for scaling shadow image.
-            mScaleFactor = size;
-
-            // Sets the touch point's position to be in the middle of the drag shadow
-            touch.set(width / 2, height / 2);
-        }
-
-        @Override
-        public void onDrawShadow(Canvas canvas) {
-            // Draws the ColorDrawable in the Canvas passed in from the system.
-            canvas.scale(mScaleFactor.x / (float) getView().getWidth(), mScaleFactor.y / (float) getView().getHeight());
-            getView().draw(canvas);
-        }
+    // Must be run after displayPicture() is called
+    public String getCatName() {
+        return this.categoryTV.getText().toString();
     }
+
 }
