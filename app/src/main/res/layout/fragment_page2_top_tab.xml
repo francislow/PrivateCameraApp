@@ -16,7 +16,7 @@
             android:id="@+id/top_tab_space_2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/white_grey_bottom_border_test"
+            android:background="@drawable/remove_tb"
             android:animateLayoutChanges="true"/>
 
 
