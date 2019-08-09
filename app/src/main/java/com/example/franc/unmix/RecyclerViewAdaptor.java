@@ -98,7 +98,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: ran " + categoryNames.get(position));
         // Add category name
-        String currentCategoryName = categoryNames.get(position);
+        final String currentCategoryName = categoryNames.get(position);
         holder.categoryTV.setText(currentCategoryName);
         holder.categoryTV.setTypeface(Typeface.create(holder.categoryTV.getTypeface(), Typeface.BOLD), Typeface.BOLD);
 
@@ -222,6 +222,10 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
                     final EditText labelNameET = (EditText) nagDialog.findViewById(R.id.editT4);
                     labelNameET.setText(currentLabelName);
+                    labelNameET.setSelection(currentLabelName.length());
+                    // Automatically bring up keyboard
+                    labelNameET.requestFocus();
+                    nagDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
                     //Set add category button on click listener
                     Button submitButton = (Button) nagDialog.findViewById(R.id.button4);
@@ -371,6 +375,13 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                 final Dialog nagDialog = new Dialog(myContext);
                                 nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                                 nagDialog.setContentView(R.layout.dialog_edit_cat_name);
+
+                                EditText catNameET = (EditText) nagDialog.findViewById(R.id.editT2);
+                                catNameET.setText(currentCategoryName);
+                                catNameET.setSelection(currentCategoryName.length());
+                                // Automatically bring up keyboard
+                                catNameET.requestFocus();
+                                nagDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
                                 //Set add category button on click listener
                                 Button submitButton = (Button) nagDialog.findViewById(R.id.button2);

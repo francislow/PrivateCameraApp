@@ -20,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -138,6 +139,11 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                             final Dialog nagDialog = new Dialog(getActivity());
                             nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                             nagDialog.setContentView(R.layout.dialog_insert_cat_name);
+
+                            EditText catNameET = (EditText) nagDialog.findViewById(R.id.editT1);
+                            // Automatically bring up keyboard
+                            catNameET.requestFocus();
+                            nagDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
                             //Set add category button on click listener
                             Button submitButton = (Button) nagDialog.findViewById(R.id.button1);
