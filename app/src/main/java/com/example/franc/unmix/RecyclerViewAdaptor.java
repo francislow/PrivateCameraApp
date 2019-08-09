@@ -77,9 +77,14 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
         }
 
         mydb.deleteAllRowsPTable();
-        for (ArrayList<String> photoPathList : photoPathLists) {
+        for (int i = 0; i < photoPathLists.size(); i++) {
+            ArrayList<String> photoPathList = photoPathLists.get(i);
+            //ArrayList<String> labelNameList = labelNameLists.get(i);
+
             String categoryName = categoryNames.get(photoPathLists.indexOf(photoPathList));
-            for (String photoPathName : photoPathList) {
+            for (int j = 0; j < photoPathList.size(); j++) {
+                String photoPathName = photoPathList.get(j);
+                //String labelName = labelNameList.get(j);
                 mydb.insertNewRowPTable(photoPathName, categoryName, null, null, null);
             }
         }
