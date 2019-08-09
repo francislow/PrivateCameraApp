@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
@@ -35,6 +36,8 @@ import com.example.franc.unmix.Utilities.MyUtilities;
 
 import java.util.ArrayList;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by franc on 1/6/2019.
  */
@@ -54,6 +57,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     // Constants when drag of a specific picture started
     public static GridLayout oldGridLayout;
     public static CustomPicture draggedPicture;
+    public static int oldGridPosition;
 
     @Nullable
     @Override
@@ -124,6 +128,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 if (MyUtilities.touchUpInButton(motionEvent, (Button) view)) {
                     switch (view.getId()) {
                         case R.id.information_button:
+                            MyUtilities.printOutPTable(getActivity());
                             break;
                         case R.id.add_cat_button:
                             MyUtilities.printOutPTable(this.getActivity());
@@ -214,6 +219,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
             case DragEvent.ACTION_DROP:
                 dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
                 dustbinTV.setTypeface(Typeface.create(dustbinTV.getTypeface(), Typeface.ITALIC), Typeface.ITALIC);
+                Log.d(TAG, "onDrag: Drop detected at remove bar");
 
                 /* Don't need to do this since recyclerview removed the dragged picture already after drag
                 started. If dropped anywhere else except top remove bar, it will add back to original grid
@@ -286,5 +292,9 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         recyclerViewAdaptor = new RecyclerViewAdaptor(this.getActivity(), distinctCategoryNames, photoPathLists);
         recyclerView.setAdapter(recyclerViewAdaptor);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    public RecyclerViewAdaptor getRecyclerViewAdaptor() {
+        return recyclerViewAdaptor;
     }
 }

@@ -153,7 +153,7 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
     public boolean deletePicturesPTable(String categoryName) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        long result = db.delete(PICTURES_TABLE_NAME, "ABSPATH = ?", new String[] {categoryName});
+        long result = db.delete(PICTURES_TABLE_NAME, "CATEGORYNAME = ?", new String[] {categoryName});
 
         if (result == -1) {
             return false;

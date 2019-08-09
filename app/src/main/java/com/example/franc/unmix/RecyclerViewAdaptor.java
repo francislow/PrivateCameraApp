@@ -47,7 +47,6 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
     // associatedFragment = FragmentPage2
     private Fragment associatedFragment;
     private PicturesDatabaseHelper mydb;
-    private boolean first_detection;
 
 
     public RecyclerViewAdaptor(Context context, ArrayList<String> categoryNames, ArrayList<ArrayList<String>> photoPathLists) {
@@ -65,38 +64,25 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_page2_item_layout, parent, false);
         return new ViewHolder(view);
     }
-/*
-    // This is called when adaptor is set to null in onPause() of fragment/ activity
-    // Thus will be called when fragment is onPaused();
+
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         Log.d(TAG, "onDetachedFromRecyclerView: ran");
+        // Update database
+        mydb.deleteAllRowsCTable();
+        for (String categoryName : categoryNames) {
+            mydb.insertNewRowCTable(categoryName);
+        }
 
-        // Delete all pictures in database
         mydb.deleteAllRowsPTable();
-    }
-
-
-    // This runs after onDetachedFromRecyclerView
-    @Override
-    public void onViewDetachedFromWindow(@NonNull ViewHolder holder) {
-        super.onViewDetachedFromWindow(holder);
-        Log.d(TAG, "onViewDetachedFromWindow: " + holder.categoryTV.getText());
-
-        // Delete all pictures in database under this holder category
-        // (Just to be save since scrolling down will run on view detach)
-        mydb.deletePicturesPTable(holder.categoryTV.getText().toString());
-
-        // Save pictures properties into database
-        GridLayout currentGridLayout = holder.gridLayout;
-        for (int g = 0; g < currentGridLayout.getChildCount(); g++) {
-            // Update database to save positions of pictures
-            CustomPicture currentCP = (CustomPicture) currentGridLayout.getChildAt(g);
-            mydb.insertNewRowPTable(currentCP.getPhotoPath(), holder.categoryTV.getText().toString(), currentCP.getLabelName(), null, null);
+        for (ArrayList<String> photoPathList : photoPathLists) {
+            String categoryName = categoryNames.get(photoPathLists.indexOf(photoPathList));
+            for (String photoPathName : photoPathList) {
+                mydb.insertNewRowPTable(photoPathName, categoryName, null, null, null);
+            }
         }
     }
-    */
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
@@ -109,7 +95,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
         ArrayList<String> currentPhotoPathList = photoPathLists.get(position);
         holder.gridLayout.removeAllViews();
         for (final String currentPhotoPath : currentPhotoPathList) {
-            CustomPicture newCustomPicture = new CustomPicture(myContext, currentPhotoPath);
+            final CustomPicture newCustomPicture = new CustomPicture(myContext, currentPhotoPath);
             newCustomPicture.setCustomListener(holder.categoryTV, holder.line);
             holder.gridLayout.addView(newCustomPicture);
 
@@ -117,6 +103,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             newCustomPicture.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
+                    Log.d(TAG, "onLongClick: on dragged picture ran");
                     ClipData data = ClipData.newPlainText("", "");
                     //View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
                     View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view);
@@ -125,10 +112,57 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                     // Set constants after drag started
                     FragmentPage2.oldGridLayout = (GridLayout) view.getParent();
                     FragmentPage2.draggedPicture = (CustomPicture) view;
+                    FragmentPage2.oldGridPosition = photoPathLists.get(holder.getAdapterPosition()).indexOf(((CustomPicture) view).getPhotoPath());
 
                     // Update recycler view
                     photoPathLists.get(holder.getAdapterPosition()).remove(((CustomPicture) view).getPhotoPath());
-                    notifyItemChanged(holder.getAdapterPosition());
+                    // For some reason notify change removes drop detection for the holder
+                    //newCustomPicture.setVisibility(View.GONE);
+                    holder.gridLayout.removeView(newCustomPicture);
+                    //notifyItemChanged(holder.getAdapterPosition());
+                    return true;
+                }
+            });
+
+            // set drag listeners for custom pictures
+            newCustomPicture.setOnDragListener(new View.OnDragListener() {
+                @Override
+                public boolean onDrag(View v, DragEvent event) {
+                    // v -> each custom picture
+                    switch (event.getAction()) {
+                        case DragEvent.ACTION_DRAG_STARTED:
+                            break;
+                        case DragEvent.ACTION_DRAG_ENDED:
+                            if (event.getResult()) {
+                                Log.d(TAG, "onDrag: Drop detected at custom picture");
+                            } else {
+                                Log.d(TAG, "onDrag: No drop detected at custom picture");
+                                int oldCatPosition = categoryNames.indexOf(FragmentPage2.draggedPicture.getCatName());
+                                if (!photoPathLists.get(oldCatPosition).contains(FragmentPage2.draggedPicture.getPhotoPath())) {
+                                    // Update recycler view
+                                    photoPathLists.get(oldCatPosition).add(FragmentPage2.oldGridPosition, FragmentPage2.draggedPicture.getPhotoPath());
+                                    notifyItemChanged(oldCatPosition);
+                                }
+                            }
+                            break;
+                        case DragEvent.ACTION_DRAG_ENTERED:
+                            Log.d(TAG, "onDrag: entered " + newCustomPicture.getPhotoPath());
+                            break;
+                        case DragEvent.ACTION_DRAG_EXITED:
+                            break;
+                        /* User dropped into one of the custom picture */
+                        case DragEvent.ACTION_DROP:
+                            Log.d(TAG, "onDrag: Dropped at custompicture");
+                            holder.categoryTV.setTypeface(Typeface.create(holder.categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
+                            holder.line.setVisibility(View.INVISIBLE);
+
+                            int currentChildIndex = photoPathLists.get(categoryNames.indexOf(newCustomPicture.getCatName())).indexOf(newCustomPicture.getPhotoPath());
+                            photoPathLists.get(holder.getAdapterPosition()).add(currentChildIndex, FragmentPage2.draggedPicture.getPhotoPath());
+                            notifyItemChanged(holder.getAdapterPosition());
+                            break;
+                        default:
+                            break;
+                    }
                     return true;
                 }
             });
@@ -140,18 +174,18 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             public boolean onDrag(View v, DragEvent event) {
                 switch (event.getAction()) {
                     case DragEvent.ACTION_DRAG_STARTED:
-                        first_detection = true;
                         break;
                     case DragEvent.ACTION_DRAG_ENDED:
                         // if user did not drop in any on drag detection areas
-                        if (!event.getResult() && first_detection) {
+                        if (!event.getResult()) {
                             Log.d(TAG, "onDrag: No Drop Detected parent layout");
-                            // Update recycler view
-                            int oldPosition = categoryNames.indexOf(FragmentPage2.draggedPicture.getCatName());
-                            photoPathLists.get(oldPosition).add(FragmentPage2.draggedPicture.getPhotoPath());
-                            notifyItemChanged(oldPosition);
+                            int oldCatPosition = categoryNames.indexOf(FragmentPage2.draggedPicture.getCatName());
+                            if (!photoPathLists.get(oldCatPosition).contains(FragmentPage2.draggedPicture.getPhotoPath())) {
+                                // Update recycler view
+                                photoPathLists.get(oldCatPosition).add(FragmentPage2.oldGridPosition, FragmentPage2.draggedPicture.getPhotoPath());
+                                notifyItemChanged(oldCatPosition);
+                            }
                         }
-                        first_detection = false;
                         break;
                     case DragEvent.ACTION_DRAG_ENTERED:
                         holder.categoryTV.setTypeface(Typeface.create(holder.categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);

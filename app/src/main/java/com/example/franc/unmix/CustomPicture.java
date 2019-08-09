@@ -41,7 +41,7 @@ import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
  * Created by franc on 2/7/2019.
  */
 
-public class CustomPicture extends RelativeLayout implements View.OnClickListener, View.OnDragListener {
+public class CustomPicture extends RelativeLayout implements View.OnClickListener {
     private Context context;
     private ImageView newImageView;
     private RelativeLayout whiteSpace;
@@ -67,10 +67,11 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
         whiteSpaceHeight = customPictureLength / 3;
 
         // Get the label for this custom picture
-        mydb = new PicturesDatabaseHelper(context);
+        /*mydb = new PicturesDatabaseHelper(context);
         Cursor res = mydb.getLabelFromPathPTable(photoPath);
         res.moveToNext();
-        currentLabelName = res.getString(3);
+        currentLabelName = res.getString(3);*/
+        currentLabelName = null;
 
         // Set up custompicture (Relativelayout) width and height
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(customPictureLength, customPictureLength);
@@ -133,7 +134,6 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
             labelNameTVN.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
             labelNameTVN.setTypeface(labelNameTVN.getTypeface(), Typeface.BOLD_ITALIC);
             whiteSpace.addView(labelNameTVN);
-            //labelNameTVN.setText("+");
         }
     }
 
@@ -146,7 +146,6 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
         if (labelNameTVN != null) {
             labelNameTVN.setOnClickListener(this);
         }
-        this.setOnDragListener(this);
     }
 
     @Override
@@ -209,53 +208,6 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
             });
             nagDialog.show();
         }
-
-    }
-
-    @Override
-    public boolean onDrag(View v, DragEvent event) {
-        // v -> each custom picture
-        switch (event.getAction()) {
-            case DragEvent.ACTION_DRAG_STARTED:
-                System.out.println("Custom Picture Drag Started");
-                break;
-            case DragEvent.ACTION_DRAG_ENDED:
-                System.out.println("Custom Picture Drag Ended");
-                /* If user did not drop into any of the custom picture */
-                if (!event.getResult()) {
-                    System.out.println("Custom Picture did not detect drop");
-                    // This is freakin weird, why would dragged pic have a parent only when its the oni child
-                    if (FragmentPage2.draggedPicture.getParent() != null) {
-                        ((GridLayout) FragmentPage2.draggedPicture.getParent()).removeView(FragmentPage2.draggedPicture);
-                    }
-                    FragmentPage2.oldGridLayout.addView(FragmentPage2.draggedPicture);
-                }
-                break;
-            case DragEvent.ACTION_DRAG_ENTERED:
-                System.out.println("Entered Custom Picture Detection Frame");
-                break;
-            case DragEvent.ACTION_DRAG_EXITED:
-                System.out.println("Exited Custom Picture Detection Frame");
-                break;
-
-            /* User dropped into one of the custom picture */
-            case DragEvent.ACTION_DROP:
-                categoryTV.setTypeface(Typeface.create(categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
-                line.setVisibility(View.INVISIBLE);
-
-                GridLayout newGridLayout = (GridLayout) v.getParent();
-                newGridLayout.addView(FragmentPage2.draggedPicture, newGridLayout.indexOfChild(v));
-                boolean hasInsertedData = mydb.updateCategoryNamePTable(FragmentPage2.draggedPicture.getPhotoPath(), categoryTV.getText().toString());
-                if (hasInsertedData) {
-                    Toast.makeText(context, "Successfully updated cat name", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, "Error updating cat name", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            default:
-                break;
-        }
-        return true;
     }
 
     // Must be run after displayPicture() is called

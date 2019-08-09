@@ -56,6 +56,7 @@ public class MyUtilities {
             System.out.print(res.getString(5) + "\n");
         }
     }
+
     // Prints out picture database
     public static void printOutCTable(Context myContext) {
         PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(myContext);
