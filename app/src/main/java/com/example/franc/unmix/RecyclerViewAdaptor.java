@@ -18,6 +18,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -101,7 +103,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
         holder.categoryTV.setTypeface(Typeface.create(holder.categoryTV.getTypeface(), Typeface.BOLD), Typeface.BOLD);
 
         // Add custom picture to gridlayout
-        ArrayList<String> currentPhotoPathList = photoPathLists.get(position);
+        final ArrayList<String> currentPhotoPathList = photoPathLists.get(position);
         final ArrayList<String> currentLabelNameList = labelNameLists.get(position);
         holder.gridLayout.removeAllViews();
 
@@ -230,7 +232,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             nagDialog.dismiss();
 
                             // Update recycler view
-                            currentLabelNameList.set(currentLabelNameList.indexOf(currentLabelName), newLabelName);
+                            currentLabelNameList.set(currentPhotoPathList.indexOf(currentPhotoPath), newLabelName);
                             notifyItemChanged(labelNameLists.indexOf(currentLabelNameList));
                         }
                     });
