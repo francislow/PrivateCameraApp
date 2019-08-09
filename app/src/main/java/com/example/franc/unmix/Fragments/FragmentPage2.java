@@ -115,16 +115,22 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     /* This on touch method is for the add category button on the top tab */
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
+        PropertyValuesHolder scaleXUp = PropertyValuesHolder.ofFloat(View.SCALE_X, 0.5f, 1f);
+        PropertyValuesHolder scaleYUp = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.5f, 1f);
+        PropertyValuesHolder alphaUp = PropertyValuesHolder.ofFloat(View.ALPHA, 0.5f, 1f);
+
+        PropertyValuesHolder scaleXDown = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0.5f);
+        PropertyValuesHolder scaleYDown = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0.5f);
+        PropertyValuesHolder alphaDown = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0.5f);
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                view.setAlpha(0.1f);
-                view.setScaleX(0.5f);
-                view.setScaleY(0.5f);
+                ObjectAnimator.ofPropertyValuesHolder(view, alphaDown, scaleXDown, scaleYDown).start();
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                ObjectAnimator.ofPropertyValuesHolder(view, alphaUp, scaleXUp, scaleYUp).start();
                 break;
             case MotionEvent.ACTION_UP:
-                view.setAlpha(1f);
-                view.setScaleX(1f);
-                view.setScaleY(1f);
+                ObjectAnimator.ofPropertyValuesHolder(view, alphaUp, scaleXUp, scaleYUp).start();
 
                 //If user's touch up is still inside button
                 if (MyUtilities.touchUpInButton(motionEvent, (Button) view)) {
