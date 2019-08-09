@@ -45,14 +45,14 @@ public class ActivityMain extends FragmentActivity {
         swipeAdaptor = new SwipeAdaptor(getSupportFragmentManager());
         final ViewPager viewPager = (ViewPager) findViewById(R.id.myvp);
         viewPager.setAdapter(swipeAdaptor);
-        viewPager.setCurrentItem(1);
+        viewPager.setCurrentItem(0);
 
         //Setup Btm Tab
         TabLayout btmTabLayout = (TabLayout) findViewById(R.id.btmtablayout);
         btmTabLayout.setupWithViewPager(viewPager);
-        btmTabLayout.getTabAt(0).setIcon(R.drawable.ic_pin);
-        btmTabLayout.getTabAt(1).setIcon(R.drawable.ic_home);
-        btmTabLayout.getTabAt(2).setIcon(R.drawable.ic_gallery);
+        /*btmTabLayout.getTabAt(0).setIcon(R.drawable.ic_pin);*/
+        btmTabLayout.getTabAt(0).setIcon(R.drawable.ic_home);
+        btmTabLayout.getTabAt(1).setIcon(R.drawable.ic_gallery);
         btmTabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.white));
 
     }

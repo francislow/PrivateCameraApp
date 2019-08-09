@@ -51,6 +51,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
     // associatedFragment = FragmentPage2
     private Fragment associatedFragment;
     private PicturesDatabaseHelper mydb;
+    private boolean applied_initial_customisation_flag = false;
 
 
     public RecyclerViewAdaptor(Context context, ArrayList<String> categoryNames, ArrayList<ArrayList<String>> photoPathLists, ArrayList<ArrayList<String>> labelNameLists) {
@@ -59,7 +60,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
         this.photoPathLists = photoPathLists;
         this.labelNameLists = labelNameLists;
 
-        associatedFragment = ActivityMain.swipeAdaptor.getItem(2);
+        associatedFragment = ActivityMain.swipeAdaptor.getItem(1);
         mydb = new PicturesDatabaseHelper(myContext);
     }
 
@@ -69,6 +70,28 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_page2_item_layout, parent, false);
         return new ViewHolder(view);
     }
+
+  /*  // Runs after on bind view
+    @Override
+    public void onViewAttachedToWindow(@NonNull ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        Log.d(TAG, "onViewAttachedToWindow: " + holder.categoryTV.getText().toString());
+
+        if (holder.categoryTV.getText().toString().equals(ActivityMain.DEFAULTCATEGORYNAME)) {
+            holder.catOption.setVisibility(View.GONE);
+        }
+    }*/
+
+    /*@Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        ViewHolder unsortedVH = (ViewHolder) recyclerView.findViewHolderForAdapterPosition(1);
+        if (unsortedVH == null) {
+            Log.d(TAG, "onAttachedToRecyclerView: NULLLLLLLLLLLLLL REFFFFFFFFFFFF");
+        }
+        Log.d(TAG, "onAttachedToRecyclerView: set to gone" + unsortedVH.categoryTV.getText().toString());
+        unsortedVH.catOption.setVisibility(View.GONE);
+    }*/
 
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -98,7 +121,15 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: ran " + categoryNames.get(position));
         // Add category name
-        final String currentCategoryName = categoryNames.get(position);
+        final String currentCategoryName = categoryNames.get(holder.getAdapterPosition());
+        
+        /*// apply initial customisation on unsorted
+        if (currentCategoryName.equals(ActivityMain.DEFAULTCATEGORYNAME) && !applied_initial_customisation_flag) {
+            Log.d(TAG, "onBindViewHolder: IT HAPENNNNNNNNNNNNEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+            holder.setGoneCatOption();
+            applied_initial_customisation_flag = true;
+        }*/
+
         holder.categoryTV.setText(currentCategoryName);
         holder.categoryTV.setTypeface(Typeface.create(holder.categoryTV.getTypeface(), Typeface.BOLD), Typeface.BOLD);
 
@@ -363,7 +394,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                         notifyItemRemoved(holder.getAdapterPosition());
 
                                         // Refresh middle page
-                                        ActivityMain.swipeAdaptor.getItem(1).onResume();
+                                        ActivityMain.swipeAdaptor.getItem(0).onResume();
 
                                         myDialog.dismiss();
                                     }
@@ -438,6 +469,10 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             gridLayout = (GridLayout) itemView.findViewById(R.id.grid1);
             line = (ImageView) itemView.findViewById(R.id.line);
         }
+        
+    /*    public void setGoneCatOption() {
+            catOption.setVisibility(View.GONE);
+        }*/
     }
 
     private class MyDragShadowBuilder extends View.DragShadowBuilder {

@@ -248,7 +248,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 */
 
                 // Refresh middle page
-                ActivityMain.swipeAdaptor.getItem(1).onResume();
+                ActivityMain.swipeAdaptor.getItem(0).onResume();
                 break;
             default:
                 break;

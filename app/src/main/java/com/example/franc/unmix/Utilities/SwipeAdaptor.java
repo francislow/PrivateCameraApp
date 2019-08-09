@@ -14,14 +14,14 @@ import com.example.franc.unmix.Fragments.FragmentPageMiddle;
  */
 
 public class SwipeAdaptor extends FragmentStatePagerAdapter {
-    private int numPages = 3;
-    private FragmentPage1 fragment1;
+    private int numPages = 2;
+    /*private FragmentPage1 fragment1;*/
     private FragmentPage2 fragment2;
     private FragmentPageMiddle fragmentmiddle;
 
     public SwipeAdaptor(FragmentManager fm) {
         super(fm);
-        fragment1 = new FragmentPage1();
+        /*fragment1 = new FragmentPage1();*/
         fragmentmiddle = new FragmentPageMiddle();
         fragment2 = new FragmentPage2();
     }
@@ -30,8 +30,6 @@ public class SwipeAdaptor extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         Fragment fragment;
         if (position == 0) {
-            fragment = fragment1;
-        } else if (position == 1) {
             fragment = fragmentmiddle;
         } else {
             fragment = fragment2;
