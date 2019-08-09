@@ -222,12 +222,15 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
 
                 break;
             case DragEvent.ACTION_DRAG_ENTERED:
-                PropertyValuesHolder textSizeUp = PropertyValuesHolder.ofFloat(TextView.SCALE_X, 1f, 0.5f);
-                dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 22);
+                PropertyValuesHolder textSizeUpX = PropertyValuesHolder.ofFloat(TextView.SCALE_X, 1f, 1.2f);
+                PropertyValuesHolder textSizeUpY = PropertyValuesHolder.ofFloat(TextView.SCALE_Y, 1f, 1.2f);
+                ObjectAnimator.ofPropertyValuesHolder(dustbinTV, textSizeUpX, textSizeUpY).start();
                 dustbinTV.setTypeface(dustbinTV.getTypeface(), Typeface.BOLD_ITALIC);
                 break;
             case DragEvent.ACTION_DRAG_EXITED:
-                dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+                PropertyValuesHolder textSizeDownX = PropertyValuesHolder.ofFloat(TextView.SCALE_X, 1.2f, 1f);
+                PropertyValuesHolder textSizeDownY = PropertyValuesHolder.ofFloat(TextView.SCALE_Y, 1.2f, 1f);
+                ObjectAnimator.ofPropertyValuesHolder(dustbinTV, textSizeDownX, textSizeDownY).start();
                 dustbinTV.setTypeface(Typeface.create(dustbinTV.getTypeface(), Typeface.ITALIC), Typeface.ITALIC);
                 break;
             case DragEvent.ACTION_DROP:

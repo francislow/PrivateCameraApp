@@ -10,7 +10,7 @@
             android:id="@+id/top_tab_space"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/custom_tb2" />
+            android:background="@drawable/white_grey_bottom_border" />
 
         <RelativeLayout
             android:id="@+id/top_tab_space_2"
