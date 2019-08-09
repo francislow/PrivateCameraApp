@@ -141,7 +141,6 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
     public void setCustomListener(TextView categoryTV, ImageView line) {
         this.categoryTV = categoryTV;
         this.line = line;
-        this.setOnClickListener(this);
         /* If label name exist set listener */
         if (labelNameTVN != null) {
             labelNameTVN.setOnClickListener(this);
@@ -150,35 +149,8 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        /* Listener for imageview */
-        if (v.getTag() == null) {
-            // Show preview image function
-            final Dialog nagDialog = new Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-            nagDialog.setContentView(R.layout.dialog_preview_image);
-
-            ImageView previewImage = (ImageView) nagDialog.findViewById(R.id.preview_image);
-            previewImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    System.out.println("clicked preview layout");
-                    // Show action bar
-                }
-            });
-            Glide
-                    .with(context)
-                    .load(photoPath)
-                    .into(previewImage);
-            nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    nagDialog.dismiss();
-                }
-            });
-            nagDialog.show();
-        }
-
         /* Listener for label name textview */
-        else if (v.getTag().equals("textview")) {
+        if (v.getTag().equals("textview")) {
             // Edit label function
             final Dialog nagDialog = new Dialog(context);
             nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

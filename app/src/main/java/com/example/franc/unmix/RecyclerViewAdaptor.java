@@ -27,6 +27,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.franc.unmix.Fragments.FragmentPage2;
 import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 import com.example.franc.unmix.Utilities.MyUtilities;
@@ -121,6 +122,30 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                     holder.gridLayout.removeView(newCustomPicture);
                     //notifyItemChanged(holder.getAdapterPosition());
                     return true;
+                }
+            });
+
+            newCustomPicture.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (v.getTag() == null) {
+                        // Show preview image function
+                        final Dialog nagDialog = new Dialog(myContext, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+                        nagDialog.setContentView(R.layout.dialog_preview_image);
+
+                        ImageView previewImage = (ImageView) nagDialog.findViewById(R.id.preview_image);
+                        Glide
+                                .with(myContext)
+                                .load(currentPhotoPath)
+                                .into(previewImage);
+                        nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                nagDialog.dismiss();
+                            }
+                        });
+                        nagDialog.show();
+                    }
                 }
             });
 
