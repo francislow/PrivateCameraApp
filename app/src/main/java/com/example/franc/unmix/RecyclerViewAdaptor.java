@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -154,8 +156,6 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                     ClipData data = ClipData.newPlainText("", "");
                     //View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
                     View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view);
-                    view.startDrag(data, shadowBuilder, view, 0);
-                    // Drag started
                     // Set constants after drag started
                     FragmentPage2.oldGridLayout = (GridLayout) view.getParent();
                     FragmentPage2.draggedPicture = (CustomPicture) view;
@@ -165,9 +165,12 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                     photoPathLists.get(holder.getAdapterPosition()).remove(((CustomPicture) view).getPhotoPath());
                     labelNameLists.get(holder.getAdapterPosition()).remove(((CustomPicture) view).getLabelName());
                     // For some reason notify change removes drop detection for the holder
-                    //newCustomPicture.setVisibility(View.GONE);
-                    holder.gridLayout.removeView(newCustomPicture);
-                    //notifyItemChanged(holder.getAdapterPosition());
+                    //holder.gridLayout.removeView(newCustomPicture);
+                    notifyItemChanged(holder.getAdapterPosition());
+                    // this is to solve the drop within milli seconds error
+                    newCustomPicture.setVisibility(View.GONE);
+                    // Drag started
+                    view.startDrag(data, shadowBuilder, view, 0);
                     return true;
                 }
             });
@@ -245,39 +248,49 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             newCustomPicture.getLabelNameTVN().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    /* Listener for label name textview */
-                    // Edit label function
-                    final Dialog nagDialog = new Dialog(myContext);
-                    nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    nagDialog.setContentView(R.layout.dialog_edit_label_name);
-
-                    final EditText labelNameET = (EditText) nagDialog.findViewById(R.id.editT4);
-                    labelNameET.setText(currentLabelName);
-                    labelNameET.setSelection(currentLabelName.length());
-                    // Automatically bring up keyboard
-                    labelNameET.requestFocus();
-                    nagDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-
-                    //Set add category button on click listener
-                    Button submitButton = (Button) nagDialog.findViewById(R.id.button4);
-                    submitButton.setOnClickListener(new View.OnClickListener() {
+                    // animation for picture blink effect when click
+                    Animation fadeout = new AlphaAnimation(1.f, 0.f);
+                    fadeout.setDuration(500);
+                    fadeout.setStartOffset(20);
+                    newCustomPicture.startAnimation(fadeout);
+                    newCustomPicture.postDelayed(new Runnable() {
                         @Override
-                        public void onClick(View v) {
-                            String newLabelName = labelNameET.getText().toString().trim();
-                            nagDialog.dismiss();
+                        public void run() {
+                            /* Listener for label name textview */
+                            // Edit label function
+                            final Dialog nagDialog = new Dialog(myContext);
+                            nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                            nagDialog.setContentView(R.layout.dialog_edit_label_name);
 
-                            // Update recycler view
-                            currentLabelNameList.set(currentPhotoPathList.indexOf(currentPhotoPath), newLabelName);
-                            notifyItemChanged(labelNameLists.indexOf(currentLabelNameList));
+                            final EditText labelNameET = (EditText) nagDialog.findViewById(R.id.editT4);
+                            labelNameET.setText(currentLabelName);
+                            labelNameET.setSelection(currentLabelName.length());
+                            // Automatically bring up keyboard
+                            labelNameET.requestFocus();
+                            nagDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
+                            //Set add category button on click listener
+                            Button submitButton = (Button) nagDialog.findViewById(R.id.button4);
+                            submitButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String newLabelName = labelNameET.getText().toString().trim();
+                                    nagDialog.dismiss();
+
+                                    // Update recycler view
+                                    currentLabelNameList.set(currentPhotoPathList.indexOf(currentPhotoPath), newLabelName);
+                                    notifyItemChanged(labelNameLists.indexOf(currentLabelNameList));
+                                }
+                            });
+                            nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    nagDialog.dismiss();
+                                }
+                            });
+                            nagDialog.show();
                         }
-                    });
-                    nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            nagDialog.dismiss();
-                        }
-                    });
-                    nagDialog.show();
+                    }, 500);
                 }
             });
         }
