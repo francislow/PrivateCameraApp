@@ -67,7 +67,7 @@ public class ActivityMain extends FragmentActivity {
 
             //Store picture into database
             boolean hasInsertedData = mydb.insertNewRowPTable(MYCAMERA.getPicture().getAbsolutePath(),
-                    DEFAULTCATEGORYNAME, null, null, null);
+                    DEFAULTCATEGORYNAME, "", null, null);
 
 
             if (hasInsertedData) {
@@ -89,7 +89,7 @@ public class ActivityMain extends FragmentActivity {
 
             //Store picture into database
             boolean hasInsertedData = mydb.insertNewRowPTable(newUri.getPath(),
-                    DEFAULTCATEGORYNAME, null, null, null);
+                    DEFAULTCATEGORYNAME, "", null, null);
 
 
             if (hasInsertedData) {

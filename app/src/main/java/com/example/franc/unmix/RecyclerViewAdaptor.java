@@ -44,16 +44,18 @@ import static android.content.ContentValues.TAG;
 public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdaptor.ViewHolder> {
     public ArrayList<String> categoryNames = new ArrayList<>();
     public ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
+    public ArrayList<ArrayList<String>> labelNameLists = new ArrayList<>();
     private Context myContext;
     // associatedFragment = FragmentPage2
     private Fragment associatedFragment;
     private PicturesDatabaseHelper mydb;
 
 
-    public RecyclerViewAdaptor(Context context, ArrayList<String> categoryNames, ArrayList<ArrayList<String>> photoPathLists) {
+    public RecyclerViewAdaptor(Context context, ArrayList<String> categoryNames, ArrayList<ArrayList<String>> photoPathLists, ArrayList<ArrayList<String>> labelNameLists) {
         this.myContext = context;
         this.categoryNames = categoryNames;
         this.photoPathLists = photoPathLists;
+        this.labelNameLists = labelNameLists;
 
         associatedFragment = ActivityMain.swipeAdaptor.getItem(2);
         mydb = new PicturesDatabaseHelper(myContext);
@@ -70,22 +72,22 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         Log.d(TAG, "onDetachedFromRecyclerView: ran");
+
         // Update database
         mydb.deleteAllRowsCTable();
         for (String categoryName : categoryNames) {
             mydb.insertNewRowCTable(categoryName);
         }
-
         mydb.deleteAllRowsPTable();
         for (int i = 0; i < photoPathLists.size(); i++) {
             ArrayList<String> photoPathList = photoPathLists.get(i);
-            //ArrayList<String> labelNameList = labelNameLists.get(i);
+            ArrayList<String> labelNameList = labelNameLists.get(i);
 
             String categoryName = categoryNames.get(photoPathLists.indexOf(photoPathList));
             for (int j = 0; j < photoPathList.size(); j++) {
                 String photoPathName = photoPathList.get(j);
-                //String labelName = labelNameList.get(j);
-                mydb.insertNewRowPTable(photoPathName, categoryName, null, null, null);
+                String labelName = labelNameList.get(j);
+                mydb.insertNewRowPTable(photoPathName, categoryName, labelName, null, null);
             }
         }
     }
@@ -94,15 +96,21 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: ran " + categoryNames.get(position));
         // Add category name
-        holder.categoryTV.setText(categoryNames.get(position));
+        String currentCategoryName = categoryNames.get(position);
+        holder.categoryTV.setText(currentCategoryName);
         holder.categoryTV.setTypeface(Typeface.create(holder.categoryTV.getTypeface(), Typeface.BOLD), Typeface.BOLD);
 
         // Add custom picture to gridlayout
         ArrayList<String> currentPhotoPathList = photoPathLists.get(position);
+        final ArrayList<String> currentLabelNameList = labelNameLists.get(position);
         holder.gridLayout.removeAllViews();
-        for (final String currentPhotoPath : currentPhotoPathList) {
-            final CustomPicture newCustomPicture = new CustomPicture(myContext, currentPhotoPath);
-            newCustomPicture.setCustomListener(holder.categoryTV, holder.line);
+
+        for (int i = 0; i < currentPhotoPathList.size(); i++) {
+            // get properties for current picture
+            final String currentPhotoPath = currentPhotoPathList.get(i);
+            final String currentLabelName = currentLabelNameList.get(i);
+
+            final CustomPicture newCustomPicture = new CustomPicture(myContext, currentPhotoPath, currentLabelName, currentCategoryName);
             holder.gridLayout.addView(newCustomPicture);
 
             // set on long click listener for custom picture (start drag)
@@ -122,6 +130,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
                     // Update recycler view
                     photoPathLists.get(holder.getAdapterPosition()).remove(((CustomPicture) view).getPhotoPath());
+                    labelNameLists.get(holder.getAdapterPosition()).remove(((CustomPicture) view).getLabelName());
                     // For some reason notify change removes drop detection for the holder
                     //newCustomPicture.setVisibility(View.GONE);
                     holder.gridLayout.removeView(newCustomPicture);
@@ -171,6 +180,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                 if (!photoPathLists.get(oldCatPosition).contains(FragmentPage2.draggedPicture.getPhotoPath())) {
                                     // Update recycler view
                                     photoPathLists.get(oldCatPosition).add(FragmentPage2.oldGridPosition, FragmentPage2.draggedPicture.getPhotoPath());
+                                    labelNameLists.get(oldCatPosition).add(FragmentPage2.oldGridPosition, FragmentPage2.draggedPicture.getLabelName());
                                     notifyItemChanged(oldCatPosition);
                                 }
                             }
@@ -186,14 +196,51 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             holder.categoryTV.setTypeface(Typeface.create(holder.categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
                             holder.line.setVisibility(View.INVISIBLE);
 
+                            // Update recycler view
                             int currentChildIndex = photoPathLists.get(categoryNames.indexOf(newCustomPicture.getCatName())).indexOf(newCustomPicture.getPhotoPath());
                             photoPathLists.get(holder.getAdapterPosition()).add(currentChildIndex, FragmentPage2.draggedPicture.getPhotoPath());
+                            labelNameLists.get(holder.getAdapterPosition()).add(currentChildIndex, FragmentPage2.draggedPicture.getLabelName());
                             notifyItemChanged(holder.getAdapterPosition());
                             break;
                         default:
                             break;
                     }
                     return true;
+                }
+            });
+
+            newCustomPicture.getLabelNameTVN().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    /* Listener for label name textview */
+                    // Edit label function
+                    final Dialog nagDialog = new Dialog(myContext);
+                    nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    nagDialog.setContentView(R.layout.dialog_edit_label_name);
+
+                    final EditText labelNameET = (EditText) nagDialog.findViewById(R.id.editT4);
+                    labelNameET.setText(currentLabelName);
+
+                    //Set add category button on click listener
+                    Button submitButton = (Button) nagDialog.findViewById(R.id.button4);
+                    submitButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String newLabelName = labelNameET.getText().toString().trim();
+                            nagDialog.dismiss();
+
+                            // Update recycler view
+                            currentLabelNameList.set(currentLabelNameList.indexOf(currentLabelName), newLabelName);
+                            notifyItemChanged(labelNameLists.indexOf(currentLabelNameList));
+                        }
+                    });
+                    nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            nagDialog.dismiss();
+                        }
+                    });
+                    nagDialog.show();
                 }
             });
         }
@@ -213,6 +260,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             if (!photoPathLists.get(oldCatPosition).contains(FragmentPage2.draggedPicture.getPhotoPath())) {
                                 // Update recycler view
                                 photoPathLists.get(oldCatPosition).add(FragmentPage2.oldGridPosition, FragmentPage2.draggedPicture.getPhotoPath());
+                                labelNameLists.get(oldCatPosition).add(FragmentPage2.oldGridPosition, FragmentPage2.draggedPicture.getLabelName());
                                 notifyItemChanged(oldCatPosition);
                             }
                         }
@@ -232,6 +280,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
                         // Update recycler view
                         photoPathLists.get(holder.getAdapterPosition()).add(FragmentPage2.draggedPicture.getPhotoPath());
+                        labelNameLists.get(holder.getAdapterPosition()).add(FragmentPage2.draggedPicture.getLabelName());
                         notifyItemChanged(holder.getAdapterPosition());
                         break;
                     default:
@@ -258,6 +307,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                     int oldIndex = holder.getAdapterPosition();
                                     Collections.swap(categoryNames, oldIndex, oldIndex + 1);
                                     Collections.swap(photoPathLists, oldIndex, oldIndex + 1);
+                                    Collections.swap(labelNameLists, oldIndex, oldIndex + 1);
                                     notifyItemRangeChanged(oldIndex, 2);
 
                                 } catch (IndexOutOfBoundsException e) {
@@ -271,6 +321,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                     int oldIndex = holder.getAdapterPosition();
                                     Collections.swap(categoryNames, oldIndex, oldIndex - 1);
                                     Collections.swap(photoPathLists, oldIndex, oldIndex - 1);
+                                    Collections.swap(labelNameLists, oldIndex, oldIndex - 1);
                                     notifyItemRangeChanged(oldIndex - 1, 2);
 
                                 } catch (IndexOutOfBoundsException e) {
@@ -302,6 +353,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                         // Update recycler view
                                         categoryNames.remove(holder.getAdapterPosition());
                                         photoPathLists.remove(holder.getAdapterPosition());
+                                        labelNameLists.remove(holder.getAdapterPosition());
                                         notifyItemRemoved(holder.getAdapterPosition());
 
                                         // Refresh middle page

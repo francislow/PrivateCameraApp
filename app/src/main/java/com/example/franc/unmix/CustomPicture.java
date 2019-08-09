@@ -41,37 +41,31 @@ import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
  * Created by franc on 2/7/2019.
  */
 
-public class CustomPicture extends RelativeLayout implements View.OnClickListener {
+public class CustomPicture extends RelativeLayout {
     private Context context;
     private ImageView newImageView;
     private RelativeLayout whiteSpace;
     private TextView labelNameTVN;
     private String photoPath;
-    private String currentLabelName;
+    private String labelName;
     private PicturesDatabaseHelper mydb;
-    private TextView categoryTV;
-    private ImageView line;
+    private String categoryName;
 
     private int customPictureLength;
     private int whiteSpaceHeight;
     private static final int picturePadding = 7;
 
-    public CustomPicture(Context context, String photoPath) {
+    public CustomPicture(Context context, String photoPath, String labelName, String categoryName) {
         super(context);
         this.context = context;
         this.photoPath = photoPath;
+        this.labelName = labelName;
+        this.categoryName = categoryName;
 
         // Initialising picture properties
         int gridWidth = context.getResources().getDisplayMetrics().widthPixels;
         customPictureLength = gridWidth / 4;
         whiteSpaceHeight = customPictureLength / 3;
-
-        // Get the label for this custom picture
-        /*mydb = new PicturesDatabaseHelper(context);
-        Cursor res = mydb.getLabelFromPathPTable(photoPath);
-        res.moveToNext();
-        currentLabelName = res.getString(3);*/
-        currentLabelName = null;
 
         // Set up custompicture (Relativelayout) width and height
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(customPictureLength, customPictureLength);
@@ -89,7 +83,8 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
                 .into(newImageView);
 
         /* Set up label overlay */
-        if (currentLabelName != null) {
+        // if there is label name
+        if (!labelName.equals("")) {
             // Add a layer to show each picture label
             // Set up white space to show label (normal mode)
             whiteSpace = new RelativeLayout(context);
@@ -110,7 +105,7 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
             labelNameTVN.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
             labelNameTVN.setTypeface(labelNameTVN.getTypeface(), Typeface.BOLD_ITALIC);
             whiteSpace.addView(labelNameTVN);
-            labelNameTVN.setText(currentLabelName);
+            labelNameTVN.setText(labelName);
         }
         /* If there is no label name */
         else {
@@ -127,7 +122,6 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
 
             // Set up label name
             labelNameTVN = new TextView(context);
-            labelNameTVN.setTag("textview");
             LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             labelNameTVN.setLayoutParams(lp2);
             labelNameTVN.setGravity(Gravity.CENTER);
@@ -138,63 +132,21 @@ public class CustomPicture extends RelativeLayout implements View.OnClickListene
     }
 
     // Must be run after displayPicture() is called
-    public void setCustomListener(TextView categoryTV, ImageView line) {
-        this.categoryTV = categoryTV;
-        this.line = line;
-        /* If label name exist set listener */
-        if (labelNameTVN != null) {
-            labelNameTVN.setOnClickListener(this);
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        /* Listener for label name textview */
-        if (v.getTag().equals("textview")) {
-            // Edit label function
-            final Dialog nagDialog = new Dialog(context);
-            nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            nagDialog.setContentView(R.layout.dialog_edit_label_name);
-
-            final EditText labelNameET = (EditText) nagDialog.findViewById(R.id.editT4);
-            labelNameET.setText(currentLabelName);
-
-            //Set add category button on click listener
-            Button submitButton = (Button) nagDialog.findViewById(R.id.button4);
-            submitButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String newLabelName = labelNameET.getText().toString().trim();
-                    nagDialog.dismiss();
-
-                    // Note: dont need to update database since detached is called
-                    currentLabelName = newLabelName;
-                    ActivityMain.swipeAdaptor.getItem(2).onResume();
-                }
-            });
-            nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    nagDialog.dismiss();
-                }
-            });
-            nagDialog.show();
-        }
-    }
-
-    // Must be run after displayPicture() is called
     public String getPhotoPath() {
         return this.photoPath;
     }
 
     // Must be run after displayPicture() is called
     public String getLabelName() {
-        return this.currentLabelName;
+        return this.labelName;
     }
 
     // Must be run after displayPicture() is called
     public String getCatName() {
-        return this.categoryTV.getText().toString();
+        return this.categoryName;
     }
 
+    public TextView getLabelNameTVN() {
+        return labelNameTVN;
+    }
 }

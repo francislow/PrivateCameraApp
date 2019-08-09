@@ -105,9 +105,10 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         // Get data from database
         ArrayList<String> distinctCategoryNames = setUpDistinctCategoryNamesList();
         ArrayList<ArrayList<String>> photoPathLists = setUpPhotoPathList(distinctCategoryNames);
+        ArrayList<ArrayList<String>> labelNameLists = setUpLabelNameList(distinctCategoryNames);
 
         // Initialise recycler view
-        initRecyclerView(distinctCategoryNames, photoPathLists);
+        initRecyclerView(distinctCategoryNames, photoPathLists, labelNameLists);
     }
 
     /* This on touch method is for the add category button on the top tab */
@@ -149,6 +150,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                                         // Update recycler view
                                         recyclerViewAdaptor.categoryNames.add(newCategoryName);
                                         recyclerViewAdaptor.photoPathLists.add(new ArrayList<String>());
+                                        recyclerViewAdaptor.labelNameLists.add(new ArrayList<String>());
                                         int currentIndex = recyclerViewAdaptor.categoryNames.indexOf(newCategoryName);
                                         recyclerViewAdaptor.notifyItemInserted(currentIndex);
                                         nagDialog.dismiss();
@@ -273,7 +275,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         return distinctCategoryNames;
     }
 
-    // Set up photopath list
+    // Set up photopath lists
     public ArrayList<ArrayList<String>> setUpPhotoPathList(ArrayList<String> distinctCategoryNames) {
         ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
         for (int i = 0; i < distinctCategoryNames.size(); i++) {
@@ -287,9 +289,23 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         return photoPathLists;
     }
 
-    public void initRecyclerView(ArrayList<String> distinctCategoryNames, ArrayList<ArrayList<String>> photoPathLists) {
+    // Set up label name lists
+    public ArrayList<ArrayList<String>> setUpLabelNameList(ArrayList<String> distinctCategoryNames) {
+        ArrayList<ArrayList<String>> labelNameLists = new ArrayList<>();
+        for (int i = 0; i < distinctCategoryNames.size(); i++) {
+            Cursor res2 = mydb.getBasedOnCategoryPTable(distinctCategoryNames.get(i));
+            ArrayList<String> labelNames = new ArrayList<>();
+            while (res2.moveToNext()) {
+                labelNames.add(res2.getString(3));
+            }
+            labelNameLists.add(labelNames);
+        }
+        return labelNameLists;
+    }
+
+    public void initRecyclerView(ArrayList<String> distinctCategoryNames, ArrayList<ArrayList<String>> photoPathLists, ArrayList<ArrayList<String>> labelNameLists) {
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv);
-        recyclerViewAdaptor = new RecyclerViewAdaptor(this.getActivity(), distinctCategoryNames, photoPathLists);
+        recyclerViewAdaptor = new RecyclerViewAdaptor(this.getActivity(), distinctCategoryNames, photoPathLists, labelNameLists);
         recyclerView.setAdapter(recyclerViewAdaptor);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
