@@ -237,19 +237,26 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             }
                             break;
                         case DragEvent.ACTION_DRAG_ENTERED:
-                            Log.d(TAG, "onDrag: entered " + newCustomPicture.getPhotoPath());
+                            Log.d(TAG, "onDrag: entered custom picture");
                             // set spacing indicators
-                            /*newCustomPicture.getNewImageView().setPadding(100,7,7,7);
+                            // automatically remove blackspace2 for the last child
+                            ((CustomPicture) holder.gridLayout.getChildAt(holder.gridLayout.getChildCount() - 1)).getBlackSpace2().setAlpha(0);
+
+                            newCustomPicture.getBlackSpace().setAlpha(1);
                             if (currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) != 0) {
-                                ((CustomPicture)holder.gridLayout.getChildAt(currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) - 1)).getNewImageView().setPadding(7,7,100,7);
-                            }*/
+                                ((CustomPicture)holder.gridLayout.getChildAt(currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) - 1)).getBlackSpace2().setAlpha(1);
+                            }
                             break;
                         case DragEvent.ACTION_DRAG_EXITED:
+                            Log.d(TAG, "onDrag: exited custom picture");
                             // set spacing indicators
-                           /* newCustomPicture.getNewImageView().setPadding(7,7,7,7);
+                            // automatically add blackspace2 for the last child
+                            ((CustomPicture) holder.gridLayout.getChildAt(holder.gridLayout.getChildCount() - 1)).getBlackSpace2().setAlpha(1);
+
+                            newCustomPicture.getBlackSpace().setAlpha(0);
                             if (currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) != 0) {
-                                ((CustomPicture)holder.gridLayout.getChildAt(currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) - 1)).getNewImageView().setPadding(7,7,7,7);
-                            }*/
+                                ((CustomPicture)holder.gridLayout.getChildAt(currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) - 1)).getBlackSpace2().setAlpha(0);
+                            }
                             break;
                         /* User dropped into one of the custom picture */
                         case DragEvent.ACTION_DROP:
@@ -341,12 +348,27 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                         }
                         break;
                     case DragEvent.ACTION_DRAG_ENTERED:
+                        Log.d(TAG, "onDrag: Entered Parent Layout");
                         holder.categoryTV.setTypeface(Typeface.create(holder.categoryTV.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
                         holder.line.setVisibility(View.VISIBLE);
+
+                        // set spacing indicators
+                        try {
+                            ((CustomPicture) holder.gridLayout.getChildAt(holder.gridLayout.getChildCount() - 1)).getBlackSpace2().setAlpha(1);
+                        } catch (Exception e) {
+
+                        }
                         break;
                     case DragEvent.ACTION_DRAG_EXITED:
+                        Log.d(TAG, "onDrag: Exited Parent Layout");
                         holder.categoryTV.setTypeface(Typeface.create(holder.categoryTV.getTypeface(), Typeface.BOLD), Typeface.BOLD);
                         holder.line.setVisibility(View.INVISIBLE);
+
+                        // set spacing indicators
+                        try {
+                            ((CustomPicture) holder.gridLayout.getChildAt(holder.gridLayout.getChildCount() - 1)).getBlackSpace2().setAlpha(0);
+                        } catch (Exception e) {
+                        }
                         break;
                     case DragEvent.ACTION_DROP:
                         Log.d(TAG, "onDrag: Dropped at parent payout");
