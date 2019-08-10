@@ -12,5 +12,15 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
+    
+    <style name="DialogSlide">
+        <item name="android:windowEnterAnimation">@anim/translate_in</item>
+        <item name="android:windowExitAnimation">@anim/translate_out</item>
+    </style>
+
+    <style name="DialogScale">
+        <item name="android:windowEnterAnimation">@anim/scale_in</item>
+        <item name="android:windowExitAnimation">@anim/scale_out</item>
+    </style>
 
 </resources>
