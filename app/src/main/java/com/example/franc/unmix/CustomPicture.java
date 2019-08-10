@@ -149,4 +149,8 @@ public class CustomPicture extends RelativeLayout {
     public TextView getLabelNameTVN() {
         return labelNameTVN;
     }
+
+    public ImageView getNewImageView() {
+        return newImageView;
+    }
 }

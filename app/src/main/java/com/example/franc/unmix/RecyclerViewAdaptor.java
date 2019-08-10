@@ -125,11 +125,11 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
         // Add category name
         final String currentCategoryName = categoryNames.get(holder.getAdapterPosition());
         
-        /*// apply initial customisation on unsorted
-        if (currentCategoryName.equals(ActivityMain.DEFAULTCATEGORYNAME) && !applied_initial_customisation_flag) {
+       /* // apply initial customisation on unsorted
+        if (currentCategoryName.equals(ActivityMain.DEFAULTCATEGORYNAME)*//* && !applied_initial_customisation_flag*//*) {
             Log.d(TAG, "onBindViewHolder: IT HAPENNNNNNNNNNNNEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
-            holder.setGoneCatOption();
-            applied_initial_customisation_flag = true;
+            holder.catOption.setVisibility(View.GONE);
+            //applied_initial_customisation_flag = true;
         }*/
 
         holder.categoryTV.setText(currentCategoryName);
@@ -223,8 +223,18 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             break;
                         case DragEvent.ACTION_DRAG_ENTERED:
                             Log.d(TAG, "onDrag: entered " + newCustomPicture.getPhotoPath());
+                            // set spacing indicators
+                            /*newCustomPicture.getNewImageView().setPadding(100,7,7,7);
+                            if (currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) != 0) {
+                                ((CustomPicture)holder.gridLayout.getChildAt(currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) - 1)).getNewImageView().setPadding(7,7,100,7);
+                            }*/
                             break;
                         case DragEvent.ACTION_DRAG_EXITED:
+                            // set spacing indicators
+                           /* newCustomPicture.getNewImageView().setPadding(7,7,7,7);
+                            if (currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) != 0) {
+                                ((CustomPicture)holder.gridLayout.getChildAt(currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) - 1)).getNewImageView().setPadding(7,7,7,7);
+                            }*/
                             break;
                         /* User dropped into one of the custom picture */
                         case DragEvent.ACTION_DROP:
