@@ -21,6 +21,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -125,8 +127,8 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
         // Add category name
         final String currentCategoryName = categoryNames.get(holder.getAdapterPosition());
         
-       /* // apply initial customisation on unsorted
-        if (currentCategoryName.equals(ActivityMain.DEFAULTCATEGORYNAME)*//* && !applied_initial_customisation_flag*//*) {
+      /* // apply initial customisation on unsorted
+        if (currentCategoryName.equals(ActivityMain.DEFAULTCATEGORYNAME)  && !applied_initial_customisation_flag) {
             Log.d(TAG, "onBindViewHolder: IT HAPENNNNNNNNNNNNEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
             holder.catOption.setVisibility(View.GONE);
             //applied_initial_customisation_flag = true;
@@ -179,22 +181,35 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                 @Override
                 public void onClick(View v) {
                     if (v.getTag() == null) {
-                        // Show preview image function
-                        final Dialog nagDialog = new Dialog(myContext, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-                        nagDialog.setContentView(R.layout.dialog_preview_image);
-
-                        ImageView previewImage = (ImageView) nagDialog.findViewById(R.id.preview_image);
-                        Glide
-                                .with(myContext)
-                                .load(currentPhotoPath)
-                                .into(previewImage);
-                        nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        Animation scaleDown = new ScaleAnimation(1.f,0.5f,1,0.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                        Animation fadeout = new AlphaAnimation(1.f, 0.f);
+                        scaleDown.setDuration(100);
+                        fadeout.setDuration(100);
+                        AnimationSet combinedAnim = new AnimationSet(true);
+                        combinedAnim.addAnimation(scaleDown);
+                        combinedAnim.addAnimation(fadeout);
+                        newCustomPicture.startAnimation(combinedAnim);
+                        newCustomPicture.postDelayed(new Runnable() {
                             @Override
-                            public void onCancel(DialogInterface dialog) {
-                                nagDialog.dismiss();
+                            public void run() {
+                                // Show preview image function
+                                final Dialog nagDialog = new Dialog(myContext, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+                                nagDialog.setContentView(R.layout.dialog_preview_image);
+
+                                ImageView previewImage = (ImageView) nagDialog.findViewById(R.id.preview_image);
+                                Glide
+                                        .with(myContext)
+                                        .load(currentPhotoPath)
+                                        .into(previewImage);
+                                nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialog) {
+                                        nagDialog.dismiss();
+                                    }
+                                });
+                                nagDialog.show();
                             }
-                        });
-                        nagDialog.show();
+                        }, 100);
                     }
                 }
             });
@@ -260,9 +275,9 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                 public void onClick(View v) {
                     // animation for picture blink effect when click
                     Animation fadeout = new AlphaAnimation(1.f, 0.f);
-                    fadeout.setDuration(500);
-                    fadeout.setStartOffset(20);
-                    newCustomPicture.startAnimation(fadeout);
+                    fadeout.setDuration(200);
+                    newCustomPicture.getLabelNameTVN().startAnimation(fadeout);
+                    newCustomPicture.getWhiteSpace().startAnimation(fadeout);
                     newCustomPicture.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -300,7 +315,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             });
                             nagDialog.show();
                         }
-                    }, 500);
+                    }, 100);
                 }
             });
         }

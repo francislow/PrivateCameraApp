@@ -150,6 +150,10 @@ public class CustomPicture extends RelativeLayout {
         return labelNameTVN;
     }
 
+    public RelativeLayout getWhiteSpace() {
+        return whiteSpace;
+    }
+
     public ImageView getNewImageView() {
         return newImageView;
     }

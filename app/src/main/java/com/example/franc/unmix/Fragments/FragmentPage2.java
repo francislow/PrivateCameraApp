@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -143,14 +144,13 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                             MyUtilities.printOutCTable(this.getActivity());
                             //Add a category
                             final Dialog nagDialog = new Dialog(getActivity());
-                            nagDialog.getWindow().getAttributes().windowAnimations = R.style.DialogScale;
+                            //nagDialog.getWindow().getAttributes().windowAnimations = R.style.DialogScale;
                             nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                             nagDialog.setContentView(R.layout.dialog_insert_cat_name);
 
 
-                            EditText catNameET = (EditText) nagDialog.findViewById(R.id.editT1);
+                            final EditText catNameET = (EditText) nagDialog.findViewById(R.id.editT1);
                             // Automatically bring up keyboard
-                            
                             catNameET.requestFocus();
                             nagDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
