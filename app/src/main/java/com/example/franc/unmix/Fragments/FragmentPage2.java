@@ -138,7 +138,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 if (MyUtilities.touchUpInButton(motionEvent, (Button) view)) {
                     switch (view.getId()) {
                         case R.id.information_button:
-                            CustomInformationDialog myDialog = new CustomInformationDialog(getActivity(), android.R.style.Theme_Translucent);
+                            CustomInformationDialog myDialog = new CustomInformationDialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
                             myDialog.show();
                             break;
                         case R.id.add_cat_button:
