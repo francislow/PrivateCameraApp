@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.franc.unmix.ActivityMain;
+import com.example.franc.unmix.CustomInformationDialog;
 import com.example.franc.unmix.CustomPicture;
 import com.example.franc.unmix.R;
 import com.example.franc.unmix.RecyclerViewAdaptor;
@@ -137,7 +138,8 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 if (MyUtilities.touchUpInButton(motionEvent, (Button) view)) {
                     switch (view.getId()) {
                         case R.id.information_button:
-                            MyUtilities.printOutPTable(getActivity());
+                            CustomInformationDialog myDialog = new CustomInformationDialog(getActivity(), android.R.style.Theme_Translucent);
+                            myDialog.show();
                             break;
                         case R.id.add_cat_button:
                             MyUtilities.printOutPTable(this.getActivity());
@@ -177,6 +179,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                             nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                                 @Override
                                 public void onCancel(DialogInterface dialog) {
+
                                     nagDialog.dismiss();
                                 }
                             });
@@ -271,7 +274,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     // Set up distinctCategoryNames list
     public ArrayList<String> setUpDistinctCategoryNamesList() {
         ArrayList<String> distinctCategoryNames = new ArrayList<>();
-        Cursor res3 = mydb.getAllDataCTable();
+      /*  Cursor res3 = mydb.getAllDataCTable();
 
         boolean hasDefaultCatName = false;
         while (res3.moveToNext()) {
@@ -283,11 +286,16 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         if (!hasDefaultCatName) {
             mydb.insertNewRowCTable(ActivityMain.DEFAULTCATEGORYNAME);
         }
-
+*/
         Cursor res1 = mydb.getAllDataCTable();
         while (res1.moveToNext()) {
             String currentCatName = res1.getString(1);
             distinctCategoryNames.add(currentCatName);
+        }
+
+        // If dun have unsorted category
+        if (!distinctCategoryNames.contains(ActivityMain.DEFAULTCATEGORYNAME)) {
+            distinctCategoryNames.add(0, ActivityMain.DEFAULTCATEGORYNAME);
         }
 
         return distinctCategoryNames;
