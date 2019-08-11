@@ -70,7 +70,7 @@ public class CustomPicture extends RelativeLayout {
         int gridWidth = context.getResources().getDisplayMetrics().widthPixels;
         customPictureLength = gridWidth / 4;
         whiteSpaceHeight = customPictureLength / 3;
-        blackSpaceWidth = whiteSpaceHeight / 4;
+        blackSpaceWidth = whiteSpaceHeight / 3;
 
         // Set up custompicture (Relativelayout) width and height
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(customPictureLength, customPictureLength);
@@ -86,25 +86,6 @@ public class CustomPicture extends RelativeLayout {
                 .load(photoPath)
                 .transform(new CenterCrop(), new RoundedCorners(15))
                 .into(newImageView);
-
-        // Set up indicator overlay
-        blackSpace = new RelativeLayout(context);
-        blackSpace.setBackground(context.getResources().getDrawable(R.drawable.black_rectangle));
-
-        RelativeLayout.LayoutParams lpp = new RelativeLayout.LayoutParams(blackSpaceWidth, ViewGroup.LayoutParams.MATCH_PARENT);
-        blackSpace.setLayoutParams(lpp);
-        this.addView(blackSpace);
-
-        blackSpace2 = new RelativeLayout(context);
-        blackSpace2.setBackground(context.getResources().getDrawable(R.drawable.black_rectangle));
-
-        RelativeLayout.LayoutParams lpp2 = new RelativeLayout.LayoutParams(blackSpaceWidth, ViewGroup.LayoutParams.MATCH_PARENT);
-        lpp2.setMargins(customPictureLength - blackSpaceWidth - picturePadding *2,0,0,0);
-        blackSpace2.setLayoutParams(lpp2);
-        this.addView(blackSpace2);
-
-        blackSpace2.setAlpha(0);
-        blackSpace.setAlpha(0);
 
         /* Set up label overlay */
         // if there is label name
@@ -153,6 +134,25 @@ public class CustomPicture extends RelativeLayout {
             labelNameTVN.setTypeface(labelNameTVN.getTypeface(), Typeface.BOLD_ITALIC);
             whiteSpace.addView(labelNameTVN);
         }
+
+        // Set up indicator overlay
+        blackSpace = new RelativeLayout(context);
+        blackSpace.setBackground(context.getResources().getDrawable(R.drawable.black_indicator));
+
+        RelativeLayout.LayoutParams lpp = new RelativeLayout.LayoutParams(blackSpaceWidth, ViewGroup.LayoutParams.MATCH_PARENT);
+        blackSpace.setLayoutParams(lpp);
+        this.addView(blackSpace);
+
+        blackSpace2 = new RelativeLayout(context);
+        blackSpace2.setBackground(context.getResources().getDrawable(R.drawable.black_indicator));
+
+        RelativeLayout.LayoutParams lpp2 = new RelativeLayout.LayoutParams(blackSpaceWidth, ViewGroup.LayoutParams.MATCH_PARENT);
+        lpp2.setMargins(customPictureLength - blackSpaceWidth - picturePadding *2,0,0,0);
+        blackSpace2.setLayoutParams(lpp2);
+        this.addView(blackSpace2);
+
+        blackSpace2.setAlpha(0);
+        blackSpace.setAlpha(0);
     }
 
     // Must be run after displayPicture() is called
