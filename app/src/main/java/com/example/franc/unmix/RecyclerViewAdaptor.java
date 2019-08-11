@@ -36,10 +36,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.franc.unmix.Fragments.FragmentPage2;
 import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
+import com.example.franc.unmix.Utilities.MyAnimUtilities;
 import com.example.franc.unmix.Utilities.MyUtilities;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.logging.Handler;
 
 import static android.content.ContentValues.TAG;
 
@@ -155,6 +157,9 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                 @Override
                 public boolean onLongClick(View view) {
                     Log.d(TAG, "onLongClick: on dragged picture ran");
+                    // this is to solve the drop within milli seconds error
+                    newCustomPicture.setVisibility(View.GONE);
+
                     ClipData data = ClipData.newPlainText("", "");
                     //View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
                     View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view);
@@ -169,8 +174,6 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                     // For some reason notify change removes drop detection for the holder
                     //holder.gridLayout.removeView(newCustomPicture);
                     notifyItemChanged(holder.getAdapterPosition());
-                    // this is to solve the drop within milli seconds error
-                    newCustomPicture.setVisibility(View.GONE);
                     // Drag started
                     view.startDrag(data, shadowBuilder, view, 0);
                     return true;
@@ -181,7 +184,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                 @Override
                 public void onClick(View v) {
                     if (v.getTag() == null) {
-                        Animation scaleDown = new ScaleAnimation(1.f,0.5f,1,0.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                        Animation scaleDown = new ScaleAnimation(1.f, 0.5f, 1, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                         Animation fadeout = new AlphaAnimation(1.f, 0.f);
                         scaleDown.setDuration(100);
                         fadeout.setDuration(100);
@@ -244,7 +247,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
                             newCustomPicture.getBlackSpace().setAlpha(1);
                             if (currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) != 0) {
-                                ((CustomPicture)holder.gridLayout.getChildAt(currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) - 1)).getBlackSpace2().setAlpha(1);
+                                ((CustomPicture) holder.gridLayout.getChildAt(currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) - 1)).getBlackSpace2().setAlpha(1);
                             }
                             break;
                         case DragEvent.ACTION_DRAG_EXITED:
@@ -255,7 +258,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
                             newCustomPicture.getBlackSpace().setAlpha(0);
                             if (currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) != 0) {
-                                ((CustomPicture)holder.gridLayout.getChildAt(currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) - 1)).getBlackSpace2().setAlpha(0);
+                                ((CustomPicture) holder.gridLayout.getChildAt(currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) - 1)).getBlackSpace2().setAlpha(0);
                             }
                             break;
                         /* User dropped into one of the custom picture */
@@ -428,10 +431,16 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             case R.id.popup_remove:
                                 Log.d(TAG, "onMenuItemClick: remove button pressed");
                                 // Prompts user if he really wants to delete all pictures permanently
-                                final Dialog myDialog = new Dialog(myContext);
-                                myDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                final Dialog myDialog = new Dialog(myContext, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
                                 myDialog.setContentView(R.layout.dialog_delete_all_data);
-                                myDialog.setCancelable(false);
+                                myDialog.getWindow().getDecorView().setBackgroundResource(android.R.color.transparent);
+                                myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogFade;
+                                myDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialog) {
+                                        dialog.dismiss();
+                                    }
+                                });
 
                                 // User pressed "No"
                                 Button noButton = (Button) myDialog.findViewById(R.id.no_button);
