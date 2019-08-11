@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 /**
@@ -14,13 +15,17 @@ import android.widget.RelativeLayout;
  */
 
 public class CustomInformationDialog extends Dialog {
+    Context context;
+    int currentDialogPage = 1;
 
     public CustomInformationDialog(@NonNull Context context) {
         super(context);
+        this.context = context;
     }
 
     public CustomInformationDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
+        this.context = context;
     }
 
     @Override
@@ -43,13 +48,23 @@ public class CustomInformationDialog extends Dialog {
                 dialog.dismiss();
             }
         });
-
-        final CustomInformationDialog dialog = this;
+        
+        final ImageView informationIV = findViewById(R.id.informationIV);
         RelativeLayout transBackground = findViewById(R.id.transBackground);
         transBackground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                if (currentDialogPage == 1) {
+                    informationIV.setBackground(context.getResources().getDrawable(R.drawable.testinfobackground2));
+                    currentDialogPage = 2;
+                }
+                else if (currentDialogPage == 2) {
+                    informationIV.setBackground(context.getResources().getDrawable(R.drawable.testinfobackground3));
+                    currentDialogPage = 3;
+                }
+                else {
+                    CustomInformationDialog.this.dismiss();
+                }
             }
         });
     }
