@@ -501,7 +501,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                             notifyItemChanged(holder.getAdapterPosition());
                                             nagDialog.dismiss();
                                         } else {
-                                            Toast.makeText(myContext, "Unable to edit label, you already have an exact label", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(myContext, "Unable to edit label, you already have an exact label name", Toast.LENGTH_LONG).show();
                                         }
                                     }
                                 });

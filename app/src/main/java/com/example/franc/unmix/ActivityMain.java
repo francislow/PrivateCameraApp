@@ -104,9 +104,9 @@ public class ActivityMain extends FragmentActivity {
 
 
             if (hasInsertedData) {
-                Toast.makeText(this, "Picture successfully inserted into database", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Picture successfully added", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(this, "Error inserting picture into database", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Error adding picture", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -126,12 +126,10 @@ public class ActivityMain extends FragmentActivity {
 
 
             if (hasInsertedData) {
-                Toast.makeText(this, "Picture successfully inserted into database", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Picture successfully added", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(this, "Error inserting picture into database", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Error adding picture", Toast.LENGTH_LONG).show();
             }
         }
     }
-
-
 }

@@ -177,7 +177,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
 
                                         MyUtilities.createOneTimeIntroDialog(getActivity(), "first_time_page4", R.drawable.starting_dialog4);
                                     } else {
-                                        Toast.makeText(getActivity(), "Unable to add label, you already have an exact label", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getActivity(), "Unable to add label, you already have an exact label name", Toast.LENGTH_LONG).show();
                                     }
                                 }
                             });
