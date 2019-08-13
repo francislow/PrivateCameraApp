@@ -16,7 +16,7 @@
                 android:color="@color/lightgrey">
             </stroke>
             <solid
-                android:color="@color/redbackground">
+                android:color="@color/darkgrey">
             </solid>
         </shape>
     </item>

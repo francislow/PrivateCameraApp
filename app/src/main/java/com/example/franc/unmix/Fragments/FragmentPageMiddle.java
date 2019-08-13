@@ -3,14 +3,18 @@ package com.example.franc.unmix.Fragments;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -25,6 +30,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.franc.unmix.ActivityMain;
+import com.example.franc.unmix.CustomInformationDialog;
 import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 import com.example.franc.unmix.R;
 import com.example.franc.unmix.Utilities.MyUtilities;
@@ -68,6 +74,8 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
         //Photo Button
         final Button addButton = (Button) getActivity().findViewById(R.id.addButton);
         addButton.setOnTouchListener(this);
+
+        MyUtilities.createOneTimeIntroDialog(getActivity(),"first_time_page1", R.drawable.starting_dialog1);
     }
 
     @Override

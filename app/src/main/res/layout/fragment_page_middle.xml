@@ -22,7 +22,7 @@
         android:background="@color/white"
         android:scrollbars="none">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -42,14 +42,27 @@
                 android:textColor="@color/black"
                 android:textSize="13dp" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/recentlyadded"
+                android:layout_marginTop="40dp"
+                android:layout_marginLeft="150dp"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="casual"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                android:text="Start by adding a photo. \n\nAdd photos using the buttons on the top."/>
+
             <!-- To Add and display recent images taken-->
             <LinearLayout
                 android:id="@+id/LL1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/recentlyadded"
                 android:orientation="vertical">
             </LinearLayout>
-        </LinearLayout>
+        </RelativeLayout>
 
     </ScrollView>
 

@@ -3,7 +3,9 @@ package com.example.franc.unmix.Fragments;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -91,8 +94,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
 
         informationButton = (Button) getActivity().findViewById(R.id.information_button);
         informationButton.setOnTouchListener(this);
-
-
     }
 
     @Override
@@ -101,6 +102,8 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         recyclerView.setAdapter(null);
         System.out.println("fragm 2 paused");
     }
+
+
 
     @Override
     public void onResume() {
@@ -171,6 +174,8 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                                         int currentIndex = recyclerViewAdaptor.categoryNames.indexOf(newCategoryName);
                                         recyclerViewAdaptor.notifyItemInserted(currentIndex);
                                         nagDialog.dismiss();
+
+                                        MyUtilities.createOneTimeIntroDialog(getActivity(), "first_time_page4", R.drawable.starting_dialog4);
                                     } else {
                                         Toast.makeText(getActivity(), "Unable to add label, you already have an exact label", Toast.LENGTH_LONG).show();
                                     }

@@ -118,7 +118,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             for (int j = 0; j < photoPathList.size(); j++) {
                 String photoPathName = photoPathList.get(j);
                 String labelName = labelNameList.get(j);
-                mydb.insertNewRowPTable(photoPathName, categoryName, labelName, null, null);
+                mydb.insertNewRowPTable(photoPathName, categoryName, labelName, null, 1,1,1,1,1,1);
             }
         }
     }
@@ -157,8 +157,6 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                 @Override
                 public boolean onLongClick(View view) {
                     Log.d(TAG, "onLongClick: on dragged picture ran");
-                    // this is to solve the drop within milli seconds error
-                    newCustomPicture.setVisibility(View.GONE);
 
                     ClipData data = ClipData.newPlainText("", "");
                     //View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
@@ -174,6 +172,8 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                     // For some reason notify change removes drop detection for the holder
                     //holder.gridLayout.removeView(newCustomPicture);
                     notifyItemChanged(holder.getAdapterPosition());
+                    // this is to solve the drop within milli seconds error
+                    newCustomPicture.setVisibility(View.GONE);
                     // Drag started
                     view.startDrag(data, shadowBuilder, view, 0);
                     return true;
@@ -315,6 +315,8 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                     // Update recycler view
                                     currentLabelNameList.set(currentPhotoPathList.indexOf(currentPhotoPath), newLabelName);
                                     notifyItemChanged(labelNameLists.indexOf(currentLabelNameList));
+
+                                    MyUtilities.createOneTimeIntroDialog(myContext, "first_time_page3", R.drawable.starting_dialog3);
                                 }
                             });
                             nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -348,6 +350,9 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                 labelNameLists.get(oldCatPosition).add(FragmentPage2.oldGridPosition, FragmentPage2.draggedPicture.getLabelName());
                                 notifyItemChanged(oldCatPosition);
                             }
+                        }
+                        else if (event.getResult()) {
+                            MyUtilities.createOneTimeIntroDialog(myContext, "first_time_page5", R.drawable.starting_dialog5);
                         }
                         break;
                     case DragEvent.ACTION_DRAG_ENTERED:

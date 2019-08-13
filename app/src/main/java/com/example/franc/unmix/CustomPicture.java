@@ -153,6 +153,8 @@ public class CustomPicture extends RelativeLayout {
 
         blackSpace2.setAlpha(0);
         blackSpace.setAlpha(0);
+
+        //Set up detection range
     }
 
     // Must be run after displayPicture() is called

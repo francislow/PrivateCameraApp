@@ -1,12 +1,20 @@
 package com.example.franc.unmix.Utilities;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.example.franc.unmix.ActivityMain;
+import com.example.franc.unmix.R;
 import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 
 import java.io.BufferedInputStream;
@@ -15,6 +23,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by franc on 24/6/2019.
@@ -113,5 +123,48 @@ public class MyUtilities {
             }
         }
         return null;
+    }
+
+    public static void createOneTimeIntroDialog(Context context, String prefKey, int drawableId) {
+        Log.d(TAG, "createOneTimeIntroDialog: tried running one time dialog");
+        SharedPreferences prefs = context.getSharedPreferences(ActivityMain.MY_PREFS_NAME, Context.MODE_PRIVATE);
+        boolean first_time_flag = prefs.getBoolean(prefKey, true);//"No name defined" is the default value.
+
+        if (first_time_flag) {
+            // if no entry add first time flag  = false as entry
+            SharedPreferences.Editor editor = context.getSharedPreferences(ActivityMain.MY_PREFS_NAME, Context.MODE_PRIVATE).edit();
+            editor.putBoolean(prefKey, false);
+            editor.apply();
+
+            // if first time starting app, apply dialog
+            final Dialog myDialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+            // Set Layout
+            myDialog.setContentView(R.layout.dialog_information);
+            ImageView informationIV = myDialog.findViewById(R.id.informationIV);
+            informationIV.setBackground(context.getResources().getDrawable(drawableId));
+
+            // Set dialog background to transparent
+            myDialog.getWindow().getDecorView().setBackgroundResource(android.R.color.transparent);
+
+            // Set appear and disappear transitions
+            myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogFade;
+
+            // Set cancel on back button pressed
+            myDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    dialog.dismiss();
+                }
+            });
+
+            RelativeLayout transBackground = myDialog.findViewById(R.id.transBackground);
+            transBackground.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    myDialog.dismiss();
+                }
+            });
+            myDialog.show();
+        }
     }
 }
