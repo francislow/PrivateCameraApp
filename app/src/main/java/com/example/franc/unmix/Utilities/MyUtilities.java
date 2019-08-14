@@ -157,8 +157,9 @@ public class MyUtilities {
                 }
             });
 
-            RelativeLayout transBackground = myDialog.findViewById(R.id.transBackground);
-            transBackground.setOnClickListener(new View.OnClickListener() {
+            Button cancelDialogButton = (Button) myDialog.findViewById(R.id.cancel_dialog_button);
+            cancelDialogButton.setVisibility(View.VISIBLE);
+            cancelDialogButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     myDialog.dismiss();
