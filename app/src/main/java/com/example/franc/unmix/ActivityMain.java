@@ -108,6 +108,9 @@ public class ActivityMain extends FragmentActivity {
             } else {
                 Toast.makeText(this, "Error adding", Toast.LENGTH_LONG).show();
             }
+
+            // intro
+            MyUtilities.createOneTimeIntroDialog(this,"first_time_page1_2", R.drawable.starting_dialog1_2);
         }
 
         //After user picked an image from gallery
@@ -130,9 +133,9 @@ public class ActivityMain extends FragmentActivity {
             } else {
                 Toast.makeText(this, "Error adding", Toast.LENGTH_LONG).show();
             }
-        }
 
-        // intro
-        MyUtilities.createOneTimeIntroDialog(this,"first_time_page1_2", R.drawable.starting_dialog1_2);
+            // intro
+            MyUtilities.createOneTimeIntroDialog(this,"first_time_page1_2", R.drawable.starting_dialog1_2);
+        }
     }
 }
