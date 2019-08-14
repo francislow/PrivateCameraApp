@@ -131,5 +131,8 @@ public class ActivityMain extends FragmentActivity {
                 Toast.makeText(this, "Error adding", Toast.LENGTH_LONG).show();
             }
         }
+
+        // intro
+        MyUtilities.createOneTimeIntroDialog(this,"first_time_page1_2", R.drawable.starting_dialog1_2);
     }
 }
