@@ -1,5 +1,7 @@
 package com.example.franc.unmix.Utilities;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -159,10 +161,32 @@ public class MyUtilities {
 
             Button cancelDialogButton = (Button) myDialog.findViewById(R.id.cancel_dialog_button);
             cancelDialogButton.setVisibility(View.VISIBLE);
-            cancelDialogButton.setOnClickListener(new View.OnClickListener() {
+            cancelDialogButton.setOnTouchListener(new View.OnTouchListener() {
                 @Override
-                public void onClick(View v) {
-                    myDialog.dismiss();
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    PropertyValuesHolder scaleXUp = PropertyValuesHolder.ofFloat(View.SCALE_X, 0.5f, 1f);
+                    PropertyValuesHolder scaleYUp = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.5f, 1f);
+                    PropertyValuesHolder alphaUp = PropertyValuesHolder.ofFloat(View.ALPHA, 0.5f, 1f);
+
+                    PropertyValuesHolder scaleXDown = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0.5f);
+                    PropertyValuesHolder scaleYDown = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0.5f);
+                    PropertyValuesHolder alphaDown = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0.5f);
+                    switch (motionEvent.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            ObjectAnimator.ofPropertyValuesHolder(view, alphaDown, scaleXDown, scaleYDown).start();
+                            break;
+                        case MotionEvent.ACTION_CANCEL:
+                            ObjectAnimator.ofPropertyValuesHolder(view, alphaUp, scaleXUp, scaleYUp).start();
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            ObjectAnimator.ofPropertyValuesHolder(view, alphaUp, scaleXUp, scaleYUp).start();
+
+                            //If user's touch up is still inside button
+                            if (MyUtilities.touchUpInButton(motionEvent, (Button) view)) {
+                                myDialog.dismiss();
+                            }
+                    }
+                    return true;
                 }
             });
             myDialog.show();

@@ -1,16 +1,28 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/transBackground"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/translucentblack"
-    android:orientation="vertical"
-    android:id="@+id/transBackground">
+    android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/informationIV"
-        android:layout_width="300dp"
-        android:layout_height="450dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/testinfobackground" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <ImageView
+            android:id="@+id/informationIV"
+            android:layout_width="300dp"
+            android:layout_height="450dp"
+            android:background="@drawable/starting_dialog1" />
+
+        <Button
+            android:id="@+id/cancel_dialog_button"
+            android:layout_width="60dp"
+            android:layout_height="20dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="388dp"
+            android:background="@drawable/ok_button"/>
+    </RelativeLayout>
 
 </RelativeLayout>
