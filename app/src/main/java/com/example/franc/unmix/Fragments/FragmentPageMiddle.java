@@ -105,7 +105,7 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
 
             // Set unable to use back button to cancel
             myDialog.setCancelable(false);
-            
+
             Button cancelDialogButton = (Button) myDialog.findViewById(R.id.cancel_dialog_button);
             cancelDialogButton.setVisibility(View.VISIBLE);
             cancelDialogButton.setOnTouchListener(new View.OnTouchListener() {
