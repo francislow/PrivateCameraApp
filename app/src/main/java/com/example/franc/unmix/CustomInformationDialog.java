@@ -48,8 +48,9 @@ public class CustomInformationDialog extends Dialog {
                 dialog.dismiss();
             }
         });
-        
+
         final ImageView informationIV = findViewById(R.id.informationIV);
+        informationIV.setBackground(context.getResources().getDrawable(R.drawable.testinfobackground));
         RelativeLayout transBackground = findViewById(R.id.transBackground);
         transBackground.setOnClickListener(new View.OnClickListener() {
             @Override
