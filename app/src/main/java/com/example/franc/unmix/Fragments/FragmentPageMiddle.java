@@ -95,7 +95,6 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
             final Dialog myDialog = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
             // Set Layout
             myDialog.setContentView(R.layout.dialog_intro_app);
-            ImageView informationIV = myDialog.findViewById(R.id.informationIV);
 
             // Set dialog background to transparent
             myDialog.getWindow().getDecorView().setBackgroundResource(android.R.color.transparent);
