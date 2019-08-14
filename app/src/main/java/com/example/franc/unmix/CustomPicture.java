@@ -12,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.DragEvent;
@@ -107,8 +108,9 @@ public class CustomPicture extends RelativeLayout {
             LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             labelNameTVN.setLayoutParams(lp2);
             labelNameTVN.setGravity(Gravity.CENTER);
-            labelNameTVN.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
-            labelNameTVN.setTypeface(labelNameTVN.getTypeface(), Typeface.BOLD_ITALIC);
+            labelNameTVN.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+            Typeface moonchildtf = ResourcesCompat.getFont(context, R.font.moonchild);
+            labelNameTVN.setTypeface(moonchildtf);
             whiteSpace.addView(labelNameTVN);
             labelNameTVN.setText(labelName);
         }
