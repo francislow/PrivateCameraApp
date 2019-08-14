@@ -36,6 +36,8 @@ import com.example.franc.unmix.R;
 import com.example.franc.unmix.Utilities.MyUtilities;
 import com.github.chrisbanes.photoview.PhotoView;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by franc on 1/6/2019.
  */
@@ -76,6 +78,66 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
         addButton.setOnTouchListener(this);
 
         MyUtilities.createOneTimeIntroDialog(getActivity(),"first_time_page1", R.drawable.starting_dialog1);
+
+        // Create initial app intro dialog
+        String prefKey = "intro_app_pref_key";
+        Log.d(TAG, "createOneTimeIntroDialog: tried running one time dialog");
+        SharedPreferences prefs = getActivity().getSharedPreferences(ActivityMain.MY_PREFS_NAME, Context.MODE_PRIVATE);
+        boolean first_time_flag = prefs.getBoolean(prefKey, true);//"No name defined" is the default value.
+
+        if (first_time_flag) {
+            // if no entry add first time flag  = false as entry
+            SharedPreferences.Editor editor = getActivity().getSharedPreferences(ActivityMain.MY_PREFS_NAME, Context.MODE_PRIVATE).edit();
+            editor.putBoolean(prefKey, false);
+            editor.apply();
+
+            // if first time starting app, apply dialog
+            final Dialog myDialog = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+            // Set Layout
+            myDialog.setContentView(R.layout.dialog_intro_app);
+            ImageView informationIV = myDialog.findViewById(R.id.informationIV);
+
+            // Set dialog background to transparent
+            myDialog.getWindow().getDecorView().setBackgroundResource(android.R.color.transparent);
+
+            // Set appear and disappear transitions
+            myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogFade;
+
+            // Set unable to use back button to cancel
+            myDialog.setCancelable(false);
+            
+            Button cancelDialogButton = (Button) myDialog.findViewById(R.id.cancel_dialog_button);
+            cancelDialogButton.setVisibility(View.VISIBLE);
+            cancelDialogButton.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    PropertyValuesHolder scaleXUp = PropertyValuesHolder.ofFloat(View.SCALE_X, 0.5f, 1f);
+                    PropertyValuesHolder scaleYUp = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.5f, 1f);
+                    PropertyValuesHolder alphaUp = PropertyValuesHolder.ofFloat(View.ALPHA, 0.5f, 1f);
+
+                    PropertyValuesHolder scaleXDown = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0.5f);
+                    PropertyValuesHolder scaleYDown = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0.5f);
+                    PropertyValuesHolder alphaDown = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0.5f);
+                    switch (motionEvent.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            ObjectAnimator.ofPropertyValuesHolder(view, alphaDown, scaleXDown, scaleYDown).start();
+                            break;
+                        case MotionEvent.ACTION_CANCEL:
+                            ObjectAnimator.ofPropertyValuesHolder(view, alphaUp, scaleXUp, scaleYUp).start();
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            ObjectAnimator.ofPropertyValuesHolder(view, alphaUp, scaleXUp, scaleYUp).start();
+
+                            //If user's touch up is still inside button
+                            if (MyUtilities.touchUpInButton(motionEvent, (Button) view)) {
+                                myDialog.dismiss();
+                            }
+                    }
+                    return true;
+                }
+            });
+            myDialog.show();
+        }
     }
 
     @Override
