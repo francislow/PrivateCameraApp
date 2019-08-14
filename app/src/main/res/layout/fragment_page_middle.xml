@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
@@ -27,32 +28,17 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/recentlyadded"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-                android:fontFamily="casual"
-                android:textStyle="bold"
+                android:fontFamily="@font/moonchild"
                 android:gravity="start"
                 android:paddingEnd="0dp"
                 android:paddingStart="8dp"
                 android:paddingTop="6dp"
                 android:text="@string/middle_page_text1"
-                android:textColor="@color/black"
                 android:textSize="13dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/recentlyadded"
-                android:layout_marginTop="40dp"
-                android:layout_marginLeft="150dp"
-                android:layout_centerHorizontal="true"
-                android:fontFamily="casual"
-                android:textColor="@color/black"
-                android:textSize="20dp"
-                android:text="Start by adding a photo. \n\nAdd photos using the buttons on the top."/>
 
             <!-- To Add and display recent images taken-->
             <LinearLayout

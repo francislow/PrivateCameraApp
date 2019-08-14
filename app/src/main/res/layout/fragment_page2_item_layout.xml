@@ -16,14 +16,14 @@
             android:layout_height="match_parent"
             android:background="@drawable/cat_option" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/cat_name"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:fontFamily="casual"
+            android:fontFamily="@font/moonchild"
+            android:textColor="@color/black"
             android:paddingTop="4dp"
             android:text="test"
-            android:textColor="@color/black"
             android:textSize="15dp" />
 
     </LinearLayout>
