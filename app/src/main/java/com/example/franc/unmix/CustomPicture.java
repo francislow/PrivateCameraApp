@@ -120,7 +120,7 @@ public class CustomPicture extends RelativeLayout {
             // Set up white space to show label (normal mode)
             whiteSpace = new RelativeLayout(context);
             whiteSpace.setBackground(context.getResources().getDrawable(R.drawable.white_rectangle));
-            whiteSpace.getBackground().setAlpha(80);
+            whiteSpace.getBackground().setAlpha(120);
 
             RelativeLayout.LayoutParams lp3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, whiteSpaceHeight);
             lp3.setMargins(0, customPictureLength - whiteSpaceHeight, 0, 0);

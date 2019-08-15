@@ -19,9 +19,10 @@
         <Button
             android:id="@+id/cancel_dialog_button"
             android:layout_width="60dp"
-            android:layout_height="20dp"
+            android:layout_height="22dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="388dp"
+            android:visibility="invisible"
             android:background="@drawable/ok_button"/>
     </RelativeLayout>
 

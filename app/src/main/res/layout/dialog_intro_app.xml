@@ -2,21 +2,27 @@
     android:id="@+id/transBackground"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/intro_app_background"
     android:orientation="vertical">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerInParent="true">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/intro_app_background"/>
 
         <Button
             android:id="@+id/cancel_dialog_button"
-            android:layout_width="60dp"
-            android:layout_height="20dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="388dp"
-            android:background="@drawable/ok_button"/>
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/enter_button"/>
     </RelativeLayout>
 
 </RelativeLayout>
