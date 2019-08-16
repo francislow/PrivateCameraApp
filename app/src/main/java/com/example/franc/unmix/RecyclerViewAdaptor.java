@@ -352,9 +352,15 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                 notifyItemChanged(oldCatPosition);
                             }
                         }
+
                         else if (event.getResult()) {
                             MyUtilities.createOneTimeIntroDialog(myContext, "first_time_page5", R.drawable.starting_dialog5);
                         }
+
+                        // set back to normal padding space
+                        LinearLayout.LayoutParams lp3 = new LinearLayout.LayoutParams(holder.line.getLayoutParams());
+                        lp3.setMargins(convertDpToPx(myContext, 9), convertDpToPx(myContext, 15), convertDpToPx(myContext, 9), 0);
+                        holder.line.setLayoutParams(lp3);
                         break;
                     case DragEvent.ACTION_DRAG_ENTERED:
                         Log.d(TAG, "onDrag: Entered Parent Layout");
@@ -367,6 +373,11 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                         } catch (Exception e) {
 
                         }
+
+                        // set padding space increase
+                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(holder.line.getLayoutParams());
+                        lp.setMargins(convertDpToPx(myContext, 9), convertDpToPx(myContext, 30), convertDpToPx(myContext, 9), 0);
+                        holder.line.setLayoutParams(lp);
                         break;
                     case DragEvent.ACTION_DRAG_EXITED:
                         Log.d(TAG, "onDrag: Exited Parent Layout");
@@ -378,6 +389,11 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             ((CustomPicture) holder.gridLayout.getChildAt(holder.gridLayout.getChildCount() - 1)).getBlackSpace2().setAlpha(0);
                         } catch (Exception e) {
                         }
+
+                        // set back to normal padding space
+                        LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(holder.line.getLayoutParams());
+                        lp1.setMargins(convertDpToPx(myContext, 9), convertDpToPx(myContext, 15), convertDpToPx(myContext, 9), 0);
+                        holder.line.setLayoutParams(lp1);
                         break;
                     case DragEvent.ACTION_DROP:
                         Log.d(TAG, "onDrag: Dropped at parent payout");
@@ -587,5 +603,9 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             canvas.scale(mScaleFactor.x / (float) getView().getWidth(), mScaleFactor.y / (float) getView().getHeight());
             getView().draw(canvas);
         }
+    }
+
+    public int convertDpToPx(Context context, float dp) {
+        return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
 }
