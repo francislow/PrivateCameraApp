@@ -359,7 +359,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
                         // set back to normal padding space
                         LinearLayout.LayoutParams lp3 = new LinearLayout.LayoutParams(holder.line.getLayoutParams());
-                        lp3.setMargins(convertDpToPx(myContext, 9), convertDpToPx(myContext, 15), convertDpToPx(myContext, 9), 0);
+                        lp3.topMargin = convertDpToPx(myContext, 15);
                         holder.line.setLayoutParams(lp3);
                         break;
                     case DragEvent.ACTION_DRAG_ENTERED:
@@ -376,7 +376,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
                         // set padding space increase
                         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(holder.line.getLayoutParams());
-                        lp.setMargins(convertDpToPx(myContext, 9), convertDpToPx(myContext, 30), convertDpToPx(myContext, 9), 0);
+                        lp.topMargin = convertDpToPx(myContext, 30);
                         holder.line.setLayoutParams(lp);
                         break;
                     case DragEvent.ACTION_DRAG_EXITED:
@@ -392,7 +392,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
                         // set back to normal padding space
                         LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(holder.line.getLayoutParams());
-                        lp1.setMargins(convertDpToPx(myContext, 9), convertDpToPx(myContext, 15), convertDpToPx(myContext, 9), 0);
+                        lp1.topMargin = convertDpToPx(myContext, 15);
                         holder.line.setLayoutParams(lp1);
                         break;
                     case DragEvent.ACTION_DROP:
