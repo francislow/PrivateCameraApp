@@ -1,26 +1,22 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@android:color/transparent" >
-
-    <ImageView
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        android:background="@drawable/edit_name_background"/>
+    android:background="@android:color/transparent"
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/editT2"
-        android:inputType="textCapSentences"
         android:layout_width="200dp"
-        android:layout_height="40dp" />
+        android:layout_height="40dp"
+        android:background="@drawable/edit_text_bg"
+        android:inputType="textCapSentences" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="100dp"
         android:layout_height="40dp"
-        android:text="Edit Name"
-        android:textSize="8dp"
-        android:layout_toRightOf="@id/editT2"/>
+        android:layout_marginStart="10dp"
+        android:layout_toRightOf="@id/editT2"
+        android:background="@drawable/edit_cat_button" />
 
 </RelativeLayout>

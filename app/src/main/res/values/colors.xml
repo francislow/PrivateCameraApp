@@ -15,5 +15,8 @@
     <color name="grey">#DEDEDE</color>
     <color name="darkgrey">#666666</color>
     <color name="redbackground">#00CCFF</color>
+    <color name="brown">#944A00</color>
+    <color name="lightbrown">#C26100</color>
+
 
 </resources>

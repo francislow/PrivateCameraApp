@@ -296,6 +296,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             final Dialog nagDialog = new Dialog(myContext);
                             nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                             nagDialog.setContentView(R.layout.dialog_edit_label_name);
+                            nagDialog.getWindow().getDecorView().setBackgroundResource(android.R.color.transparent);
 
                             final EditText labelNameET = (EditText) nagDialog.findViewById(R.id.editT4);
                             labelNameET.setText(currentLabelName);
@@ -480,6 +481,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                 final Dialog nagDialog = new Dialog(myContext);
                                 nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                                 nagDialog.setContentView(R.layout.dialog_edit_cat_name);
+                                nagDialog.getWindow().getDecorView().setBackgroundResource(android.R.color.transparent);
 
                                 EditText catNameET = (EditText) nagDialog.findViewById(R.id.editT2);
                                 catNameET.setText(currentCategoryName);

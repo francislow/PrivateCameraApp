@@ -152,6 +152,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                             //nagDialog.getWindow().getAttributes().windowAnimations = R.style.DialogScale;
                             nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                             nagDialog.setContentView(R.layout.dialog_insert_cat_name);
+                            nagDialog.getWindow().getDecorView().setBackgroundResource(android.R.color.transparent);
 
 
                             final EditText catNameET = (EditText) nagDialog.findViewById(R.id.editT1);
@@ -236,17 +237,14 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 PropertyValuesHolder textSizeUpX = PropertyValuesHolder.ofFloat(TextView.SCALE_X, 1f, 1.2f);
                 PropertyValuesHolder textSizeUpY = PropertyValuesHolder.ofFloat(TextView.SCALE_Y, 1f, 1.2f);
                 ObjectAnimator.ofPropertyValuesHolder(dustbinTV, textSizeUpX, textSizeUpY).start();
-                dustbinTV.setTypeface(dustbinTV.getTypeface(), Typeface.BOLD_ITALIC);
                 break;
             case DragEvent.ACTION_DRAG_EXITED:
                 PropertyValuesHolder textSizeDownX = PropertyValuesHolder.ofFloat(TextView.SCALE_X, 1.2f, 1f);
                 PropertyValuesHolder textSizeDownY = PropertyValuesHolder.ofFloat(TextView.SCALE_Y, 1.2f, 1f);
                 ObjectAnimator.ofPropertyValuesHolder(dustbinTV, textSizeDownX, textSizeDownY).start();
-                dustbinTV.setTypeface(Typeface.create(dustbinTV.getTypeface(), Typeface.ITALIC), Typeface.ITALIC);
                 break;
             case DragEvent.ACTION_DROP:
                 dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-                dustbinTV.setTypeface(Typeface.create(dustbinTV.getTypeface(), Typeface.ITALIC), Typeface.ITALIC);
                 Log.d(TAG, "onDrag: Drop detected at remove bar");
 
                 /* Don't need to do this since recyclerview removed the dragged picture already after drag

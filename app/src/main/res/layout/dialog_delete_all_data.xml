@@ -6,7 +6,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="225dp"
+        android:layout_height="275dp"
         android:layout_centerInParent="true">
 
         <ImageView
@@ -19,18 +19,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="110dp">
+            android:paddingTop="130dp">
 
             <Button
                 android:id="@+id/no_button"
                 android:layout_width="70dp"
-                android:layout_height="18dp"
+                android:layout_height="25dp"
                 android:background="@drawable/white_cancel_button" />
 
             <Button
                 android:id="@+id/yes_button"
                 android:layout_width="70dp"
-                android:layout_height="18dp"
+                android:layout_height="25dp"
                 android:layout_marginLeft="15dp"
                 android:background="@drawable/white_yes_button" />
 

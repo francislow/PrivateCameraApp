@@ -4,12 +4,12 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="45dp" >
+        android:layout_height="45dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/custom_tb2" />
+            android:background="@drawable/top_bar_background" />
 
         <Button
             android:id="@+id/cambutton"
@@ -30,13 +30,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/cambutton"
             android:layout_toEndOf="@+id/cambutton"
+            android:layout_toRightOf="@+id/cambutton"
+            android:fontFamily="cursive"
             android:gravity="center"
             android:text="@string/app_name"
             android:textColor="@color/black"
-            android:textSize="20sp"
-            android:fontFamily="cursive" />
+            android:textSize="20sp" />
 
     </RelativeLayout>
 

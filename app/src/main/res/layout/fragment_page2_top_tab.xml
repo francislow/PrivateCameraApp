@@ -10,7 +10,7 @@
             android:id="@+id/top_tab_space"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/custom_tb22" />
+            android:background="@drawable/top_bar_background" />
 
         <RelativeLayout
             android:id="@+id/top_tab_space_2"
@@ -35,15 +35,14 @@
             android:layout_marginStart="5dp"
             android:background="@drawable/ic_information" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/dustbin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="Remove"
             android:textSize="14dp"
-            android:textStyle="italic"
-            android:fontFamily="sans-serif" />
+            android:fontFamily="@font/mblack" />
 
 
         <TextView

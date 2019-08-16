@@ -8,15 +8,17 @@
         android:id="@+id/editT4"
         android:layout_width="200dp"
         android:layout_height="40dp"
+        android:fontFamily="@font/moonchild"
         android:inputType="textCapWords"
+        android:background="@drawable/edit_text_bg"
         android:maxLength="14"/>
 
     <Button
         android:id="@+id/button4"
         android:layout_width="100dp"
         android:layout_height="40dp"
-        android:text="Edit Label Name"
-        android:textSize="8dp"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/edit_label_button"
         android:layout_toRightOf="@id/editT4"/>
 
 </RelativeLayout>

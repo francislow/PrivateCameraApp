@@ -83,13 +83,14 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
         String prefKey = "intro_app_pref_key";
         Log.d(TAG, "createOneTimeIntroDialog: tried running one time dialog");
         SharedPreferences prefs = getActivity().getSharedPreferences(ActivityMain.MY_PREFS_NAME, Context.MODE_PRIVATE);
-        boolean first_time_flag = prefs.getBoolean(prefKey, true);//"No name defined" is the default value.
+        /*boolean first_time_flag = prefs.getBoolean(prefKey, true);//"No name defined" is the default value.*/
+        boolean first_time_flag = true;
 
         if (first_time_flag) {
             // if no entry add first time flag  = false as entry
-            SharedPreferences.Editor editor = getActivity().getSharedPreferences(ActivityMain.MY_PREFS_NAME, Context.MODE_PRIVATE).edit();
+    /*        SharedPreferences.Editor editor = getActivity().getSharedPreferences(ActivityMain.MY_PREFS_NAME, Context.MODE_PRIVATE).edit();
             editor.putBoolean(prefKey, false);
-            editor.apply();
+            editor.apply();*/
 
             // if first time starting app, apply dialog
             final Dialog myDialog = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
