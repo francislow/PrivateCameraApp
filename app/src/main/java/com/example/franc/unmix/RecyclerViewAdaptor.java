@@ -51,8 +51,7 @@ import static android.content.ContentValues.TAG;
 
 public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdaptor.ViewHolder> {
     public ArrayList<String> categoryNames = new ArrayList<>();
-    public ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
-    public ArrayList<ArrayList<String>> labelNameLists = new ArrayList<>();
+    public ArrayList<ArrayList<CustomPicture>> customPicsLists = new ArrayList<>();
     private Context myContext;
     // associatedFragment = FragmentPage2
     private Fragment associatedFragment;
@@ -60,11 +59,10 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
     private boolean applied_initial_customisation_flag = false;
 
 
-    public RecyclerViewAdaptor(Context context, ArrayList<String> categoryNames, ArrayList<ArrayList<String>> photoPathLists, ArrayList<ArrayList<String>> labelNameLists) {
+    public RecyclerViewAdaptor(Context context, ArrayList<String> categoryNames, ArrayList<ArrayList<CustomPicture>> customPicsLists) {
         this.myContext = context;
         this.categoryNames = categoryNames;
-        this.photoPathLists = photoPathLists;
-        this.labelNameLists = labelNameLists;
+        this.customPicsLists = customPicsLists;
 
         associatedFragment = ActivityMain.swipeAdaptor.getItem(1);
         mydb = new PicturesDatabaseHelper(myContext);
@@ -77,28 +75,6 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
         return new ViewHolder(view);
     }
 
-  /*  // Runs after on bind view
-    @Override
-    public void onViewAttachedToWindow(@NonNull ViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
-        Log.d(TAG, "onViewAttachedToWindow: " + holder.categoryTV.getText().toString());
-
-        if (holder.categoryTV.getText().toString().equals(ActivityMain.DEFAULTCATEGORYNAME)) {
-            holder.catOption.setVisibility(View.GONE);
-        }
-    }*/
-
-    /*@Override
-    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        ViewHolder unsortedVH = (ViewHolder) recyclerView.findViewHolderForAdapterPosition(1);
-        if (unsortedVH == null) {
-            Log.d(TAG, "onAttachedToRecyclerView: NULLLLLLLLLLLLLL REFFFFFFFFFFFF");
-        }
-        Log.d(TAG, "onAttachedToRecyclerView: set to gone" + unsortedVH.categoryTV.getText().toString());
-        unsortedVH.catOption.setVisibility(View.GONE);
-    }*/
-
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
@@ -110,15 +86,22 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             mydb.insertNewRowCTable(categoryName);
         }
         mydb.deleteAllRowsPTable();
-        for (int i = 0; i < photoPathLists.size(); i++) {
-            ArrayList<String> photoPathList = photoPathLists.get(i);
-            ArrayList<String> labelNameList = labelNameLists.get(i);
+        for (int i = 0; i < customPicsLists.size(); i++) {
+            ArrayList<CustomPicture> customPictureList = customPicsLists.get(i);
 
-            String categoryName = categoryNames.get(photoPathLists.indexOf(photoPathList));
-            for (int j = 0; j < photoPathList.size(); j++) {
-                String photoPathName = photoPathList.get(j);
-                String labelName = labelNameList.get(j);
-                mydb.insertNewRowPTable(photoPathName, categoryName, labelName, null, 1,1,1,1,1,1);
+            String categoryName = categoryNames.get(customPicsLists.indexOf(customPictureList));
+            for (int j = 0; j < customPictureList.size(); j++) {
+                CustomPicture currentPic = customPictureList.get(j);
+                String photoPathName = currentPic.getPhotoPath();
+                String labelName = currentPic.getLabelName();
+                int year = currentPic.getYear();
+                int month = currentPic.getMonth();
+                int day = currentPic.getDay();
+                int hour = currentPic.getHour();
+                int min = currentPic.getMin();
+                int sec = currentPic.getSec();
+                mydb.insertNewRowPTable(photoPathName, categoryName, labelName, null,
+                        year, month, day, hour, min, sec);
             }
         }
     }
@@ -129,31 +112,49 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
         // Add category name
         final String currentCategoryName = categoryNames.get(holder.getAdapterPosition());
         
-      /* // apply initial customisation on unsorted
+        /*// apply initial customisation on unsorted
         if (currentCategoryName.equals(ActivityMain.DEFAULTCATEGORYNAME)  && !applied_initial_customisation_flag) {
             Log.d(TAG, "onBindViewHolder: IT HAPENNNNNNNNNNNNEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
             holder.catOption.setVisibility(View.GONE);
             //applied_initial_customisation_flag = true;
         }*/
 
+        // Set category name
         holder.categoryTV.setText(currentCategoryName);
         holder.categoryTV.setTypeface(Typeface.create(holder.categoryTV.getTypeface(), Typeface.BOLD), Typeface.BOLD);
 
-        // Add custom picture to gridlayout
-        final ArrayList<String> currentPhotoPathList = photoPathLists.get(position);
-        final ArrayList<String> currentLabelNameList = labelNameLists.get(position);
+        // Set custom pictures to gridlayout
+        final ArrayList<CustomPicture> currentCustomPicList = customPicsLists.get(position);
         holder.gridLayout.removeAllViews();
-
-        for (int i = 0; i < currentPhotoPathList.size(); i++) {
+        for (int i = 0; i < currentCustomPicList.size(); i++) {
             // get properties for current picture
-            final String currentPhotoPath = currentPhotoPathList.get(i);
-            final String currentLabelName = currentLabelNameList.get(i);
+            final CustomPicture currentPic = currentCustomPicList.get(i);
+            final String currentPhotoPath = currentPic.getPhotoPath();
+            final String currentLabelName = currentPic.getLabelName();
 
-            final CustomPicture newCustomPicture = new CustomPicture(myContext, currentPhotoPath, currentLabelName, currentCategoryName);
-            holder.gridLayout.addView(newCustomPicture);
+           if ((GridLayout) currentPic.getParent() != null) {
+                ((GridLayout) currentPic.getParent()).removeView(currentPic);
+            }
+            holder.gridLayout.addView(currentPic);
 
-            // set on long click listener for custom picture (start drag)
-            newCustomPicture.setOnLongClickListener(new View.OnLongClickListener() {
+            // Set Label Name for each pic
+            currentPic.getLabelNameTVN().setText(currentPic.getLabelName());
+
+            // Set white space opacity (whether label name is present or not)
+            if (!currentPic.getLabelName().equals("")) {
+                // if there is label name
+                currentPic.getWhiteSpace().getBackground().setAlpha(190);
+            } else {
+                // if there is no label name
+                currentPic.getWhiteSpace().getBackground().setAlpha(120);
+            }
+
+            // Set black indicator to opacity 0 by default
+            currentPic.getBlackSpace().setAlpha(0);
+            currentPic.getBlackSpace2().setAlpha(0);
+
+            // Set on long click listener for custom picture (start drag)
+            currentPic.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     Log.d(TAG, "onLongClick: on dragged picture ran");
@@ -163,62 +164,60 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                     View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view);
                     // Set constants after drag started
                     FragmentPage2.oldGridLayout = (GridLayout) view.getParent();
-                    FragmentPage2.draggedPicture = (CustomPicture) view;
-                    FragmentPage2.oldGridPosition = photoPathLists.get(holder.getAdapterPosition()).indexOf(((CustomPicture) view).getPhotoPath());
+                    CustomPicture newRefCurrentPic = new CustomPicture(myContext, currentPic.getPhotoPath(), currentPic.getLabelName(), currentPic.getCatName(), null, currentPic.getYear(), currentPic.getMonth(), currentPic.getDay(), currentPic.getHour(), currentPic.getMin(), currentPic.getSec());
+                    FragmentPage2.draggedPicture = newRefCurrentPic;
+                    FragmentPage2.oldGridPosition = customPicsLists.get(holder.getAdapterPosition()).indexOf(((CustomPicture) view));
 
                     // Update recycler view
-                    photoPathLists.get(holder.getAdapterPosition()).remove(((CustomPicture) view).getPhotoPath());
-                    labelNameLists.get(holder.getAdapterPosition()).remove(((CustomPicture) view).getLabelName());
+                    customPicsLists.get(holder.getAdapterPosition()).remove(((CustomPicture) view));
                     // For some reason notify change removes drop detection for the holder
                     //holder.gridLayout.removeView(newCustomPicture);
                     notifyItemChanged(holder.getAdapterPosition());
                     // this is to solve the drop within milli seconds error
-                    newCustomPicture.setVisibility(View.GONE);
+                    currentPic.setVisibility(View.GONE);
                     // Drag started
                     view.startDrag(data, shadowBuilder, view, 0);
                     return true;
                 }
             });
 
-            newCustomPicture.setOnClickListener(new View.OnClickListener() {
+            currentPic.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (v.getTag() == null) {
-                        Animation scaleDown = new ScaleAnimation(1.f, 0.5f, 1, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                        Animation fadeout = new AlphaAnimation(1.f, 0.f);
-                        scaleDown.setDuration(100);
-                        fadeout.setDuration(100);
-                        AnimationSet combinedAnim = new AnimationSet(true);
-                        combinedAnim.addAnimation(scaleDown);
-                        combinedAnim.addAnimation(fadeout);
-                        newCustomPicture.startAnimation(combinedAnim);
-                        newCustomPicture.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                // Show preview image function
-                                final Dialog nagDialog = new Dialog(myContext, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-                                nagDialog.setContentView(R.layout.dialog_preview_image);
+                    Animation scaleDown = new ScaleAnimation(1.f, 0.5f, 1, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                    Animation fadeout = new AlphaAnimation(1.f, 0.f);
+                    scaleDown.setDuration(100);
+                    fadeout.setDuration(100);
+                    AnimationSet combinedAnim = new AnimationSet(true);
+                    combinedAnim.addAnimation(scaleDown);
+                    combinedAnim.addAnimation(fadeout);
+                    currentPic.startAnimation(combinedAnim);
+                    currentPic.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Show preview image function
+                            final Dialog nagDialog = new Dialog(myContext, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+                            nagDialog.setContentView(R.layout.dialog_preview_image);
 
-                                ImageView previewImage = (ImageView) nagDialog.findViewById(R.id.preview_image);
-                                Glide
-                                        .with(myContext)
-                                        .load(currentPhotoPath)
-                                        .into(previewImage);
-                                nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                    @Override
-                                    public void onCancel(DialogInterface dialog) {
-                                        nagDialog.dismiss();
-                                    }
-                                });
-                                nagDialog.show();
-                            }
-                        }, 100);
-                    }
+                            ImageView previewImage = (ImageView) nagDialog.findViewById(R.id.preview_image);
+                            Glide
+                                    .with(myContext)
+                                    .load(currentPhotoPath)
+                                    .into(previewImage);
+                            nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    nagDialog.dismiss();
+                                }
+                            });
+                            nagDialog.show();
+                        }
+                    }, 100);
                 }
             });
 
             // set drag listeners for custom pictures
-            newCustomPicture.setOnDragListener(new View.OnDragListener() {
+            currentPic.setOnDragListener(new View.OnDragListener() {
                 @Override
                 public boolean onDrag(View v, DragEvent event) {
                     // v -> each custom picture
@@ -231,10 +230,11 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             } else {
                                 Log.d(TAG, "onDrag: No drop detected at custom picture");
                                 int oldCatPosition = categoryNames.indexOf(FragmentPage2.draggedPicture.getCatName());
-                                if (!photoPathLists.get(oldCatPosition).contains(FragmentPage2.draggedPicture.getPhotoPath())) {
+
+                                // To make sure only either the current pic or the holder adds back the dragged picture
+                                if (!customPicsLists.get(oldCatPosition).contains(FragmentPage2.draggedPicture)) {
                                     // Update recycler view
-                                    photoPathLists.get(oldCatPosition).add(FragmentPage2.oldGridPosition, FragmentPage2.draggedPicture.getPhotoPath());
-                                    labelNameLists.get(oldCatPosition).add(FragmentPage2.oldGridPosition, FragmentPage2.draggedPicture.getLabelName());
+                                    customPicsLists.get(oldCatPosition).add(FragmentPage2.oldGridPosition, FragmentPage2.draggedPicture);
                                     notifyItemChanged(oldCatPosition);
                                 }
                             }
@@ -245,9 +245,9 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             // automatically remove blackspace2 for the last child
                             ((CustomPicture) holder.gridLayout.getChildAt(holder.gridLayout.getChildCount() - 1)).getBlackSpace2().setAlpha(0);
 
-                            newCustomPicture.getBlackSpace().setAlpha(1);
-                            if (currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) != 0) {
-                                ((CustomPicture) holder.gridLayout.getChildAt(currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) - 1)).getBlackSpace2().setAlpha(1);
+                            currentPic.getBlackSpace().setAlpha(1);
+                            if (currentCustomPicList.indexOf(currentPic) != 0) {
+                                ((CustomPicture) holder.gridLayout.getChildAt(currentCustomPicList.indexOf(currentPic) - 1)).getBlackSpace2().setAlpha(1);
                             }
                             break;
                         case DragEvent.ACTION_DRAG_EXITED:
@@ -256,9 +256,9 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             // automatically add blackspace2 for the last child
                             ((CustomPicture) holder.gridLayout.getChildAt(holder.gridLayout.getChildCount() - 1)).getBlackSpace2().setAlpha(1);
 
-                            newCustomPicture.getBlackSpace().setAlpha(0);
-                            if (currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) != 0) {
-                                ((CustomPicture) holder.gridLayout.getChildAt(currentPhotoPathList.indexOf(newCustomPicture.getPhotoPath()) - 1)).getBlackSpace2().setAlpha(0);
+                            currentPic.getBlackSpace().setAlpha(0);
+                            if (currentCustomPicList.indexOf(currentPic) != 0) {
+                                ((CustomPicture) holder.gridLayout.getChildAt(currentCustomPicList.indexOf(currentPic) - 1)).getBlackSpace2().setAlpha(0);
                             }
                             break;
                         /* User dropped into one of the custom picture */
@@ -268,9 +268,9 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             holder.line.setVisibility(View.INVISIBLE);
 
                             // Update recycler view
-                            int currentChildIndex = photoPathLists.get(categoryNames.indexOf(newCustomPicture.getCatName())).indexOf(newCustomPicture.getPhotoPath());
-                            photoPathLists.get(holder.getAdapterPosition()).add(currentChildIndex, FragmentPage2.draggedPicture.getPhotoPath());
-                            labelNameLists.get(holder.getAdapterPosition()).add(currentChildIndex, FragmentPage2.draggedPicture.getLabelName());
+                            int currentChildIndex = customPicsLists.get(categoryNames.indexOf(currentPic.getCatName())).indexOf(currentPic);
+                            customPicsLists.get(holder.getAdapterPosition()).add(currentChildIndex, FragmentPage2.draggedPicture);
+                            FragmentPage2.draggedPicture.setCategoryName(currentPic.getCatName());
                             notifyItemChanged(holder.getAdapterPosition());
                             break;
                         default:
@@ -280,15 +280,15 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                 }
             });
 
-            newCustomPicture.getLabelNameTVN().setOnClickListener(new View.OnClickListener() {
+            currentPic.getLabelNameTVN().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // animation for picture blink effect when click
                     Animation fadeout = new AlphaAnimation(1.f, 0.f);
                     fadeout.setDuration(200);
-                    newCustomPicture.getLabelNameTVN().startAnimation(fadeout);
-                    newCustomPicture.getWhiteSpace().startAnimation(fadeout);
-                    newCustomPicture.postDelayed(new Runnable() {
+                    currentPic.getLabelNameTVN().startAnimation(fadeout);
+                    currentPic.getWhiteSpace().startAnimation(fadeout);
+                    currentPic.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             /* Listener for label name textview */
@@ -314,8 +314,8 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                     nagDialog.dismiss();
 
                                     // Update recycler view
-                                    currentLabelNameList.set(currentPhotoPathList.indexOf(currentPhotoPath), newLabelName);
-                                    notifyItemChanged(labelNameLists.indexOf(currentLabelNameList));
+                                    currentPic.setLabelName(newLabelName);
+                                    notifyItemChanged(customPicsLists.indexOf(currentCustomPicList));
 
                                     MyUtilities.createOneTimeIntroDialog(myContext, "first_time_page3", R.drawable.starting_dialog3);
                                 }
@@ -345,15 +345,14 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                         if (!event.getResult()) {
                             Log.d(TAG, "onDrag: No Drop Detected parent layout");
                             int oldCatPosition = categoryNames.indexOf(FragmentPage2.draggedPicture.getCatName());
-                            if (!photoPathLists.get(oldCatPosition).contains(FragmentPage2.draggedPicture.getPhotoPath())) {
+
+                            // To make sure only either the current pic or the holder adds back the dragged picture
+                            if (!customPicsLists.get(oldCatPosition).contains(FragmentPage2.draggedPicture)) {
                                 // Update recycler view
-                                photoPathLists.get(oldCatPosition).add(FragmentPage2.oldGridPosition, FragmentPage2.draggedPicture.getPhotoPath());
-                                labelNameLists.get(oldCatPosition).add(FragmentPage2.oldGridPosition, FragmentPage2.draggedPicture.getLabelName());
+                                customPicsLists.get(oldCatPosition).add(FragmentPage2.oldGridPosition, FragmentPage2.draggedPicture);
                                 notifyItemChanged(oldCatPosition);
                             }
-                        }
-
-                        else if (event.getResult()) {
+                        } else if (event.getResult()) {
                             MyUtilities.createOneTimeIntroDialog(myContext, "first_time_page5", R.drawable.starting_dialog5);
                         }
 
@@ -401,8 +400,8 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                         holder.line.setVisibility(View.INVISIBLE);
 
                         // Update recycler view
-                        photoPathLists.get(holder.getAdapterPosition()).add(FragmentPage2.draggedPicture.getPhotoPath());
-                        labelNameLists.get(holder.getAdapterPosition()).add(FragmentPage2.draggedPicture.getLabelName());
+                        customPicsLists.get(holder.getAdapterPosition()).add(FragmentPage2.draggedPicture);
+                        FragmentPage2.draggedPicture.setCategoryName(holder.categoryTV.getText().toString());
                         notifyItemChanged(holder.getAdapterPosition());
                         break;
                     default:
@@ -418,6 +417,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             public void onClick(View v) {
                 Log.d(TAG, "onClick: category option pressed");
                 final PopupMenu popupMenu = new PopupMenu(myContext, holder.catOption);
+                final int currentIndex = holder.getAdapterPosition();
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
@@ -426,11 +426,9 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                 try {
                                     Log.d(TAG, "onMenuItemClick: Move down button pressed");
                                     // Update recycler view
-                                    int oldIndex = holder.getAdapterPosition();
-                                    Collections.swap(categoryNames, oldIndex, oldIndex + 1);
-                                    Collections.swap(photoPathLists, oldIndex, oldIndex + 1);
-                                    Collections.swap(labelNameLists, oldIndex, oldIndex + 1);
-                                    notifyItemRangeChanged(oldIndex, 2);
+                                    Collections.swap(categoryNames, currentIndex, currentIndex + 1);
+                                    Collections.swap(customPicsLists, currentIndex, currentIndex + 1);
+                                    notifyItemRangeChanged(currentIndex, 2);
 
                                 } catch (IndexOutOfBoundsException e) {
                                     Log.d(TAG, "onMenuItemClick: Caught IndexOutOfBoundError");
@@ -440,11 +438,9 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                 try {
                                     Log.d(TAG, "onMenuItemClick: Move up button pressed");
                                     // Update recycler view
-                                    int oldIndex = holder.getAdapterPosition();
-                                    Collections.swap(categoryNames, oldIndex, oldIndex - 1);
-                                    Collections.swap(photoPathLists, oldIndex, oldIndex - 1);
-                                    Collections.swap(labelNameLists, oldIndex, oldIndex - 1);
-                                    notifyItemRangeChanged(oldIndex - 1, 2);
+                                    Collections.swap(categoryNames, currentIndex, currentIndex - 1);
+                                    Collections.swap(customPicsLists, currentIndex, currentIndex - 1);
+                                    notifyItemRangeChanged(currentIndex - 1, 2);
 
                                 } catch (IndexOutOfBoundsException e) {
                                     Log.d(TAG, "onMenuItemClick: Caught IndexOutOfBoundError");
@@ -480,8 +476,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                     public void onClick(View v) {
                                         // Update recycler view
                                         categoryNames.remove(holder.getAdapterPosition());
-                                        photoPathLists.remove(holder.getAdapterPosition());
-                                        labelNameLists.remove(holder.getAdapterPosition());
+                                        customPicsLists.remove(holder.getAdapterPosition());
                                         notifyItemRemoved(holder.getAdapterPosition());
 
                                         // Refresh middle page
@@ -501,6 +496,11 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
                                 EditText catNameET = (EditText) nagDialog.findViewById(R.id.editT2);
                                 catNameET.setText(currentCategoryName);
+                                // Update recycler view
+                                for (CustomPicture pic : customPicsLists.get(currentIndex)) {
+                                    pic.setCategoryName(currentCategoryName);
+                                }
+
                                 catNameET.setSelection(currentCategoryName.length());
                                 // Automatically bring up keyboard
                                 catNameET.requestFocus();
@@ -516,6 +516,11 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                         if (!MyUtilities.hasDuplicatedCatNames(newCategoryName, categoryNames)) {
                                             // Update recycler view
                                             categoryNames.set(holder.getAdapterPosition(), newCategoryName);
+                                            /*// Update cat name for all pic in holder
+                                            for () {
+
+                                            }*/
+
                                             notifyItemChanged(holder.getAdapterPosition());
                                             nagDialog.dismiss();
                                         } else {

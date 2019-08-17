@@ -42,6 +42,15 @@ import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
  * Created by franc on 2/7/2019.
  */
 
+/*
+    Properties that can be changed
+    1) Label name
+    2) Cat name
+    3) White space opacity
+    4) Black indicators opacity
+
+ */
+
 public class CustomPicture extends RelativeLayout {
     private Context context;
     private ImageView newImageView;
@@ -49,6 +58,12 @@ public class CustomPicture extends RelativeLayout {
     private TextView labelNameTVN;
     private String photoPath;
     private String labelName;
+    int year;
+    int month;
+    int day;
+    int hour;
+    int min;
+    int sec;
     private PicturesDatabaseHelper mydb;
     private String categoryName;
     private RelativeLayout blackSpace;
@@ -60,7 +75,8 @@ public class CustomPicture extends RelativeLayout {
 
     private static final int picturePadding = 7;
 
-    public CustomPicture(Context context, String photoPath, String labelName, String categoryName) {
+    public CustomPicture(Context context, String photoPath, String labelName, String categoryName, String position,
+                         int year, int month, int day, int hour, int min, int sec) {
         super(context);
         this.context = context;
         this.photoPath = photoPath;
@@ -88,54 +104,23 @@ public class CustomPicture extends RelativeLayout {
                 .transform(new CenterCrop(), new RoundedCorners(15))
                 .into(newImageView);
 
+        /* Set up white space */
+        whiteSpace = new RelativeLayout(context);
+        whiteSpace.setBackground(context.getResources().getDrawable(R.drawable.white_rectangle));
+        RelativeLayout.LayoutParams lp3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, whiteSpaceHeight);
+        lp3.setMargins(0, customPictureLength - whiteSpaceHeight, 0, 0);
+        whiteSpace.setLayoutParams(lp3);
+        this.addView(whiteSpace);
+
         /* Set up label overlay */
-        // if there is label name
-        if (!labelName.equals("")) {
-            // Add a layer to show each picture label
-            // Set up white space to show label (normal mode)
-            whiteSpace = new RelativeLayout(context);
-            whiteSpace.setBackground(context.getResources().getDrawable(R.drawable.white_rectangle));
-            whiteSpace.getBackground().setAlpha(190);
-
-            RelativeLayout.LayoutParams lp3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, whiteSpaceHeight);
-            lp3.setMargins(0, customPictureLength - whiteSpaceHeight, 0, 0);
-            whiteSpace.setLayoutParams(lp3);
-            this.addView(whiteSpace);
-
-            // Set up label name
-            labelNameTVN = new TextView(context);
-            labelNameTVN.setTag("textview");
-            LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            labelNameTVN.setLayoutParams(lp2);
-            labelNameTVN.setGravity(Gravity.CENTER);
-            labelNameTVN.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            Typeface moonchildtf = ResourcesCompat.getFont(context, R.font.moonchild);
-            labelNameTVN.setTypeface(moonchildtf);
-            whiteSpace.addView(labelNameTVN);
-            labelNameTVN.setText(labelName);
-        }
-        /* If there is no label name */
-        else {
-            // Add a layer to show each picture label
-            // Set up white space to show label (normal mode)
-            whiteSpace = new RelativeLayout(context);
-            whiteSpace.setBackground(context.getResources().getDrawable(R.drawable.white_rectangle));
-            whiteSpace.getBackground().setAlpha(120);
-
-            RelativeLayout.LayoutParams lp3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, whiteSpaceHeight);
-            lp3.setMargins(0, customPictureLength - whiteSpaceHeight, 0, 0);
-            whiteSpace.setLayoutParams(lp3);
-            this.addView(whiteSpace);
-
-            // Set up label name
-            labelNameTVN = new TextView(context);
-            LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            labelNameTVN.setLayoutParams(lp2);
-            labelNameTVN.setGravity(Gravity.CENTER);
-            labelNameTVN.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
-            labelNameTVN.setTypeface(labelNameTVN.getTypeface(), Typeface.BOLD_ITALIC);
-            whiteSpace.addView(labelNameTVN);
-        }
+        labelNameTVN = new TextView(context);
+        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        labelNameTVN.setLayoutParams(lp2);
+        labelNameTVN.setGravity(Gravity.CENTER);
+        labelNameTVN.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+        Typeface moonchildtf = ResourcesCompat.getFont(context, R.font.moonchild);
+        labelNameTVN.setTypeface(moonchildtf);
+        whiteSpace.addView(labelNameTVN);
 
         // Set up indicator overlay
         blackSpace = new RelativeLayout(context);
@@ -152,9 +137,6 @@ public class CustomPicture extends RelativeLayout {
         lpp2.setMargins(customPictureLength - blackSpaceWidth - picturePadding *2,0,0,0);
         blackSpace2.setLayoutParams(lpp2);
         this.addView(blackSpace2);
-
-        blackSpace2.setAlpha(0);
-        blackSpace.setAlpha(0);
 
         //Set up detection range
     }
@@ -192,5 +174,37 @@ public class CustomPicture extends RelativeLayout {
 
     public RelativeLayout getBlackSpace2() {
         return blackSpace2;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public int getHour() {
+        return hour;
+    }
+
+    public int getMin() {
+        return min;
+    }
+
+    public int getSec() {
+        return sec;
+    }
+
+    public void setLabelName(String labelName) {
+        this.labelName = labelName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }

@@ -112,9 +112,10 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         ArrayList<String> distinctCategoryNames = setUpDistinctCategoryNamesList();
         ArrayList<ArrayList<String>> photoPathLists = setUpPhotoPathList(distinctCategoryNames);
         ArrayList<ArrayList<String>> labelNameLists = setUpLabelNameList(distinctCategoryNames);
+        ArrayList<ArrayList<CustomPicture>> customPictureLists = setUpCustomPicList(distinctCategoryNames);
 
         // Initialise recycler view
-        initRecyclerView(distinctCategoryNames, photoPathLists, labelNameLists);
+        initRecyclerView(distinctCategoryNames, customPictureLists);
     }
 
     /* This on touch method is for the add category button on the top tab */
@@ -170,8 +171,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                                     if (!MyUtilities.hasDuplicatedCatNames(newCategoryName, recyclerViewAdaptor.categoryNames)) {
                                         // Update recycler view
                                         recyclerViewAdaptor.categoryNames.add(newCategoryName);
-                                        recyclerViewAdaptor.photoPathLists.add(new ArrayList<String>());
-                                        recyclerViewAdaptor.labelNameLists.add(new ArrayList<String>());
+                                        recyclerViewAdaptor.customPicsLists.add(new ArrayList<CustomPicture>());
                                         int currentIndex = recyclerViewAdaptor.categoryNames.indexOf(newCategoryName);
                                         recyclerViewAdaptor.notifyItemInserted(currentIndex);
                                         nagDialog.dismiss();
@@ -318,6 +318,30 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         return photoPathLists;
     }
 
+    // Set up photopath lists
+    public ArrayList<ArrayList<CustomPicture>> setUpCustomPicList(ArrayList<String> distinctCategoryNames) {
+        ArrayList<ArrayList<CustomPicture>> customPicsLists = new ArrayList<>();
+        for (int i = 0; i < distinctCategoryNames.size(); i++) {
+            Cursor res2 = mydb.getBasedOnCategoryPTable(distinctCategoryNames.get(i));
+            ArrayList<CustomPicture> customPics = new ArrayList<>();
+            while (res2.moveToNext()) {
+                String photopathName = res2.getString(1);
+                String labelName = res2.getString(3);
+                String catName = distinctCategoryNames.get(i);
+                int year = res2.getInt(5);
+                int month = res2.getInt(6);
+                int day = res2.getInt(7);
+                int hour = res2.getInt(8);
+                int mins = res2.getInt(9);
+                int secs = res2.getInt(10);
+                customPics.add(new CustomPicture(getActivity(), photopathName, labelName, catName, null,
+                        year, month, day, hour, mins, secs));
+            }
+            customPicsLists.add(customPics);
+        }
+        return customPicsLists;
+    }
+
     // Set up label name lists
     public ArrayList<ArrayList<String>> setUpLabelNameList(ArrayList<String> distinctCategoryNames) {
         ArrayList<ArrayList<String>> labelNameLists = new ArrayList<>();
@@ -332,9 +356,9 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         return labelNameLists;
     }
 
-    public void initRecyclerView(ArrayList<String> distinctCategoryNames, ArrayList<ArrayList<String>> photoPathLists, ArrayList<ArrayList<String>> labelNameLists) {
+    public void initRecyclerView(ArrayList<String> distinctCategoryNames, ArrayList<ArrayList<CustomPicture>> customPicsLists) {
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv);
-        recyclerViewAdaptor = new RecyclerViewAdaptor(this.getActivity(), distinctCategoryNames, photoPathLists, labelNameLists);
+        recyclerViewAdaptor = new RecyclerViewAdaptor(this.getActivity(), distinctCategoryNames, customPicsLists);
         recyclerView.setAdapter(recyclerViewAdaptor);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
