@@ -110,8 +110,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         super.onResume();
         // Get data from database
         ArrayList<String> distinctCategoryNames = setUpDistinctCategoryNamesList();
-        ArrayList<ArrayList<String>> photoPathLists = setUpPhotoPathList(distinctCategoryNames);
-        ArrayList<ArrayList<String>> labelNameLists = setUpLabelNameList(distinctCategoryNames);
         ArrayList<ArrayList<CustomPicture>> customPictureLists = setUpCustomPicList(distinctCategoryNames);
 
         // Initialise recycler view
@@ -256,8 +254,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 recyclerViewAdaptor.notifyItemChanged(currentIndex);
                 */
 
-                // Refresh middle page
-                ActivityMain.swipeAdaptor.getItem(0).onResume();
                 break;
             default:
                 break;
@@ -332,10 +328,10 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 int month = res2.getInt(6);
                 int day = res2.getInt(7);
                 int hour = res2.getInt(8);
-                int mins = res2.getInt(9);
-                int secs = res2.getInt(10);
+                int min = res2.getInt(9);
+                int sec = res2.getInt(10);
                 customPics.add(new CustomPicture(getActivity(), photopathName, labelName, catName, null,
-                        year, month, day, hour, mins, secs));
+                        year, month, day, hour, min, sec));
             }
             customPicsLists.add(customPics);
         }

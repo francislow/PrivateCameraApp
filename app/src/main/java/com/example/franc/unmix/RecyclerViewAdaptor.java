@@ -157,6 +157,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             currentPic.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
+                    MyUtilities.printOutPTable(myContext);
                     Log.d(TAG, "onLongClick: on dragged picture ran");
 
                     ClipData data = ClipData.newPlainText("", "");
@@ -478,9 +479,6 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                         categoryNames.remove(holder.getAdapterPosition());
                                         customPicsLists.remove(holder.getAdapterPosition());
                                         notifyItemRemoved(holder.getAdapterPosition());
-
-                                        // Refresh middle page
-                                        ActivityMain.swipeAdaptor.getItem(0).onResume();
 
                                         myDialog.dismiss();
                                     }

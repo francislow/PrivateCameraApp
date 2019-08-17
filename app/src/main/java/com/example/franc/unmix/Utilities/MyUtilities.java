@@ -57,15 +57,23 @@ public class MyUtilities {
 
     // Prints out picture database
     public static void printOutPTable(Context myContext) {
+        System.out.println("ran print out table");
+        Log.d(TAG, "printOutPTable: asdasdas ran");
         PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(myContext);
         Cursor res = mydb.getAllDataPTable();
         while (res.moveToNext()) {
-            System.out.print(res.getString(0) + " ");
-            System.out.print(res.getString(1) + " ");
-            System.out.print(res.getString(2) + " ");
-            System.out.print(res.getString(3) + " ");
-            System.out.print(res.getString(4) + " ");
-            System.out.print(res.getString(5) + "\n");
+            Log.d(TAG, "printOutPTable: " +
+                    res.getString(0) + " " +
+                    res.getString(1) + " " +
+                    res.getString(2) + " " +
+                    res.getString(3) + " " +
+                    res.getString(4) + " " +
+                    res.getString(5) + " " +
+                    res.getString(6) + " " +
+                    res.getString(7) + " " +
+                    res.getString(8) + " " +
+                    res.getString(9) + " " +
+                    res.getString(10) + "\n");
         }
     }
 

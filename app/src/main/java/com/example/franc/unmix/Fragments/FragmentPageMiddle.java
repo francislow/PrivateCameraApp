@@ -36,6 +36,10 @@ import com.example.franc.unmix.R;
 import com.example.franc.unmix.Utilities.MyUtilities;
 import com.github.chrisbanes.photoview.PhotoView;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+
 import static android.content.ContentValues.TAG;
 
 /**
@@ -83,14 +87,13 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
         String prefKey = "intro_app_pref_key";
         Log.d(TAG, "createOneTimeIntroDialog: tried running one time dialog");
         SharedPreferences prefs = getActivity().getSharedPreferences(ActivityMain.MY_PREFS_NAME, Context.MODE_PRIVATE);
-        /*boolean first_time_flag = prefs.getBoolean(prefKey, true);//"No name defined" is the default value.*/
-        boolean first_time_flag = true;
+        boolean first_time_flag = prefs.getBoolean(prefKey, true);//"No name defined" is the default value.
 
         if (first_time_flag) {
             // if no entry add first time flag  = false as entry
-    /*        SharedPreferences.Editor editor = getActivity().getSharedPreferences(ActivityMain.MY_PREFS_NAME, Context.MODE_PRIVATE).edit();
+            SharedPreferences.Editor editor = getActivity().getSharedPreferences(ActivityMain.MY_PREFS_NAME, Context.MODE_PRIVATE).edit();
             editor.putBoolean(prefKey, false);
-            editor.apply();*/
+            editor.apply();
 
             // if first time starting app, apply dialog
             final Dialog myDialog = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
@@ -155,9 +158,27 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
         // Render all pictures and thumbnails
         PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(getActivity());
         final Cursor res = mydb.getAllDataPTable();
+
+        // Set up picture info list
+        ArrayList<PictureInfo> pictureInfoList = new ArrayList<>();
         while (res.moveToNext()) {
             //Get current photo path
             String currentPhotoPath = res.getString(1);
+            int year = res.getInt(5);
+            int month = res.getInt(6);
+            int day = res.getInt(7);
+            int hour = res.getInt(8);
+            int min = res.getInt(9);
+            int sec = res.getInt(10);
+
+            pictureInfoList.add(new PictureInfo(currentPhotoPath, year, month, day, hour, min, sec));
+        }
+
+        // Sort according to age
+        Collections.sort(pictureInfoList);
+
+        for (PictureInfo picInfo: pictureInfoList) {
+            String currentPhotoPath = picInfo.getPhotopath();
 
             // Set up image view
             ImageView newImageView = new ImageView(this.getActivity());
@@ -263,6 +284,89 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
                 ImageView correspondingIV = (ImageView)view.getTag();
                 vScrollView.smoothScrollTo(0, correspondingIV.getTop() + tv.getHeight());
                 break;
+        }
+    }
+    public class PictureInfo implements Comparable<PictureInfo> {
+        private String photopath;
+        private int yr;
+        private int mnth;
+        private int day;
+        private int hour;
+        private int min;
+        private int sec;
+
+        public PictureInfo (String photopath, int yr, int mnth, int day, int hour, int min, int sec) {
+            this.photopath = photopath;
+            this.yr = yr;
+            this.mnth = mnth;
+            this.day = day;
+            this.hour = hour;
+            this.min = min;
+            this.sec = sec;
+        }
+
+        public String getPhotopath() {
+            return photopath;
+        }
+
+        public int getYr() {
+            return yr;
+        }
+
+        public int getMnth() {
+            return mnth;
+        }
+
+        public int getDay() {
+            return day;
+        }
+
+        public int getHour() {
+            return hour;
+        }
+
+        public int getMin() {
+            return min;
+        }
+
+        public int getSec() {
+            return sec;
+        }
+
+        @Override
+        public int compareTo(@NonNull PictureInfo o) {
+            Log.d(TAG, "compareTo: ran");
+            if (yr < o.getYr()) {
+                return -1;
+            }
+            else if (yr > o.getYr()) {
+                return 1;
+            }
+            else {
+                if (mnth < o.getMnth()) {
+                    return -1;
+
+                }
+                else if (mnth > o.getMnth()) {
+                    return 1;
+                }
+                else {
+                    float minuteAge = (day * 24 * 60) + (hour * 60) + (min) + ((float)sec / 60);
+                    float oMinuteAge = (o.getDay() * 24 * 60) + (o.getHour() * 60) + (o.getMin()) + ((float)o.getSec() / 60);
+
+                    if (minuteAge < oMinuteAge) {
+                        return -1;
+
+                    }
+                    else if (minuteAge > oMinuteAge) {
+                        return 1;
+                    }
+                    else {
+                        System.out.println("returned 0");
+                        return 0;
+                    }
+                }
+            }
         }
     }
 }

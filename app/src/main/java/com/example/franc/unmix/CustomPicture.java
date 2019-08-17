@@ -82,6 +82,12 @@ public class CustomPicture extends RelativeLayout {
         this.photoPath = photoPath;
         this.labelName = labelName;
         this.categoryName = categoryName;
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.hour = hour;
+        this.min = min;
+        this.sec = sec;
 
         // Initialising picture properties
         int gridWidth = context.getResources().getDisplayMetrics().widthPixels;
