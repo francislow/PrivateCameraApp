@@ -90,7 +90,7 @@ public class ActivityMain extends FragmentActivity {
         int year = Calendar.getInstance().get(Calendar.YEAR);
         int month = Calendar.getInstance().get(Calendar.MONTH);
         int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-        int hour = Calendar.getInstance().get(Calendar.HOUR);
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         int min = Calendar.getInstance().get(Calendar.MINUTE);
         int seconds = Calendar.getInstance().get(Calendar.SECOND);
         //After user took the photo
