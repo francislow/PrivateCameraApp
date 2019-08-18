@@ -13,6 +13,8 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,6 +33,8 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.franc.unmix.ActivityMain;
 import com.example.franc.unmix.CustomInformationDialog;
+import com.example.franc.unmix.CustomPicture;
+import com.example.franc.unmix.RecyclerViewAdaptor;
 import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 import com.example.franc.unmix.R;
 import com.example.franc.unmix.Utilities.MyUtilities;
@@ -177,6 +181,8 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
         // Sort according to age
         Collections.sort(pictureInfoList);
 
+        initRecyclerView(pictureInfoList);
+
         for (PictureInfo picInfo: pictureInfoList) {
             String currentPhotoPath = picInfo.getPhotopath();
 
@@ -286,6 +292,14 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
                 break;
         }
     }
+
+    public void initRecyclerView(ArrayList<PictureInfo> pictureInfoList) {
+     /*   recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv);
+        recyclerViewAdaptor = new RecyclerViewAdaptor(this.getActivity(), distinctCategoryNames, customPicsLists);
+        recyclerView.setAdapter(recyclerViewAdaptor);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));*/
+    }
+
     public class PictureInfo implements Comparable<PictureInfo> {
         private String photopath;
         private int yr;
