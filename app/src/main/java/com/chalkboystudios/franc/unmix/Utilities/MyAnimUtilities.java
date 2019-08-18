@@ -1,4 +1,4 @@
-package com.example.franc.unmix.Utilities;
+package com.chalkboystudios.franc.unmix.Utilities;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;

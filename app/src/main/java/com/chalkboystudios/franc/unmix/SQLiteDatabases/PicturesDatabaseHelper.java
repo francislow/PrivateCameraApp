@@ -1,4 +1,4 @@
-package com.example.franc.unmix.SQLiteDatabases;
+package com.chalkboystudios.franc.unmix.SQLiteDatabases;
 
 import android.content.ContentValues;
 import android.content.Context;

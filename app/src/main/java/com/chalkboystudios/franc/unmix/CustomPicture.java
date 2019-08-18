@@ -1,42 +1,20 @@
-package com.example.franc.unmix;
+package com.chalkboystudios.franc.unmix;
 
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
-import android.app.Dialog;
-import android.content.ClipData;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.database.Cursor;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.TypedValue;
-import android.view.ContextThemeWrapper;
-import android.view.DragEvent;
 import android.view.Gravity;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.example.franc.unmix.Fragments.FragmentPage2;
-import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
+import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 
 /**
  * Created by franc on 2/7/2019.

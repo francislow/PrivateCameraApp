@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.franc.unmix">
+    package="com.chalkboystudios.franc.unmix">
 
     <!--Request for permission to use stuffs in android-->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -23,7 +23,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.example.android.fileprovider"
+            android:authorities="com.chalkboystudios.android.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -34,7 +34,7 @@
 
         <!-- Define driver to start from -->
         <activity
-            android:name="com.example.franc.unmix.ActivityMain"
+            android:name="com.chalkboystudios.franc.unmix.ActivityMain"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

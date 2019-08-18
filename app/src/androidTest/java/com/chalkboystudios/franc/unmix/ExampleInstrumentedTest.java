@@ -1,4 +1,4 @@
-package com.example.franc.unmix;
+package com.chalkboystudios.franc.unmix;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

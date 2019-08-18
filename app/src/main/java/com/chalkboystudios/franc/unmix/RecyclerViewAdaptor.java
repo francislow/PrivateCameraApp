@@ -1,4 +1,4 @@
-package com.example.franc.unmix;
+package com.chalkboystudios.franc.unmix;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -28,7 +27,6 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -39,15 +37,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.franc.unmix.Fragments.FragmentPage2;
-import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
-import com.example.franc.unmix.Utilities.MyAnimUtilities;
-import com.example.franc.unmix.Utilities.MyUtilities;
+import com.chalkboystudios.franc.unmix.Fragments.FragmentPage2;
+import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
+import com.chalkboystudios.franc.unmix.Utilities.MyUtilities;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.logging.Handler;
 
 import static android.content.ContentValues.TAG;
 

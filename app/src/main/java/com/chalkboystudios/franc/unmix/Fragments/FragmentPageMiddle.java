@@ -1,10 +1,9 @@
-package com.example.franc.unmix.Fragments;
+package com.chalkboystudios.franc.unmix.Fragments;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -15,7 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -24,25 +22,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.example.franc.unmix.ActivityMain;
-import com.example.franc.unmix.CustomInformationDialog;
-import com.example.franc.unmix.CustomPicture;
-import com.example.franc.unmix.MiddleRecyclerViewAdaptor;
-import com.example.franc.unmix.RecyclerViewAdaptor;
-import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
-import com.example.franc.unmix.R;
-import com.example.franc.unmix.Utilities.MyUtilities;
-import com.github.chrisbanes.photoview.PhotoView;
+import com.chalkboystudios.franc.unmix.ActivityMain;
+import com.chalkboystudios.franc.unmix.MiddleRecyclerViewAdaptor;
+import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
+import com.chalkboystudios.franc.unmix.R;
+import com.chalkboystudios.franc.unmix.Utilities.MyUtilities;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 
 import static android.content.ContentValues.TAG;

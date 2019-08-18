@@ -1,13 +1,11 @@
-package com.example.franc.unmix.Utilities;
+package com.chalkboystudios.franc.unmix.Utilities;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.example.franc.unmix.Fragments.FragmentPage1;
-import com.example.franc.unmix.Fragments.FragmentPage2;
-import com.example.franc.unmix.Fragments.FragmentPageMiddle;
+import com.chalkboystudios.franc.unmix.Fragments.FragmentPage2;
+import com.chalkboystudios.franc.unmix.Fragments.FragmentPageMiddle;
 
 /**
  * Created by franc on 1/6/2019.

@@ -1,4 +1,4 @@
-package com.example.franc.unmix.Utilities;
+package com.chalkboystudios.franc.unmix.Utilities;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
@@ -13,12 +13,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
-import com.example.franc.unmix.ActivityMain;
-import com.example.franc.unmix.R;
-import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
+import com.chalkboystudios.franc.unmix.ActivityMain;
+import com.chalkboystudios.franc.unmix.R;
+import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

@@ -1,4 +1,4 @@
-package com.example.franc.unmix;
+package com.chalkboystudios.franc.unmix;
 
 import org.junit.Test;
 

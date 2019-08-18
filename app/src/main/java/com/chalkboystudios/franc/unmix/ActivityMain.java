@@ -1,26 +1,18 @@
-package com.example.franc.unmix;
+package com.chalkboystudios.franc.unmix;
 
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
-import com.example.franc.unmix.Utilities.MyCamera;
-import com.example.franc.unmix.Utilities.MyUtilities;
-import com.example.franc.unmix.Utilities.SwipeAdaptor;
+import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
+import com.chalkboystudios.franc.unmix.Utilities.MyCamera;
+import com.chalkboystudios.franc.unmix.Utilities.MyUtilities;
+import com.chalkboystudios.franc.unmix.Utilities.SwipeAdaptor;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

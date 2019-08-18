@@ -1,50 +1,26 @@
-package com.example.franc.unmix;
+package com.chalkboystudios.franc.unmix;
 
 import android.app.Dialog;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Point;
-import android.graphics.Typeface;
-import android.media.Image;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.ScaleAnimation;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupMenu;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.example.franc.unmix.Fragments.FragmentPage2;
-import com.example.franc.unmix.Fragments.FragmentPageMiddle;
-import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
-import com.example.franc.unmix.Utilities.MyUtilities;
+import com.chalkboystudios.franc.unmix.Fragments.FragmentPageMiddle;
+import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import static android.content.ContentValues.TAG;
 
