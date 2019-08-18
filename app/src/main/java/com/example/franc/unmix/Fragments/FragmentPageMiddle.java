@@ -34,6 +34,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.franc.unmix.ActivityMain;
 import com.example.franc.unmix.CustomInformationDialog;
 import com.example.franc.unmix.CustomPicture;
+import com.example.franc.unmix.MiddleRecyclerViewAdaptor;
 import com.example.franc.unmix.RecyclerViewAdaptor;
 import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 import com.example.franc.unmix.R;
@@ -51,11 +52,11 @@ import static android.content.ContentValues.TAG;
  */
 
 public class FragmentPageMiddle extends Fragment implements View.OnTouchListener, View.OnClickListener {
-    private LinearLayout LLOfPictures;
     private LinearLayout LLOfThumbnails;
     private ScrollView vScrollView;
     private int screenWidth;
     private int screenHeight;
+    RecyclerView recyclerView;
 
     @Nullable
     @Override
@@ -72,9 +73,10 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
         screenHeight = getActivity().getResources().getDisplayMetrics().heightPixels;
 
         //LinearLayout
-        LLOfPictures = (LinearLayout) getActivity().findViewById(R.id.LL1);
         LLOfThumbnails = (LinearLayout) getActivity().findViewById(R.id.LL2);
         vScrollView = (ScrollView) getActivity().findViewById(R.id.vScrollView);
+        // To fix bug where scroll view is hidden on resume
+        vScrollView.smoothScrollTo(0, 0);
 
         //Setup Top Tab
         //Camera Button
@@ -85,7 +87,7 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
         final Button addButton = (Button) getActivity().findViewById(R.id.addButton);
         addButton.setOnTouchListener(this);
 
-        MyUtilities.createOneTimeIntroDialog(getActivity(),"first_time_page1", R.drawable.starting_dialog1);
+        MyUtilities.createOneTimeIntroDialog(getActivity(), "first_time_page1", R.drawable.starting_dialog1);
 
         // Create initial app intro dialog
         String prefKey = "intro_app_pref_key";
@@ -155,8 +157,8 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
     @Override
     public void onResume() {
         super.onResume();
+
         // Remove all pictures and thumbnails
-        LLOfPictures.removeAllViews();
         LLOfThumbnails.removeAllViews();
 
         // Render all pictures and thumbnails
@@ -175,46 +177,28 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
             int min = res.getInt(9);
             int sec = res.getInt(10);
 
-            pictureInfoList.add(new PictureInfo(currentPhotoPath, year, month, day, hour, min, sec));
+            pictureInfoList.add(0, new PictureInfo(currentPhotoPath, year, month, day, hour, min, sec));
         }
 
         // Sort according to age
         Collections.sort(pictureInfoList);
-
         initRecyclerView(pictureInfoList);
 
-        for (PictureInfo picInfo: pictureInfoList) {
-            String currentPhotoPath = picInfo.getPhotopath();
-
-            // Set up image view
-            ImageView newImageView = new ImageView(this.getActivity());
-            LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(screenWidth, screenHeight / 2);
-            lp1.setMargins(0, 24, 0, 0);
-            newImageView.setLayoutParams(lp1);
-            newImageView.setPadding(20, 0, 20, 0);
-            LLOfPictures.addView(newImageView, 0);
-            Glide
-                    .with(this.getActivity())
-                    .load(currentPhotoPath)
-                    .transform(new CenterCrop(), new RoundedCorners(25))
-                    .into(newImageView);
-            //Set on click listener for the image view
-            newImageView.setTag(currentPhotoPath);
-            newImageView.setOnClickListener(this);
+        for (int i = 0; i < pictureInfoList.size(); i++) {
+            String currentPhotoPath = pictureInfoList.get(i).getPhotopath();
 
             //Set up thumbnail (image view)
             ImageView newThumbnail = new ImageView(this.getActivity());
             LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(screenHeight / 13, screenHeight / 13);
             lp2.setMargins(23, 10, 0, 10);
             newThumbnail.setLayoutParams(lp2);
-            LLOfThumbnails.addView(newThumbnail, 0);
+            LLOfThumbnails.addView(newThumbnail);
             Glide
                     .with(getActivity())
                     .load(currentPhotoPath)
                     .transform(new CenterCrop(), new RoundedCorners(60))
                     .into(newThumbnail);
             //Set on click listener
-            newThumbnail.setTag(newImageView);
             newThumbnail.setOnClickListener(this);
         }
     }
@@ -262,42 +246,20 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
 
     @Override
     public void onClick(View view) {
-        switch (((LinearLayout) view.getParent()).getOrientation()) {
-            // If it is the display pictures
-            case LinearLayout.VERTICAL:
-                String currentPhotoPath = (String) view.getTag();
-                final Dialog nagDialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-                nagDialog.setContentView(R.layout.dialog_preview_image);
+        ImageView currentThumbnail = (ImageView) view;
+        int indexOfThumbNail = LLOfThumbnails.indexOfChild(currentThumbnail);
+        TextView tv = (TextView) getActivity().findViewById(R.id.recentlyadded);
+        vScrollView.smoothScrollTo(0, indexOfThumbNail * convertDpToPx(getContext(), 400) + tv.getHeight());
 
-                ImageView previewImage = (PhotoView) nagDialog.findViewById(R.id.preview_image);
-                Glide
-                        .with(nagDialog.getContext())
-                        .load(currentPhotoPath)
-                        .into(previewImage);
-
-                nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        nagDialog.dismiss();
-                    }
-                });
-                nagDialog.show();
-                break;
-
-            // If it is the thumbnails
-            case LinearLayout.HORIZONTAL:
-                TextView tv = (TextView) getActivity().findViewById(R.id.recentlyadded);
-                ImageView correspondingIV = (ImageView)view.getTag();
-                vScrollView.smoothScrollTo(0, correspondingIV.getTop() + tv.getHeight());
-                break;
-        }
     }
 
     public void initRecyclerView(ArrayList<PictureInfo> pictureInfoList) {
-     /*   recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv);
-        recyclerViewAdaptor = new RecyclerViewAdaptor(this.getActivity(), distinctCategoryNames, customPicsLists);
-        recyclerView.setAdapter(recyclerViewAdaptor);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));*/
+        recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv2);
+        // Allow smooth gliding scrolling
+        recyclerView.setNestedScrollingEnabled(false);
+        MiddleRecyclerViewAdaptor myRVA = new MiddleRecyclerViewAdaptor(getActivity(), pictureInfoList);
+        recyclerView.setAdapter(myRVA);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
     public class PictureInfo implements Comparable<PictureInfo> {
@@ -309,7 +271,7 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
         private int min;
         private int sec;
 
-        public PictureInfo (String photopath, int yr, int mnth, int day, int hour, int min, int sec) {
+        public PictureInfo(String photopath, int yr, int mnth, int day, int hour, int min, int sec) {
             this.photopath = photopath;
             this.yr = yr;
             this.mnth = mnth;
@@ -351,36 +313,34 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
         public int compareTo(@NonNull PictureInfo o) {
             Log.d(TAG, "compareTo: ran");
             if (yr < o.getYr()) {
-                return -1;
-            }
-            else if (yr > o.getYr()) {
                 return 1;
-            }
-            else {
+            } else if (yr > o.getYr()) {
+                return -1;
+            } else {
                 if (mnth < o.getMnth()) {
-                    return -1;
-
-                }
-                else if (mnth > o.getMnth()) {
                     return 1;
-                }
-                else {
-                    float minuteAge = (day * 24 * 60) + (hour * 60) + (min) + ((float)sec / 60);
-                    float oMinuteAge = (o.getDay() * 24 * 60) + (o.getHour() * 60) + (o.getMin()) + ((float)o.getSec() / 60);
+
+                } else if (mnth > o.getMnth()) {
+                    return -1;
+                } else {
+                    float minuteAge = (day * 24 * 60) + (hour * 60) + (min) + ((float) sec / 60);
+                    float oMinuteAge = (o.getDay() * 24 * 60) + (o.getHour() * 60) + (o.getMin()) + ((float) o.getSec() / 60);
 
                     if (minuteAge < oMinuteAge) {
-                        return -1;
-
-                    }
-                    else if (minuteAge > oMinuteAge) {
                         return 1;
-                    }
-                    else {
+
+                    } else if (minuteAge > oMinuteAge) {
+                        return -1;
+                    } else {
                         System.out.println("returned 0");
                         return 0;
                     }
                 }
             }
         }
+    }
+
+    public int convertDpToPx(Context context, float dp) {
+        return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
 }

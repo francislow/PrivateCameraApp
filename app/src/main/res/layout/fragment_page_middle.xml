@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -17,11 +17,12 @@
 
     <!--Rest of the page - Scrollview-->
     <ScrollView
+        android:layout_below="@id/toptab1"
         android:id="@+id/vScrollView"
         android:layout_width="match_parent"
-        android:layout_height="495dp"
+        android:layout_height="match_parent"
         android:background="@color/white"
-        android:scrollbars="none">
+        android:scrollbars="none" >
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -31,7 +32,7 @@
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/recentlyadded"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="25dp"
                 android:fontFamily="@font/moonchild"
                 android:gravity="start"
                 android:paddingEnd="0dp"
@@ -41,30 +42,31 @@
                 android:textSize="13dp" />
 
             <!-- To Add and display recent images taken-->
-            <LinearLayout
-                android:id="@+id/LL1"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerv2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/recentlyadded"
-                android:orientation="vertical">
-            </LinearLayout>
+                android:layout_height="match_parent"
+                android:layout_below="@+id/recentlyadded" >
+            </android.support.v7.widget.RecyclerView>
         </RelativeLayout>
 
     </ScrollView>
 
     <!--Recent photos - Scrollview-->
     <HorizontalScrollView
+        android:id="@+id/hsv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/lightgrey"
+        android:layout_alignParentBottom="true"
         android:scrollbars="none">
 
         <LinearLayout
             android:id="@+id/LL2"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal"></LinearLayout>
+            android:orientation="horizontal" >
+        </LinearLayout>
 
     </HorizontalScrollView>
-
-</LinearLayout>
+</RelativeLayout>
