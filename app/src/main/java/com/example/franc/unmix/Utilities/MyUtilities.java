@@ -201,4 +201,11 @@ public class MyUtilities {
             myDialog.show();
         }
     }
+
+    public static void deleteFile(String pathName) {
+        File file = new File(pathName);
+        if (file.exists()) {
+            file.delete();
+        }
+    }
 }

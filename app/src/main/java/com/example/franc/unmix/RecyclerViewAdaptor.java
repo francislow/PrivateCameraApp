@@ -523,9 +523,16 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                 yesButton.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
+
+                                        // Delete actual file stored in package
+                                        for (CustomPicture custompic : customPicsLists.get(holder.getAdapterPosition())) {
+                                            MyUtilities.deleteFile(custompic.getPhotoPath());
+                                        }
+                                        
                                         // Update recycler view
                                         categoryNames.remove(holder.getAdapterPosition());
                                         customPicsLists.remove(holder.getAdapterPosition());
+
                                         notifyItemRemoved(holder.getAdapterPosition());
 
                                         myDialog.dismiss();

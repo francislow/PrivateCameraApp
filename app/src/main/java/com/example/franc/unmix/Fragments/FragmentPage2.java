@@ -245,6 +245,8 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
                 Log.d(TAG, "onDrag: Drop detected at remove bar");
 
+                // Delete actual file stored in package
+                MyUtilities.deleteFile(draggedPicture.getPhotoPath());
                 /* Don't need to do this since recyclerview removed the dragged picture already after drag
                 started. If dropped anywhere else except top remove bar, it will add back to original grid
                 // User wants to delete the photo
