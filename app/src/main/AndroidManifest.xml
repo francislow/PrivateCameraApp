@@ -15,9 +15,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/myappicon5"
         android:label="Unmix Gallery"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@mipmap/ic_app"
+        android:roundIcon="@mipmap/ic_app_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
