@@ -4,10 +4,12 @@ import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.media.Image;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -40,6 +42,7 @@ import com.example.franc.unmix.Fragments.FragmentPageMiddle;
 import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 import com.example.franc.unmix.Utilities.MyUtilities;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -99,6 +102,10 @@ public class MiddleRecyclerViewAdaptor extends RecyclerView.Adapter<MiddleRecycl
                         // Show preview image function
                         final Dialog nagDialog = new Dialog(myContext, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
                         nagDialog.setContentView(R.layout.dialog_preview_image);
+
+                        // Button
+                        Button sendButton = (Button) nagDialog.findViewById(R.id.sendButton);
+                        sendButton.setVisibility(View.GONE);
 
                         ImageView previewImage = (ImageView) nagDialog.findViewById(R.id.preview_image);
                         Glide

@@ -1,13 +1,17 @@
 package com.example.franc.unmix;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +19,7 @@ import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -39,6 +44,7 @@ import com.example.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 import com.example.franc.unmix.Utilities.MyAnimUtilities;
 import com.example.franc.unmix.Utilities.MyUtilities;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.logging.Handler;
@@ -199,6 +205,42 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                             // Show preview image function
                             final Dialog nagDialog = new Dialog(myContext, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
                             nagDialog.setContentView(R.layout.dialog_preview_image);
+
+                            // Button
+                            Button sendButton = (Button) nagDialog.findViewById(R.id.sendButton);
+                            sendButton.setOnTouchListener(new View.OnTouchListener() {
+                                @Override
+                                public boolean onTouch(View view, MotionEvent motionEvent) {
+                                    PropertyValuesHolder scaleXUp = PropertyValuesHolder.ofFloat(View.SCALE_X, 0.7f, 1f);
+                                    PropertyValuesHolder scaleYUp = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.7f, 1f);
+                                    PropertyValuesHolder alphaUp = PropertyValuesHolder.ofFloat(View.ALPHA, 0.5f, 1f);
+
+                                    PropertyValuesHolder scaleXDown = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0.7f);
+                                    PropertyValuesHolder scaleYDown = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0.7f);
+                                    PropertyValuesHolder alphaDown = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0.5f);
+                                    switch (motionEvent.getAction()) {
+                                        case MotionEvent.ACTION_DOWN:
+                                            ObjectAnimator.ofPropertyValuesHolder(view, alphaDown, scaleXDown, scaleYDown).start();
+                                            break;
+                                        case MotionEvent.ACTION_CANCEL:
+                                            ObjectAnimator.ofPropertyValuesHolder(view, alphaUp, scaleXUp, scaleYUp).start();
+                                            break;
+                                        case MotionEvent.ACTION_UP:
+                                            ObjectAnimator.ofPropertyValuesHolder(view, alphaUp, scaleXUp, scaleYUp).start();
+
+                                            //If user's touch up is still inside button
+                                            if (MyUtilities.touchUpInButton(motionEvent, (Button) view)) {
+                                                Intent shareIntent = new Intent();
+                                                shareIntent.setAction(Intent.ACTION_SEND);
+                                                Uri uriToImage = Uri.fromFile(new File(currentPic.getPhotoPath()));
+                                                shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
+                                                shareIntent.setType("image/jpeg");
+                                                myContext.startActivity(Intent.createChooser(shareIntent, "idk whats this~"));
+                                            }
+                                    }
+                                    return true;
+                                }
+                            });
 
                             ImageView previewImage = (ImageView) nagDialog.findViewById(R.id.preview_image);
                             Glide
