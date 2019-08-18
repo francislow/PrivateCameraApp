@@ -138,7 +138,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             final String currentPhotoPath = currentPic.getPhotoPath();
             final String currentLabelName = currentPic.getLabelName();
 
-           if ((GridLayout) currentPic.getParent() != null) {
+            if ((GridLayout) currentPic.getParent() != null) {
                 ((GridLayout) currentPic.getParent()).removeView(currentPic);
             }
             holder.gridLayout.addView(currentPic);
@@ -360,7 +360,13 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
                                     currentPic.setLabelName(newLabelName);
                                     notifyItemChanged(customPicsLists.indexOf(currentCustomPicList));
 
-                                    MyUtilities.createOneTimeIntroDialog(myContext, "first_time_page3", R.drawable.starting_dialog3);
+                                    // Add delay for tut dialog
+                                    currentPic.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            MyUtilities.createOneTimeIntroDialog(myContext, "first_time_page3", R.drawable.starting_dialog3);
+                                        }
+                                    }, 900);
                                 }
                             });
                             nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {

@@ -66,7 +66,12 @@ public class ActivityMain extends FragmentActivity {
             @Override
             public void onPageSelected(int position) {
                 if (position == 1) {
-                    MyUtilities.createOneTimeIntroDialog(ActivityMain.this,"first_time_page2", R.drawable.starting_dialog2);
+                    viewPager.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            MyUtilities.createOneTimeIntroDialog(ActivityMain.this,"first_time_page2", R.drawable.starting_dialog2);
+                        }
+                    }, 400);
                 }
             }
 
