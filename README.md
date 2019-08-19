@@ -8,4 +8,4 @@ This is a private gallery, separated from your phone's gallery, tailored to stor
 What's more?
 To better identify each picture, you can label each individual picture at will.
 
-Unmix your gallery now.
+Unmix your gallery now!
