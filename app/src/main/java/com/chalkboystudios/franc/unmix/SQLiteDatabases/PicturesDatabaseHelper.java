@@ -88,6 +88,12 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public Cursor getAllDataPTable() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + PICTURES_TABLE_NAME, null);
+        return res;
+    }
+
     public boolean updateCategoryNamePTable(String pathName, String newCategoryName) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -141,12 +147,6 @@ public class PicturesDatabaseHelper extends SQLiteOpenHelper {
             return false;
         }
         return true;
-    }
-
-    public Cursor getAllDataPTable() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + PICTURES_TABLE_NAME, null);
-        return res;
     }
 
     public boolean deleteRowPTable(String pathName) {

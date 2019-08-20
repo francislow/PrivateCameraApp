@@ -22,17 +22,8 @@ public class MyCamera {
     private File currentImageFile;
     private Activity currentActivity;
 
-    private String year;
-    private String month;
-    private String day;
-
-
     public MyCamera(Activity currentActivity) {
         this.currentActivity = currentActivity;
-    }
-
-    public File getPicture() {
-        return currentImageFile;
     }
 
     public void dispatchTakePictureIntent() {
@@ -43,7 +34,7 @@ public class MyCamera {
         }
         else {
             try {
-                currentImageFile = createEmptyFile();
+                currentImageFile = MyUtilities.createEmptyFile(currentActivity);
             } catch (IOException ex) {
                 System.out.println("Error occurred while creating the an empty file for image");
             }
@@ -60,35 +51,7 @@ public class MyCamera {
         }
     }
 
-    //Creates an blank image file with unique names for it
-    public File createEmptyFile() throws IOException {
-        //To be stored in database
-        year = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
-        month = Integer.toString(Calendar.getInstance().get(Calendar.MONTH));
-        day = Integer.toString(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
-
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp;
-        File storageDir = currentActivity.getExternalFilesDir(ActivityMain.APPIMAGEFOLDERNAME);
-
-        //This will may not give a unique name
-        //File imageFile = new File(storageDir, imageFileName + ".jpg");
-
-        //But this will give a unique file name by adding -(some number) to end of file name
-        File imageFile = File.createTempFile(imageFileName, ".jpg", storageDir);
-        return imageFile;
-    }
-
-    public String getYear(){
-        return this.year;
-    }
-
-    public String getMonth() {
-        return this.month;
-    }
-
-    public String getDay() {
-        return this.day;
+    public File getPictureFile() {
+        return currentImageFile;
     }
 }

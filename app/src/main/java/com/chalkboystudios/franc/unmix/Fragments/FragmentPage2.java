@@ -28,10 +28,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chalkboystudios.franc.unmix.ActivityMain;
-import com.chalkboystudios.franc.unmix.CustomInformationDialog;
-import com.chalkboystudios.franc.unmix.CustomPicture;
+import com.chalkboystudios.franc.unmix.Utilities.CustomInformationDialog;
+import com.chalkboystudios.franc.unmix.Utilities.CustomPicture;
 import com.chalkboystudios.franc.unmix.R;
-import com.chalkboystudios.franc.unmix.RecyclerViewAdaptor;
+import com.chalkboystudios.franc.unmix.RecyclerViewAdaptors.RecyclerViewAdaptor2;
 import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 import com.chalkboystudios.franc.unmix.Utilities.MyUtilities;
 
@@ -49,11 +49,10 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     private Button informationButton;
     private TextView appNameTV;
     private RelativeLayout topTabSpace;
-    private RelativeLayout topTabSpace2;
+    private RelativeLayout topTabSpaceRemove;
     private TextView dustbinTV;
-
     private RecyclerView recyclerView;
-    public RecyclerViewAdaptor recyclerViewAdaptor;
+    private RecyclerViewAdaptor2 recyclerViewAdaptor2;
 
     // Constants when drag of a specific picture started
     public static GridLayout oldGridLayout;
@@ -74,12 +73,14 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
 
         // Setup Top Tab
         topTabSpace = (RelativeLayout) getActivity().findViewById(R.id.top_tab_space);
-        topTabSpace2 = (RelativeLayout) getActivity().findViewById(R.id.top_tab_space_2);
-        topTabSpace2.setOnDragListener(this);
-        topTabSpace2.setAlpha(0);
+        topTabSpaceRemove = (RelativeLayout) getActivity().findViewById(R.id.top_tab_space_2);
+        topTabSpaceRemove.setOnDragListener(this);
+        topTabSpaceRemove.setAlpha(0);
+
         // Dustbin imageview
         dustbinTV = (TextView) getActivity().findViewById(R.id.dustbin);
         dustbinTV.setAlpha(0);
+
         // App name textview
         appNameTV = (TextView) getActivity().findViewById(R.id.appname2);
 
@@ -94,8 +95,9 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause: FragmentPage2");
+
         recyclerView.setAdapter(null);
-        System.out.println("fragm 2 paused");
     }
 
 
@@ -103,6 +105,8 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume: FragmentPage2");
+
         // Get data from database
         ArrayList<String> distinctCategoryNames = setUpDistinctCategoryNamesList();
         ArrayList<ArrayList<CustomPicture>> customPictureLists = setUpCustomPicList(distinctCategoryNames);
@@ -139,8 +143,6 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                             myDialog.show();
                             break;
                         case R.id.add_cat_button:
-                            MyUtilities.printOutPTable(this.getActivity());
-                            MyUtilities.printOutCTable(this.getActivity());
                             //Add a category
                             final Dialog nagDialog = new Dialog(getActivity());
                             //nagDialog.getWindow().getAttributes().windowAnimations = R.style.DialogScale;
@@ -161,12 +163,12 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                                 public void onClick(View v) {
                                     EditText categoryNameText = (EditText) nagDialog.findViewById(R.id.editT1);
                                     String newCategoryName = categoryNameText.getText().toString().trim();
-                                    if (!MyUtilities.hasDuplicatedCatNames(newCategoryName, recyclerViewAdaptor.categoryNames)) {
+                                    if (!MyUtilities.hasDuplicatedCatNames(newCategoryName, recyclerViewAdaptor2.categoryNames)) {
                                         // Update recycler view
-                                        recyclerViewAdaptor.categoryNames.add(newCategoryName);
-                                        recyclerViewAdaptor.customPicsLists.add(new ArrayList<CustomPicture>());
-                                        int currentIndex = recyclerViewAdaptor.categoryNames.indexOf(newCategoryName);
-                                        recyclerViewAdaptor.notifyItemInserted(currentIndex);
+                                        recyclerViewAdaptor2.categoryNames.add(newCategoryName);
+                                        recyclerViewAdaptor2.customPicsLists.add(new ArrayList<CustomPicture>());
+                                        int currentIndex = recyclerViewAdaptor2.categoryNames.indexOf(newCategoryName);
+                                        recyclerViewAdaptor2.notifyItemInserted(currentIndex);
                                         nagDialog.dismiss();
 
                                         MyUtilities.createOneTimeIntroDialog(getActivity(), "first_time_page4", R.drawable.starting_dialog4);
@@ -211,13 +213,13 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
 
                 // Appear
                 ObjectAnimator.ofPropertyValuesHolder(dustbinTV, scaleXUp, scaleYUp, alphaUp).start();
-                ObjectAnimator.ofPropertyValuesHolder(topTabSpace2, alphaUp).start();
+                ObjectAnimator.ofPropertyValuesHolder(topTabSpaceRemove, alphaUp).start();
 
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
                 // Remove
                 ObjectAnimator.ofPropertyValuesHolder(dustbinTV, scaleXDown, scaleYDown, alphaDown).start();
-                ObjectAnimator.ofPropertyValuesHolder(topTabSpace2, alphaDown).start();
+                ObjectAnimator.ofPropertyValuesHolder(topTabSpaceRemove, alphaDown).start();
 
                 // Appear
                 ObjectAnimator.ofPropertyValuesHolder(topTabSpace, alphaUp).start();
@@ -246,9 +248,9 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 started. If dropped anywhere else except top remove bar, it will add back to original grid
                 // User wants to delete the photo
                 // Update recycler view
-                int currentIndex = recyclerViewAdaptor.categoryNames.indexOf(draggedPicture.getCatName());
-                recyclerViewAdaptor.photoPathLists.get(currentIndex).remove(draggedPicture.getPhotoPath());
-                recyclerViewAdaptor.notifyItemChanged(currentIndex);
+                int currentIndex = recyclerViewAdaptor2.categoryNames.indexOf(draggedPicture.getCatName());
+                recyclerViewAdaptor2.photoPathLists.get(currentIndex).remove(draggedPicture.getPhotoPath());
+                recyclerViewAdaptor2.notifyItemChanged(currentIndex);
                 */
 
                 break;
@@ -263,26 +265,11 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
 
 
 
-
-
     /* HELPER METHODS */
 
     // Set up distinctCategoryNames list
     public ArrayList<String> setUpDistinctCategoryNamesList() {
         ArrayList<String> distinctCategoryNames = new ArrayList<>();
-      /*  Cursor res3 = mydb.getAllDataCTable();
-
-        boolean hasDefaultCatName = false;
-        while (res3.moveToNext()) {
-            String currentCatName = res3.getString(1);
-            if (currentCatName.equals(ActivityMain.DEFAULTCATEGORYNAME)) {
-                hasDefaultCatName = true;
-            }
-        }
-        if (!hasDefaultCatName) {
-            mydb.insertNewRowCTable(ActivityMain.DEFAULTCATEGORYNAME);
-        }
-*/
         Cursor res1 = mydb.getAllDataCTable();
         while (res1.moveToNext()) {
             String currentCatName = res1.getString(1);
@@ -290,25 +277,11 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         }
 
         // If dun have unsorted category
-        if (!distinctCategoryNames.contains(ActivityMain.DEFAULTCATEGORYNAME)) {
-            distinctCategoryNames.add(0, ActivityMain.DEFAULTCATEGORYNAME);
+        if (!distinctCategoryNames.contains(ActivityMain.DEFAULT_CAT_NAME)) {
+            distinctCategoryNames.add(0, ActivityMain.DEFAULT_CAT_NAME);
         }
 
         return distinctCategoryNames;
-    }
-
-    // Set up photopath lists
-    public ArrayList<ArrayList<String>> setUpPhotoPathList(ArrayList<String> distinctCategoryNames) {
-        ArrayList<ArrayList<String>> photoPathLists = new ArrayList<>();
-        for (int i = 0; i < distinctCategoryNames.size(); i++) {
-            Cursor res2 = mydb.getBasedOnCategoryPTable(distinctCategoryNames.get(i));
-            ArrayList<String> photoPaths = new ArrayList<>();
-            while (res2.moveToNext()) {
-                photoPaths.add(res2.getString(1));
-            }
-            photoPathLists.add(photoPaths);
-        }
-        return photoPathLists;
     }
 
     // Set up photopath lists
@@ -335,28 +308,10 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
         return customPicsLists;
     }
 
-    // Set up label name lists
-    public ArrayList<ArrayList<String>> setUpLabelNameList(ArrayList<String> distinctCategoryNames) {
-        ArrayList<ArrayList<String>> labelNameLists = new ArrayList<>();
-        for (int i = 0; i < distinctCategoryNames.size(); i++) {
-            Cursor res2 = mydb.getBasedOnCategoryPTable(distinctCategoryNames.get(i));
-            ArrayList<String> labelNames = new ArrayList<>();
-            while (res2.moveToNext()) {
-                labelNames.add(res2.getString(3));
-            }
-            labelNameLists.add(labelNames);
-        }
-        return labelNameLists;
-    }
-
     public void initRecyclerView(ArrayList<String> distinctCategoryNames, ArrayList<ArrayList<CustomPicture>> customPicsLists) {
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv);
-        recyclerViewAdaptor = new RecyclerViewAdaptor(this.getActivity(), distinctCategoryNames, customPicsLists);
-        recyclerView.setAdapter(recyclerViewAdaptor);
+        recyclerViewAdaptor2 = new RecyclerViewAdaptor2(this.getActivity(), distinctCategoryNames, customPicsLists);
+        recyclerView.setAdapter(recyclerViewAdaptor2);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-    }
-
-    public RecyclerViewAdaptor getRecyclerViewAdaptor() {
-        return recyclerViewAdaptor;
     }
 }

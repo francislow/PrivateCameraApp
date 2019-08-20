@@ -1,10 +1,9 @@
-package com.chalkboystudios.franc.unmix;
+package com.chalkboystudios.franc.unmix.RecyclerViewAdaptors;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +17,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.chalkboystudios.franc.unmix.Fragments.FragmentPageMiddle;
+import com.chalkboystudios.franc.unmix.R;
 import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 
 import java.util.ArrayList;
@@ -28,19 +28,16 @@ import static android.content.ContentValues.TAG;
  * Created by franc on 27/6/2019.
  */
 
-public class MiddleRecyclerViewAdaptor extends RecyclerView.Adapter<MiddleRecyclerViewAdaptor.ViewHolder> {
-    public ArrayList<FragmentPageMiddle.PictureInfo> pictureInfoList = new ArrayList<>();
+public class RecyclerViewAdaptor1 extends RecyclerView.Adapter<RecyclerViewAdaptor1.ViewHolder> {
+    private ArrayList<FragmentPageMiddle.PictureInfo> pictureInfoList = new ArrayList<>();
     private Context myContext;
-    // associatedFragment = FragmentPageMiddle
-    private Fragment associatedFragment;
     private PicturesDatabaseHelper mydb;
 
 
-    public MiddleRecyclerViewAdaptor(Context context, ArrayList<FragmentPageMiddle.PictureInfo> pictureInfoList) {
+    public RecyclerViewAdaptor1(Context context, ArrayList<FragmentPageMiddle.PictureInfo> pictureInfoList) {
         this.myContext = context;
         this.pictureInfoList = pictureInfoList;
 
-        associatedFragment = ActivityMain.swipeAdaptor.getItem(0);
         mydb = new PicturesDatabaseHelper(myContext);
     }
 
@@ -108,17 +105,11 @@ public class MiddleRecyclerViewAdaptor extends RecyclerView.Adapter<MiddleRecycl
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-
         ImageView displayImage;
 
         public ViewHolder(View itemView) {
             super(itemView);
             displayImage = (ImageView) itemView.findViewById(R.id.display_image);
         }
-    }
-
-
-    public int convertDpToPx(Context context, float dp) {
-        return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
 }

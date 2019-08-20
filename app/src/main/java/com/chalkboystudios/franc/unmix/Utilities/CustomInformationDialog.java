@@ -1,4 +1,4 @@
-package com.chalkboystudios.franc.unmix;
+package com.chalkboystudios.franc.unmix.Utilities;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -7,15 +7,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+
+import com.chalkboystudios.franc.unmix.R;
 
 /**
  * Created by franc on 11/8/2019.
  */
 
+/* This class is for custom instruction page when user clicks on information button */
+
 public class CustomInformationDialog extends Dialog {
-    Context context;
-    int currentDialogPage = 1;
+    private Context context;
+    private int currentDialogPage = 1;
 
     public CustomInformationDialog(@NonNull Context context) {
         super(context);
@@ -48,18 +51,20 @@ public class CustomInformationDialog extends Dialog {
             }
         });
 
+        // Set initial background
         final ImageView informationIV = findViewById(R.id.informationIV);
-        informationIV.setBackground(context.getResources().getDrawable(R.drawable.testinfobackground));
-        RelativeLayout transBackground = findViewById(R.id.transBackground);
-        transBackground.setOnClickListener(new View.OnClickListener() {
+        informationIV.setBackground(context.getResources().getDrawable(R.drawable.instruction1));
+
+        // User click to go next page
+        informationIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (currentDialogPage == 1) {
-                    informationIV.setBackground(context.getResources().getDrawable(R.drawable.testinfobackground2));
+                    informationIV.setBackground(context.getResources().getDrawable(R.drawable.instruction2));
                     currentDialogPage = 2;
                 }
                 else if (currentDialogPage == 2) {
-                    informationIV.setBackground(context.getResources().getDrawable(R.drawable.testinfobackground3));
+                    informationIV.setBackground(context.getResources().getDrawable(R.drawable.instruction3));
                     currentDialogPage = 3;
                 }
                 else {

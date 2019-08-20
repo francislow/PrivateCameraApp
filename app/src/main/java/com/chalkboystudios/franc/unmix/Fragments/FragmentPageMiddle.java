@@ -29,7 +29,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.chalkboystudios.franc.unmix.ActivityMain;
-import com.chalkboystudios.franc.unmix.MiddleRecyclerViewAdaptor;
+import com.chalkboystudios.franc.unmix.RecyclerViewAdaptors.RecyclerViewAdaptor1;
 import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 import com.chalkboystudios.franc.unmix.R;
 import com.chalkboystudios.franc.unmix.Utilities.MyUtilities;
@@ -46,9 +46,7 @@ import static android.content.ContentValues.TAG;
 public class FragmentPageMiddle extends Fragment implements View.OnTouchListener, View.OnClickListener {
     private LinearLayout LLOfThumbnails;
     private ScrollView vScrollView;
-    private int screenWidth;
     private int screenHeight;
-    RecyclerView recyclerView;
 
     @Nullable
     @Override
@@ -61,7 +59,6 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
         super.onViewCreated(view, savedInstanceState);
 
         //Get screen width and height
-        screenWidth = getActivity().getResources().getDisplayMetrics().widthPixels;
         screenHeight = getActivity().getResources().getDisplayMetrics().heightPixels;
 
         //LinearLayout
@@ -176,10 +173,9 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
         Collections.sort(pictureInfoList);
         initRecyclerView(pictureInfoList);
 
+        //Set up thumbnail (image view)
         for (int i = 0; i < pictureInfoList.size(); i++) {
             String currentPhotoPath = pictureInfoList.get(i).getPhotopath();
-
-            //Set up thumbnail (image view)
             ImageView newThumbnail = new ImageView(this.getActivity());
             LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(screenHeight / 13, screenHeight / 13);
             lp2.setMargins(23, 10, 0, 10);
@@ -220,7 +216,7 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
                         // If it is a camera button
                         case R.id.cambutton:
                             // Start camera
-                            ActivityMain.MYCAMERA.dispatchTakePictureIntent();
+                            ActivityMain.getCamera().dispatchTakePictureIntent();
                             break;
 
                         // If it is an add from gallery button
@@ -241,15 +237,16 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
         ImageView currentThumbnail = (ImageView) view;
         int indexOfThumbNail = LLOfThumbnails.indexOfChild(currentThumbnail);
         TextView tv = (TextView) getActivity().findViewById(R.id.recentlyadded);
-        vScrollView.smoothScrollTo(0, indexOfThumbNail * convertDpToPx(getContext(), 400) + tv.getHeight());
+        vScrollView.smoothScrollTo(0, indexOfThumbNail * MyUtilities.convertDpToPx(getContext(), 400) + tv.getHeight());
 
     }
 
     public void initRecyclerView(ArrayList<PictureInfo> pictureInfoList) {
-        recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv2);
+        RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv2);
         // Allow smooth gliding scrolling
         recyclerView.setNestedScrollingEnabled(false);
-        MiddleRecyclerViewAdaptor myRVA = new MiddleRecyclerViewAdaptor(getActivity(), pictureInfoList);
+        // Set recycler view adaptor
+        RecyclerViewAdaptor1 myRVA = new RecyclerViewAdaptor1(getActivity(), pictureInfoList);
         recyclerView.setAdapter(myRVA);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
@@ -263,7 +260,7 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
         private int min;
         private int sec;
 
-        public PictureInfo(String photopath, int yr, int mnth, int day, int hour, int min, int sec) {
+        private PictureInfo(String photopath, int yr, int mnth, int day, int hour, int min, int sec) {
             this.photopath = photopath;
             this.yr = yr;
             this.mnth = mnth;
@@ -277,27 +274,27 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
             return photopath;
         }
 
-        public int getYr() {
+        private int getYr() {
             return yr;
         }
 
-        public int getMnth() {
+        private int getMnth() {
             return mnth;
         }
 
-        public int getDay() {
+        private int getDay() {
             return day;
         }
 
-        public int getHour() {
+        private int getHour() {
             return hour;
         }
 
-        public int getMin() {
+        private int getMin() {
             return min;
         }
 
-        public int getSec() {
+        private int getSec() {
             return sec;
         }
 
@@ -320,7 +317,6 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
 
                     if (minuteAge < oMinuteAge) {
                         return 1;
-
                     } else if (minuteAge > oMinuteAge) {
                         return -1;
                     } else {
@@ -330,9 +326,5 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
                 }
             }
         }
-    }
-
-    public int convertDpToPx(Context context, float dp) {
-        return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
 }

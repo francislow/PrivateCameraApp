@@ -1,4 +1,4 @@
-package com.chalkboystudios.franc.unmix;
+package com.chalkboystudios.franc.unmix.Utilities;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.chalkboystudios.franc.unmix.R;
 import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 
 /**
@@ -21,57 +22,55 @@ import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
  */
 
 /*
-    Properties that can be changed
+    This class is for custom picture for the gridlayout in fragment page 2
+
+    Properties that will be changed during run time
     1) Label name
     2) Cat name
     3) White space opacity
     4) Black indicators opacity
-
  */
 
 public class CustomPicture extends RelativeLayout {
-    private Context context;
-    private ImageView newImageView;
-    private RelativeLayout whiteSpace;
-    private TextView labelNameTVN;
-    private String photoPath;
+    // Constants for each custom picture
+    private final int year;
+    private final int month;
+    private final int day;
+    private final int hour;
+    private final int min;
+    private final int sec;
+    private final String photoPath;
+
+    // Constants across all custom picture
+    private static final int picturePadding = 7;
+
     private String labelName;
-    int year;
-    int month;
-    int day;
-    int hour;
-    int min;
-    int sec;
-    private PicturesDatabaseHelper mydb;
     private String categoryName;
     private RelativeLayout blackSpace;
     private RelativeLayout blackSpace2;
+    private RelativeLayout whiteSpace;
+    private ImageView pictureIV;
+    private TextView labelNameTVN;
 
-    private int customPictureLength;
-    private int whiteSpaceHeight;
-    private int blackSpaceWidth;
-
-    private static final int picturePadding = 7;
 
     public CustomPicture(Context context, String photoPath, String labelName, String categoryName, String position,
                          int year, int month, int day, int hour, int min, int sec) {
         super(context);
-        this.context = context;
-        this.photoPath = photoPath;
-        this.labelName = labelName;
-        this.categoryName = categoryName;
         this.year = year;
         this.month = month;
         this.day = day;
         this.hour = hour;
         this.min = min;
         this.sec = sec;
+        this.photoPath = photoPath;
+        this.labelName = labelName;
+        this.categoryName = categoryName;
 
         // Initialising picture properties
         int gridWidth = context.getResources().getDisplayMetrics().widthPixels;
-        customPictureLength = gridWidth / 4;
-        whiteSpaceHeight = customPictureLength / 3;
-        blackSpaceWidth = whiteSpaceHeight / 3;
+        int customPictureLength = gridWidth / 4;
+        int whiteSpaceHeight = customPictureLength / 3;
+        int blackSpaceWidth = whiteSpaceHeight / 3;
 
         // Set up custompicture (Relativelayout) width and height
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(customPictureLength, customPictureLength);
@@ -79,16 +78,16 @@ public class CustomPicture extends RelativeLayout {
         this.setPadding(picturePadding, picturePadding, picturePadding, picturePadding);
 
         // Add an filled image view to fill whole of this custom picture
-        newImageView = new ImageView(context);
-        newImageView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        this.addView(newImageView);
+        pictureIV = new ImageView(context);
+        pictureIV.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        this.addView(pictureIV);
         Glide
                 .with(context)
                 .load(photoPath)
                 .transform(new CenterCrop(), new RoundedCorners(15))
-                .into(newImageView);
+                .into(pictureIV);
 
-        /* Set up white space */
+        // Set up white space for label
         whiteSpace = new RelativeLayout(context);
         whiteSpace.setBackground(context.getResources().getDrawable(R.drawable.white_rectangle));
         RelativeLayout.LayoutParams lp3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, whiteSpaceHeight);
@@ -96,27 +95,25 @@ public class CustomPicture extends RelativeLayout {
         whiteSpace.setLayoutParams(lp3);
         this.addView(whiteSpace);
 
-        /* Set up label overlay */
+        // Set up label overlay
         labelNameTVN = new TextView(context);
         LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         labelNameTVN.setLayoutParams(lp2);
         labelNameTVN.setGravity(Gravity.CENTER);
         labelNameTVN.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        Typeface moonchildtf = ResourcesCompat.getFont(context, R.font.moonchild);
-        labelNameTVN.setTypeface(moonchildtf);
+        labelNameTVN.setTypeface(ResourcesCompat.getFont(context, R.font.moonchild));
         whiteSpace.addView(labelNameTVN);
 
-        // Set up indicator overlay
+        // Set up indicator overlay 1
         blackSpace = new RelativeLayout(context);
         blackSpace.setBackground(context.getResources().getDrawable(R.drawable.black_indicator));
-
         RelativeLayout.LayoutParams lpp = new RelativeLayout.LayoutParams(blackSpaceWidth, ViewGroup.LayoutParams.MATCH_PARENT);
         blackSpace.setLayoutParams(lpp);
         this.addView(blackSpace);
 
+        // Set up indicator overlay 2
         blackSpace2 = new RelativeLayout(context);
         blackSpace2.setBackground(context.getResources().getDrawable(R.drawable.black_indicator));
-
         RelativeLayout.LayoutParams lpp2 = new RelativeLayout.LayoutParams(blackSpaceWidth, ViewGroup.LayoutParams.MATCH_PARENT);
         lpp2.setMargins(customPictureLength - blackSpaceWidth - picturePadding *2,0,0,0);
         blackSpace2.setLayoutParams(lpp2);
@@ -125,17 +122,14 @@ public class CustomPicture extends RelativeLayout {
         //Set up detection range
     }
 
-    // Must be run after displayPicture() is called
     public String getPhotoPath() {
         return this.photoPath;
     }
 
-    // Must be run after displayPicture() is called
     public String getLabelName() {
         return this.labelName;
     }
 
-    // Must be run after displayPicture() is called
     public String getCatName() {
         return this.categoryName;
     }
@@ -146,10 +140,6 @@ public class CustomPicture extends RelativeLayout {
 
     public RelativeLayout getWhiteSpace() {
         return whiteSpace;
-    }
-
-    public ImageView getNewImageView() {
-        return newImageView;
     }
 
     public RelativeLayout getBlackSpace() {

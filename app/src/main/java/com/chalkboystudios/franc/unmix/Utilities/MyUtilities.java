@@ -2,6 +2,7 @@ package com.chalkboystudios.franc.unmix.Utilities;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,7 +24,9 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static android.content.ContentValues.TAG;
 
@@ -32,19 +35,6 @@ import static android.content.ContentValues.TAG;
  */
 
 public class MyUtilities {
-
-    //Checks if the there category table in database already contains a specific category name
-    public static boolean hasDuplicatedCatNamesInCTable(String categoryNameToCheck, Context myContext) {
-        PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(myContext);
-        Cursor res = mydb.getAllDataCTable();
-        while (res.moveToNext()) {
-            if (res.getString(1).equals(categoryNameToCheck)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static boolean hasDuplicatedCatNames(String categoryNameToCheck, ArrayList<String> categoryNames) {
         for (String categoryName : categoryNames) {
             if (categoryName.equals(categoryNameToCheck)) {
@@ -52,38 +42,6 @@ public class MyUtilities {
             }
         }
         return false;
-    }
-
-    // Prints out picture database
-    public static void printOutPTable(Context myContext) {
-        System.out.println("ran print out table");
-        Log.d(TAG, "printOutPTable: asdasdas ran");
-        PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(myContext);
-        Cursor res = mydb.getAllDataPTable();
-        while (res.moveToNext()) {
-            Log.d(TAG, "printOutPTable: " +
-                    res.getString(0) + " " +
-                    res.getString(1) + " " +
-                    res.getString(2) + " " +
-                    res.getString(3) + " " +
-                    res.getString(4) + " " +
-                    res.getString(5) + " " +
-                    res.getString(6) + " " +
-                    res.getString(7) + " " +
-                    res.getString(8) + " " +
-                    res.getString(9) + " " +
-                    res.getString(10) + "\n");
-        }
-    }
-
-    // Prints out picture database
-    public static void printOutCTable(Context myContext) {
-        PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(myContext);
-        Cursor res = mydb.getAllDataCTable();
-        while (res.moveToNext()) {
-            System.out.print(res.getString(0) + " ");
-            System.out.print(res.getString(1) + "\n");
-        }
     }
 
     //If user touched down and up a button within button space
@@ -101,7 +59,7 @@ public class MyUtilities {
 
     // Makes a copy of the image file selected and put inside app folder
     public static Uri copyMediaStoreUriToCacheDir(Uri uri, String filename, Context myContext) {
-        String destinationFilename = myContext.getExternalFilesDir(ActivityMain.APPIMAGEFOLDERNAME) + "/" + filename + ".jpg";
+        String destinationFilename = myContext.getExternalFilesDir(ActivityMain.IMAGE_FOLDER_NAME) + "/" + filename + ".jpg";
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
 
@@ -132,6 +90,21 @@ public class MyUtilities {
             }
         }
         return null;
+    }
+
+    //Creates an blank image file with unique names for it
+    public static File createEmptyFile(Activity currentActivity) throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp;
+        File storageDir = currentActivity.getExternalFilesDir(ActivityMain.IMAGE_FOLDER_NAME);
+
+        //This will may not give a unique name
+        //File imageFile = new File(storageDir, imageFileName + ".jpg");
+
+        //But this will give a unique file name by adding -(some number) to end of file name
+        File imageFile = File.createTempFile(imageFileName, ".jpg", storageDir);
+        return imageFile;
     }
 
     public static void createOneTimeIntroDialog(Context context, String prefKey, int drawableId) {
@@ -189,7 +162,7 @@ public class MyUtilities {
                             ObjectAnimator.ofPropertyValuesHolder(view, alphaUp, scaleXUp, scaleYUp).start();
 
                             //If user's touch up is still inside button
-                            if (MyUtilities.touchUpInButton(motionEvent, (Button) view)) {
+                            if (touchUpInButton(motionEvent, (Button) view)) {
                                 myDialog.dismiss();
                             }
                     }
@@ -200,10 +173,46 @@ public class MyUtilities {
         }
     }
 
+    // Deletes a file in image folder given the path name
     public static void deleteFile(String pathName) {
         File file = new File(pathName);
         if (file.exists()) {
             file.delete();
+        }
+    }
+
+    public static int convertDpToPx(Context context, float dp) {
+        return (int) (dp * context.getResources().getDisplayMetrics().density);
+    }
+
+    // Prints out picture database
+    public static void printOutPTable(Context myContext) {
+        System.out.println("ran print out table");
+        PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(myContext);
+        Cursor res = mydb.getAllDataPTable();
+        while (res.moveToNext()) {
+            Log.d(TAG, "printOutPTable: " +
+                    res.getString(0) + " " +
+                    res.getString(1) + " " +
+                    res.getString(2) + " " +
+                    res.getString(3) + " " +
+                    res.getString(4) + " " +
+                    res.getString(5) + " " +
+                    res.getString(6) + " " +
+                    res.getString(7) + " " +
+                    res.getString(8) + " " +
+                    res.getString(9) + " " +
+                    res.getString(10) + "\n");
+        }
+    }
+
+    // Prints out category database
+    public static void printOutCTable(Context myContext) {
+        PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(myContext);
+        Cursor res = mydb.getAllDataCTable();
+        while (res.moveToNext()) {
+            System.out.print(res.getString(0) + " ");
+            System.out.print(res.getString(1) + "\n");
         }
     }
 }

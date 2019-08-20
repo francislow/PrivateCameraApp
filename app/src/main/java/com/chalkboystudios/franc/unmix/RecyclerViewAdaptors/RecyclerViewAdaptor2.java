@@ -1,4 +1,4 @@
-package com.chalkboystudios.franc.unmix;
+package com.chalkboystudios.franc.unmix.RecyclerViewAdaptors;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
@@ -12,7 +12,6 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.DragEvent;
@@ -37,7 +36,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.chalkboystudios.franc.unmix.Utilities.CustomPicture;
 import com.chalkboystudios.franc.unmix.Fragments.FragmentPage2;
+import com.chalkboystudios.franc.unmix.R;
 import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 import com.chalkboystudios.franc.unmix.Utilities.MyUtilities;
 
@@ -51,22 +52,18 @@ import static android.content.ContentValues.TAG;
  * Created by franc on 27/6/2019.
  */
 
-public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdaptor.ViewHolder> {
+public class RecyclerViewAdaptor2 extends RecyclerView.Adapter<RecyclerViewAdaptor2.ViewHolder> {
     public ArrayList<String> categoryNames = new ArrayList<>();
     public ArrayList<ArrayList<CustomPicture>> customPicsLists = new ArrayList<>();
     private Context myContext;
-    // associatedFragment = FragmentPage2
-    private Fragment associatedFragment;
     private PicturesDatabaseHelper mydb;
-    private boolean applied_initial_customisation_flag = false;
 
 
-    public RecyclerViewAdaptor(Context context, ArrayList<String> categoryNames, ArrayList<ArrayList<CustomPicture>> customPicsLists) {
+    public RecyclerViewAdaptor2(Context context, ArrayList<String> categoryNames, ArrayList<ArrayList<CustomPicture>> customPicsLists) {
         this.myContext = context;
         this.categoryNames = categoryNames;
         this.customPicsLists = customPicsLists;
 
-        associatedFragment = ActivityMain.swipeAdaptor.getItem(1);
         mydb = new PicturesDatabaseHelper(myContext);
     }
 
@@ -82,16 +79,20 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
         super.onDetachedFromRecyclerView(recyclerView);
         Log.d(TAG, "onDetachedFromRecyclerView: ran");
 
-        // Update database
+        // Update category table database
         mydb.deleteAllRowsCTable();
         for (String categoryName : categoryNames) {
             mydb.insertNewRowCTable(categoryName);
         }
+
+        // Update picture table database
         mydb.deleteAllRowsPTable();
+        // Loop through each category
         for (int i = 0; i < customPicsLists.size(); i++) {
             ArrayList<CustomPicture> customPictureList = customPicsLists.get(i);
+            String categoryName = categoryNames.get(i);
 
-            String categoryName = categoryNames.get(customPicsLists.indexOf(customPictureList));
+            // Loop through each picture
             for (int j = 0; j < customPictureList.size(); j++) {
                 CustomPicture currentPic = customPictureList.get(j);
                 String photoPathName = currentPic.getPhotoPath();
@@ -111,15 +112,8 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: ran " + categoryNames.get(position));
-        // Add category name
+
         final String currentCategoryName = categoryNames.get(holder.getAdapterPosition());
-        
-        /*// apply initial customisation on unsorted
-        if (currentCategoryName.equals(ActivityMain.DEFAULTCATEGORYNAME)  && !applied_initial_customisation_flag) {
-            Log.d(TAG, "onBindViewHolder: IT HAPENNNNNNNNNNNNEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
-            holder.catOption.setVisibility(View.GONE);
-            //applied_initial_customisation_flag = true;
-        }*/
 
         // Set category name
         holder.categoryTV.setText(currentCategoryName);
@@ -159,7 +153,6 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             currentPic.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    MyUtilities.printOutPTable(myContext);
                     Log.d(TAG, "onLongClick: on dragged picture ran");
 
                     ClipData data = ClipData.newPlainText("", "");
@@ -403,7 +396,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
                         // set back to normal padding space
                         LinearLayout.LayoutParams lp3 = new LinearLayout.LayoutParams(holder.line.getLayoutParams());
-                        lp3.topMargin = convertDpToPx(myContext, 15);
+                        lp3.topMargin = MyUtilities.convertDpToPx(myContext, 15);
                         holder.line.setLayoutParams(lp3);
                         break;
                     case DragEvent.ACTION_DRAG_ENTERED:
@@ -420,7 +413,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
                         // set padding space increase
                         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(holder.line.getLayoutParams());
-                        lp.topMargin = convertDpToPx(myContext, 30);
+                        lp.topMargin = MyUtilities.convertDpToPx(myContext, 30);
                         holder.line.setLayoutParams(lp);
                         break;
                     case DragEvent.ACTION_DRAG_EXITED:
@@ -436,7 +429,7 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
 
                         // set back to normal padding space
                         LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(holder.line.getLayoutParams());
-                        lp1.topMargin = convertDpToPx(myContext, 15);
+                        lp1.topMargin = MyUtilities.convertDpToPx(myContext, 15);
                         holder.line.setLayoutParams(lp1);
                         break;
                     case DragEvent.ACTION_DROP:
@@ -615,10 +608,6 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             gridLayout = (GridLayout) itemView.findViewById(R.id.grid1);
             line = (ImageView) itemView.findViewById(R.id.line);
         }
-        
-    /*    public void setGoneCatOption() {
-            catOption.setVisibility(View.GONE);
-        }*/
     }
 
     private class MyDragShadowBuilder extends View.DragShadowBuilder {
@@ -657,9 +646,5 @@ public class RecyclerViewAdaptor extends RecyclerView.Adapter<RecyclerViewAdapto
             canvas.scale(mScaleFactor.x / (float) getView().getWidth(), mScaleFactor.y / (float) getView().getHeight());
             getView().draw(canvas);
         }
-    }
-
-    public int convertDpToPx(Context context, float dp) {
-        return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
 }
