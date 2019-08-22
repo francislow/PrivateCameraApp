@@ -10,4 +10,7 @@ This is a private gallery, separated from your phone's gallery, tailored to stor
 What's more?
 To better identify each picture, you can label each individual picture at will.
 
+Downloadable at:
+https://play.google.com/store/apps/details?id=com.chalkboystudios.franc.unmix
+
 Unmix your gallery now!
