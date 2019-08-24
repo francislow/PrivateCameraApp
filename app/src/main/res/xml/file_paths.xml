@@ -3,5 +3,5 @@
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- this is for the camera to find the empty image file created which is in CameraPictures folder,
     defined by me in MyCamera class-->
-    <external-path name="cameraPictures" path="Android/data/com.chalkboystudios.franc.testcamera/files/UserPictures" />
+    <external-path name="cameraPictures" path="Android/data/com.chalkboystudios.franc.unmix/files/UserPictures" />
 </paths>

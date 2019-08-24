@@ -4,7 +4,6 @@
     package="com.chalkboystudios.franc.unmix">
 
     <!--Request for permission to use stuffs in android-->
-    <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="true" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
                      android:maxSdkVersion="18" />
@@ -23,7 +22,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.chalkboystudios.android.fileprovider"
+            android:authorities="com.example.android.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
