@@ -1,4 +1,6 @@
 # Unmix-Photo-Gallery
+<i><b>*Compatible with Android devices only</b></i>
+
 A private gallery that allows user to manage pictures which they do not want to be mixed into their default phone gallery.
 
 Ever felt like there are just too many work / study related pictures trapped inside your memory-filled gallery? Its time for a change. Keep junk photos away from your cherished photos.
@@ -7,5 +9,8 @@ This is a private gallery, separated from your phone's gallery, tailored to stor
 
 What's more?
 To better identify each picture, you can label each individual picture at will.
+
+Downloadable at:
+https://play.google.com/store/apps/details?id=com.chalkboystudios.franc.unmix
 
 Unmix your gallery now!
