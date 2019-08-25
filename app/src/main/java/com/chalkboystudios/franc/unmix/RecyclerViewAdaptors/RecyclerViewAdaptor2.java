@@ -12,6 +12,7 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.DragEvent;
@@ -221,10 +222,12 @@ public class RecyclerViewAdaptor2 extends RecyclerView.Adapter<RecyclerViewAdapt
                                             if (MyUtilities.touchUpInButton(motionEvent, (Button) view)) {
                                                 Intent shareIntent = new Intent();
                                                 shareIntent.setAction(Intent.ACTION_SEND);
-                                                Uri uriToImage = Uri.fromFile(new File(currentPic.getPhotoPath()));
+                                                //Uri uriToImage = Uri.fromFile(new File(currentPic.getPhotoPath()));
+                                                Uri uriToImage = FileProvider.getUriForFile(myContext, "com.example.android.fileprovider", new File(currentPic.getPhotoPath()));
                                                 shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
                                                 shareIntent.setType("image/jpeg");
-                                                myContext.startActivity(Intent.createChooser(shareIntent, "idk whats this~"));
+                                                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                                myContext.startActivity(Intent.createChooser(shareIntent, "Share"));
                                             }
                                     }
                                     return true;
