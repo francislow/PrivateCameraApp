@@ -40,9 +40,8 @@ import java.util.ArrayList;
 import static android.content.ContentValues.TAG;
 
 /**
- * Created by franc on 1/6/2019.
+ * Gallery fragment page
  */
-
 public class FragmentPageGallery extends Fragment implements View.OnTouchListener, View.OnDragListener {
     private PicturesDatabaseHelper mydb;
     private Button addCatButton;

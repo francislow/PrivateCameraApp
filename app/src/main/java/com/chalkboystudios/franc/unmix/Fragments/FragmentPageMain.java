@@ -41,9 +41,8 @@ import java.util.Collections;
 import static android.content.ContentValues.TAG;
 
 /**
- * Created by franc on 1/6/2019.
+ * Main fragment page
  */
-
 public class FragmentPageMain extends Fragment implements View.OnTouchListener, View.OnClickListener {
     private LinearLayout LLOfThumbnails;
     private ScrollView vScrollView;

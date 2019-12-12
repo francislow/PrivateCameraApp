@@ -29,9 +29,8 @@ import java.util.Date;
 import static android.content.ContentValues.TAG;
 
 /**
- * Created by franc on 24/6/2019.
+ * Utility class
  */
-
 public class MyUtilities {
     public static boolean hasDuplicatedCatNames(String categoryNameToCheck, ArrayList<String> categoryNames) {
         for (String categoryName : categoryNames) {
