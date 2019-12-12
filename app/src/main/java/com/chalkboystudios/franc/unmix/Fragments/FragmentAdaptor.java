@@ -1,25 +1,25 @@
-package com.chalkboystudios.franc.unmix.Utilities;
+package com.chalkboystudios.franc.unmix.Fragments;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.chalkboystudios.franc.unmix.Fragments.FragmentPage2;
-import com.chalkboystudios.franc.unmix.Fragments.FragmentPageMiddle;
+import com.chalkboystudios.franc.unmix.Fragments.FragmentPageGallery;
+import com.chalkboystudios.franc.unmix.Fragments.FragmentPageMain;
 
 /**
  * Created by franc on 1/6/2019.
  */
 
-public class SwipeAdaptor extends FragmentStatePagerAdapter {
+public class FragmentAdaptor extends FragmentStatePagerAdapter {
     private int numPages = 2;
-    private FragmentPage2 fragment2;
-    private FragmentPageMiddle fragmentmiddle;
+    private FragmentPageGallery fragment2;
+    private FragmentPageMain fragmentmiddle;
 
-    public SwipeAdaptor(FragmentManager fm) {
+    public FragmentAdaptor(FragmentManager fm) {
         super(fm);
-        fragmentmiddle = new FragmentPageMiddle();
-        fragment2 = new FragmentPage2();
+        fragmentmiddle = new FragmentPageMain();
+        fragment2 = new FragmentPageGallery();
     }
 
     @Override

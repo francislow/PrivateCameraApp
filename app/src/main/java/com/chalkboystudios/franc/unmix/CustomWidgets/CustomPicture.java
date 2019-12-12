@@ -1,4 +1,4 @@
-package com.chalkboystudios.franc.unmix.Utilities;
+package com.chalkboystudios.franc.unmix.CustomWidgets;
 
 import android.content.Context;
 import android.graphics.Typeface;

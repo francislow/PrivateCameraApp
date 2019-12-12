@@ -29,7 +29,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.chalkboystudios.franc.unmix.ActivityMain;
-import com.chalkboystudios.franc.unmix.RecyclerViewAdaptors.RecyclerViewAdaptor1;
+import com.chalkboystudios.franc.unmix.RecyclerViewAdaptors.RecyclerViewAdaptorMain;
 import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 import com.chalkboystudios.franc.unmix.R;
 import com.chalkboystudios.franc.unmix.Utilities.MyUtilities;
@@ -43,7 +43,7 @@ import static android.content.ContentValues.TAG;
  * Created by franc on 1/6/2019.
  */
 
-public class FragmentPageMiddle extends Fragment implements View.OnTouchListener, View.OnClickListener {
+public class FragmentPageMain extends Fragment implements View.OnTouchListener, View.OnClickListener {
     private LinearLayout LLOfThumbnails;
     private ScrollView vScrollView;
     private int screenHeight;
@@ -246,7 +246,7 @@ public class FragmentPageMiddle extends Fragment implements View.OnTouchListener
         // Allow smooth gliding scrolling
         recyclerView.setNestedScrollingEnabled(false);
         // Set recycler view adaptor
-        RecyclerViewAdaptor1 myRVA = new RecyclerViewAdaptor1(getActivity(), pictureInfoList);
+        RecyclerViewAdaptorMain myRVA = new RecyclerViewAdaptorMain(getActivity(), pictureInfoList);
         recyclerView.setAdapter(myRVA);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }

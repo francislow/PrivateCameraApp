@@ -37,8 +37,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.chalkboystudios.franc.unmix.Utilities.CustomPicture;
-import com.chalkboystudios.franc.unmix.Fragments.FragmentPage2;
+import com.chalkboystudios.franc.unmix.Fragments.FragmentPageGallery;
+import com.chalkboystudios.franc.unmix.CustomWidgets.CustomPicture;
 import com.chalkboystudios.franc.unmix.R;
 import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 import com.chalkboystudios.franc.unmix.Utilities.MyUtilities;
@@ -53,14 +53,14 @@ import static android.content.ContentValues.TAG;
  * Created by franc on 27/6/2019.
  */
 
-public class RecyclerViewAdaptor2 extends RecyclerView.Adapter<RecyclerViewAdaptor2.ViewHolder> {
+public class RecyclerViewAdaptorGallery extends RecyclerView.Adapter<RecyclerViewAdaptorGallery.ViewHolder> {
     public ArrayList<String> categoryNames = new ArrayList<>();
     public ArrayList<ArrayList<CustomPicture>> customPicsLists = new ArrayList<>();
     private Context myContext;
     private PicturesDatabaseHelper mydb;
 
 
-    public RecyclerViewAdaptor2(Context context, ArrayList<String> categoryNames, ArrayList<ArrayList<CustomPicture>> customPicsLists) {
+    public RecyclerViewAdaptorGallery(Context context, ArrayList<String> categoryNames, ArrayList<ArrayList<CustomPicture>> customPicsLists) {
         this.myContext = context;
         this.categoryNames = categoryNames;
         this.customPicsLists = customPicsLists;
@@ -160,10 +160,10 @@ public class RecyclerViewAdaptor2 extends RecyclerView.Adapter<RecyclerViewAdapt
                     //View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
                     View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view);
                     // Set constants after drag started
-                    FragmentPage2.oldGridLayout = (GridLayout) view.getParent();
+                    FragmentPageGallery.oldGridLayout = (GridLayout) view.getParent();
                     CustomPicture newRefCurrentPic = new CustomPicture(myContext, currentPic.getPhotoPath(), currentPic.getLabelName(), currentPic.getCatName(), null, currentPic.getYear(), currentPic.getMonth(), currentPic.getDay(), currentPic.getHour(), currentPic.getMin(), currentPic.getSec());
-                    FragmentPage2.draggedPicture = newRefCurrentPic;
-                    FragmentPage2.oldGridPosition = customPicsLists.get(holder.getAdapterPosition()).indexOf(((CustomPicture) view));
+                    FragmentPageGallery.draggedPicture = newRefCurrentPic;
+                    FragmentPageGallery.oldGridPosition = customPicsLists.get(holder.getAdapterPosition()).indexOf(((CustomPicture) view));
 
                     // Update recycler view
                     customPicsLists.get(holder.getAdapterPosition()).remove(((CustomPicture) view));
@@ -264,12 +264,12 @@ public class RecyclerViewAdaptor2 extends RecyclerView.Adapter<RecyclerViewAdapt
                                 Log.d(TAG, "onDrag: Drop detected at custom picture");
                             } else {
                                 Log.d(TAG, "onDrag: No drop detected at custom picture");
-                                int oldCatPosition = categoryNames.indexOf(FragmentPage2.draggedPicture.getCatName());
+                                int oldCatPosition = categoryNames.indexOf(FragmentPageGallery.draggedPicture.getCatName());
 
                                 // To make sure only either the current pic or the holder adds back the dragged picture
-                                if (!customPicsLists.get(oldCatPosition).contains(FragmentPage2.draggedPicture)) {
+                                if (!customPicsLists.get(oldCatPosition).contains(FragmentPageGallery.draggedPicture)) {
                                     // Update recycler view
-                                    customPicsLists.get(oldCatPosition).add(FragmentPage2.oldGridPosition, FragmentPage2.draggedPicture);
+                                    customPicsLists.get(oldCatPosition).add(FragmentPageGallery.oldGridPosition, FragmentPageGallery.draggedPicture);
                                     notifyItemChanged(oldCatPosition);
                                 }
                             }
@@ -304,8 +304,8 @@ public class RecyclerViewAdaptor2 extends RecyclerView.Adapter<RecyclerViewAdapt
 
                             // Update recycler view
                             int currentChildIndex = customPicsLists.get(categoryNames.indexOf(currentPic.getCatName())).indexOf(currentPic);
-                            customPicsLists.get(holder.getAdapterPosition()).add(currentChildIndex, FragmentPage2.draggedPicture);
-                            FragmentPage2.draggedPicture.setCategoryName(currentPic.getCatName());
+                            customPicsLists.get(holder.getAdapterPosition()).add(currentChildIndex, FragmentPageGallery.draggedPicture);
+                            FragmentPageGallery.draggedPicture.setCategoryName(currentPic.getCatName());
                             notifyItemChanged(holder.getAdapterPosition());
                             break;
                         default:
@@ -385,12 +385,12 @@ public class RecyclerViewAdaptor2 extends RecyclerView.Adapter<RecyclerViewAdapt
                         // if user did not drop in any on drag detection areas
                         if (!event.getResult()) {
                             Log.d(TAG, "onDrag: No Drop Detected parent layout");
-                            int oldCatPosition = categoryNames.indexOf(FragmentPage2.draggedPicture.getCatName());
+                            int oldCatPosition = categoryNames.indexOf(FragmentPageGallery.draggedPicture.getCatName());
 
                             // To make sure only either the current pic or the holder adds back the dragged picture
-                            if (!customPicsLists.get(oldCatPosition).contains(FragmentPage2.draggedPicture)) {
+                            if (!customPicsLists.get(oldCatPosition).contains(FragmentPageGallery.draggedPicture)) {
                                 // Update recycler view
-                                customPicsLists.get(oldCatPosition).add(FragmentPage2.oldGridPosition, FragmentPage2.draggedPicture);
+                                customPicsLists.get(oldCatPosition).add(FragmentPageGallery.oldGridPosition, FragmentPageGallery.draggedPicture);
                                 notifyItemChanged(oldCatPosition);
                             }
                         } else if (event.getResult()) {
@@ -441,8 +441,8 @@ public class RecyclerViewAdaptor2 extends RecyclerView.Adapter<RecyclerViewAdapt
                         holder.line.setVisibility(View.INVISIBLE);
 
                         // Update recycler view
-                        customPicsLists.get(holder.getAdapterPosition()).add(FragmentPage2.draggedPicture);
-                        FragmentPage2.draggedPicture.setCategoryName(holder.categoryTV.getText().toString());
+                        customPicsLists.get(holder.getAdapterPosition()).add(FragmentPageGallery.draggedPicture);
+                        FragmentPageGallery.draggedPicture.setCategoryName(holder.categoryTV.getText().toString());
                         notifyItemChanged(holder.getAdapterPosition());
                         break;
                     default:

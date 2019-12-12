@@ -28,10 +28,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chalkboystudios.franc.unmix.ActivityMain;
-import com.chalkboystudios.franc.unmix.Utilities.CustomInformationDialog;
-import com.chalkboystudios.franc.unmix.Utilities.CustomPicture;
+import com.chalkboystudios.franc.unmix.RecyclerViewAdaptors.RecyclerViewAdaptorGallery;
+import com.chalkboystudios.franc.unmix.CustomWidgets.CustomInformationDialog;
+import com.chalkboystudios.franc.unmix.CustomWidgets.CustomPicture;
 import com.chalkboystudios.franc.unmix.R;
-import com.chalkboystudios.franc.unmix.RecyclerViewAdaptors.RecyclerViewAdaptor2;
 import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 import com.chalkboystudios.franc.unmix.Utilities.MyUtilities;
 
@@ -43,7 +43,7 @@ import static android.content.ContentValues.TAG;
  * Created by franc on 1/6/2019.
  */
 
-public class FragmentPage2 extends Fragment implements View.OnTouchListener, View.OnDragListener {
+public class FragmentPageGallery extends Fragment implements View.OnTouchListener, View.OnDragListener {
     private PicturesDatabaseHelper mydb;
     private Button addCatButton;
     private Button informationButton;
@@ -52,7 +52,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     private RelativeLayout topTabSpaceRemove;
     private TextView dustbinTV;
     private RecyclerView recyclerView;
-    private RecyclerViewAdaptor2 recyclerViewAdaptor2;
+    private RecyclerViewAdaptorGallery recyclerViewAdaptorGallery;
 
     // Constants when drag of a specific picture started
     public static GridLayout oldGridLayout;
@@ -95,7 +95,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause: FragmentPage2");
+        Log.d(TAG, "onPause: FragmentPageGallery");
 
         recyclerView.setAdapter(null);
     }
@@ -105,7 +105,7 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: FragmentPage2");
+        Log.d(TAG, "onResume: FragmentPageGallery");
 
         // Get data from database
         ArrayList<String> distinctCategoryNames = setUpDistinctCategoryNamesList();
@@ -163,12 +163,12 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                                 public void onClick(View v) {
                                     EditText categoryNameText = (EditText) nagDialog.findViewById(R.id.editT1);
                                     String newCategoryName = categoryNameText.getText().toString().trim();
-                                    if (!MyUtilities.hasDuplicatedCatNames(newCategoryName, recyclerViewAdaptor2.categoryNames)) {
+                                    if (!MyUtilities.hasDuplicatedCatNames(newCategoryName, recyclerViewAdaptorGallery.categoryNames)) {
                                         // Update recycler view
-                                        recyclerViewAdaptor2.categoryNames.add(newCategoryName);
-                                        recyclerViewAdaptor2.customPicsLists.add(new ArrayList<CustomPicture>());
-                                        int currentIndex = recyclerViewAdaptor2.categoryNames.indexOf(newCategoryName);
-                                        recyclerViewAdaptor2.notifyItemInserted(currentIndex);
+                                        recyclerViewAdaptorGallery.categoryNames.add(newCategoryName);
+                                        recyclerViewAdaptorGallery.customPicsLists.add(new ArrayList<CustomPicture>());
+                                        int currentIndex = recyclerViewAdaptorGallery.categoryNames.indexOf(newCategoryName);
+                                        recyclerViewAdaptorGallery.notifyItemInserted(currentIndex);
                                         nagDialog.dismiss();
 
                                         MyUtilities.createOneTimeIntroDialog(getActivity(), "first_time_page4", R.drawable.starting_dialog4);
@@ -248,9 +248,9 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
                 started. If dropped anywhere else except top remove bar, it will add back to original grid
                 // User wants to delete the photo
                 // Update recycler view
-                int currentIndex = recyclerViewAdaptor2.categoryNames.indexOf(draggedPicture.getCatName());
-                recyclerViewAdaptor2.photoPathLists.get(currentIndex).remove(draggedPicture.getPhotoPath());
-                recyclerViewAdaptor2.notifyItemChanged(currentIndex);
+                int currentIndex = recyclerViewAdaptorGallery.categoryNames.indexOf(draggedPicture.getCatName());
+                recyclerViewAdaptorGallery.photoPathLists.get(currentIndex).remove(draggedPicture.getPhotoPath());
+                recyclerViewAdaptorGallery.notifyItemChanged(currentIndex);
                 */
 
                 break;
@@ -310,8 +310,8 @@ public class FragmentPage2 extends Fragment implements View.OnTouchListener, Vie
 
     public void initRecyclerView(ArrayList<String> distinctCategoryNames, ArrayList<ArrayList<CustomPicture>> customPicsLists) {
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerv);
-        recyclerViewAdaptor2 = new RecyclerViewAdaptor2(this.getActivity(), distinctCategoryNames, customPicsLists);
-        recyclerView.setAdapter(recyclerViewAdaptor2);
+        recyclerViewAdaptorGallery = new RecyclerViewAdaptorGallery(this.getActivity(), distinctCategoryNames, customPicsLists);
+        recyclerView.setAdapter(recyclerViewAdaptorGallery);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 }

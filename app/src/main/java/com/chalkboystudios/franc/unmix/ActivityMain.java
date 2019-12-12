@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 import com.chalkboystudios.franc.unmix.Utilities.MyCamera;
 import com.chalkboystudios.franc.unmix.Utilities.MyUtilities;
-import com.chalkboystudios.franc.unmix.Utilities.SwipeAdaptor;
+import com.chalkboystudios.franc.unmix.Fragments.FragmentAdaptor;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -43,9 +43,9 @@ public class ActivityMain extends FragmentActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         // Set viewpager
-        SwipeAdaptor swipeAdaptor = new SwipeAdaptor(getSupportFragmentManager());
+        FragmentAdaptor fragmentAdaptor = new FragmentAdaptor(getSupportFragmentManager());
         final ViewPager viewPager = (ViewPager) findViewById(R.id.myvp);
-        viewPager.setAdapter(swipeAdaptor);
+        viewPager.setAdapter(fragmentAdaptor);
         viewPager.setCurrentItem(0);
 
         // Setup first time tutorial guide

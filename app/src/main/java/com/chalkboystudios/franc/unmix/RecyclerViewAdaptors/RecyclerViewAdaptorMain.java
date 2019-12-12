@@ -16,7 +16,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.chalkboystudios.franc.unmix.Fragments.FragmentPageMiddle;
+import com.chalkboystudios.franc.unmix.Fragments.FragmentPageMain;
 import com.chalkboystudios.franc.unmix.R;
 import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 
@@ -28,13 +28,13 @@ import static android.content.ContentValues.TAG;
  * Created by franc on 27/6/2019.
  */
 
-public class RecyclerViewAdaptor1 extends RecyclerView.Adapter<RecyclerViewAdaptor1.ViewHolder> {
-    private ArrayList<FragmentPageMiddle.PictureInfo> pictureInfoList = new ArrayList<>();
+public class RecyclerViewAdaptorMain extends RecyclerView.Adapter<RecyclerViewAdaptorMain.ViewHolder> {
+    private ArrayList<FragmentPageMain.PictureInfo> pictureInfoList = new ArrayList<>();
     private Context myContext;
     private PicturesDatabaseHelper mydb;
 
 
-    public RecyclerViewAdaptor1(Context context, ArrayList<FragmentPageMiddle.PictureInfo> pictureInfoList) {
+    public RecyclerViewAdaptorMain(Context context, ArrayList<FragmentPageMain.PictureInfo> pictureInfoList) {
         this.myContext = context;
         this.pictureInfoList = pictureInfoList;
 
