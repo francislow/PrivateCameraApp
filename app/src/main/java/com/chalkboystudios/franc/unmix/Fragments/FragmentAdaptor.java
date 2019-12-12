@@ -8,9 +8,8 @@ import com.chalkboystudios.franc.unmix.Fragments.FragmentPageGallery;
 import com.chalkboystudios.franc.unmix.Fragments.FragmentPageMain;
 
 /**
- * Created by franc on 1/6/2019.
+ * Fragment adaptor
  */
-
 public class FragmentAdaptor extends FragmentStatePagerAdapter {
     private int numPages = 2;
     private FragmentPageGallery fragment2;

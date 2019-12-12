@@ -7,7 +7,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -182,36 +181,5 @@ public class MyUtilities {
 
     public static int convertDpToPx(Context context, float dp) {
         return (int) (dp * context.getResources().getDisplayMetrics().density);
-    }
-
-    // Prints out picture database
-    public static void printOutPTable(Context myContext) {
-        System.out.println("ran print out table");
-        PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(myContext);
-        Cursor res = mydb.getAllDataPTable();
-        while (res.moveToNext()) {
-            Log.d(TAG, "printOutPTable: " +
-                    res.getString(0) + " " +
-                    res.getString(1) + " " +
-                    res.getString(2) + " " +
-                    res.getString(3) + " " +
-                    res.getString(4) + " " +
-                    res.getString(5) + " " +
-                    res.getString(6) + " " +
-                    res.getString(7) + " " +
-                    res.getString(8) + " " +
-                    res.getString(9) + " " +
-                    res.getString(10) + "\n");
-        }
-    }
-
-    // Prints out category database
-    public static void printOutCTable(Context myContext) {
-        PicturesDatabaseHelper mydb = new PicturesDatabaseHelper(myContext);
-        Cursor res = mydb.getAllDataCTable();
-        while (res.moveToNext()) {
-            System.out.print(res.getString(0) + " ");
-            System.out.print(res.getString(1) + "\n");
-        }
     }
 }

@@ -25,9 +25,8 @@ import java.util.ArrayList;
 import static android.content.ContentValues.TAG;
 
 /**
- * Created by franc on 27/6/2019.
+ * Recycler view adaptor for the main fragment page
  */
-
 public class RecyclerViewAdaptorMain extends RecyclerView.Adapter<RecyclerViewAdaptorMain.ViewHolder> {
     private ArrayList<FragmentPageMain.PictureInfo> pictureInfoList = new ArrayList<>();
     private Context myContext;
@@ -50,7 +49,7 @@ public class RecyclerViewAdaptorMain extends RecyclerView.Adapter<RecyclerViewAd
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder: ran Middle recyclerview");
+        Log.d(TAG, "onBindViewHolder: main fragment");
 
         ImageView currentIV = holder.displayImage;
         final String currentPhotoPathName = pictureInfoList.get(position).getPhotopath();

@@ -50,9 +50,8 @@ import java.util.Collections;
 import static android.content.ContentValues.TAG;
 
 /**
- * Created by franc on 27/6/2019.
+ * Recycler view adaptor for the gallery fragment page
  */
-
 public class RecyclerViewAdaptorGallery extends RecyclerView.Adapter<RecyclerViewAdaptorGallery.ViewHolder> {
     public ArrayList<String> categoryNames = new ArrayList<>();
     public ArrayList<ArrayList<CustomPicture>> customPicsLists = new ArrayList<>();
@@ -78,7 +77,7 @@ public class RecyclerViewAdaptorGallery extends RecyclerView.Adapter<RecyclerVie
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
-        Log.d(TAG, "onDetachedFromRecyclerView: ran");
+        Log.d(TAG, "onBindViewHolder: gallery fragment");
 
         // Update category table database
         mydb.emptyCTable();

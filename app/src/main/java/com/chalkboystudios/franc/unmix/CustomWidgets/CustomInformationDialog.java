@@ -10,12 +10,10 @@ import android.widget.ImageView;
 
 import com.chalkboystudios.franc.unmix.R;
 
+
 /**
- * Created by franc on 11/8/2019.
+ * Custom instruction page when user clicks on information button in fragment page gallery
  */
-
-/* This class is for custom instruction page when user clicks on information button */
-
 public class CustomInformationDialog extends Dialog {
     private Context context;
     private int currentDialogPage = 1;

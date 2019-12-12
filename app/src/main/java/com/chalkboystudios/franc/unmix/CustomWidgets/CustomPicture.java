@@ -16,19 +16,14 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.chalkboystudios.franc.unmix.R;
 
 /**
- * Created by franc on 2/7/2019.
+ * Custom picture for the gridlayout in fragment page gallery
+ *
+ * Properties that will be changed during run time
+ * 1) Label name
+ * 2) Category name
+ * 3) White space opacity
+ * 4) Black indicators opacity
  */
-
-/*
-    This class is for custom picture for the gridlayout in fragment page 2
-
-    Properties that will be changed during run time
-    1) Label name
-    2) Cat name
-    3) White space opacity
-    4) Black indicators opacity
- */
-
 public class CustomPicture extends RelativeLayout {
     // Constants for each custom picture
     private final int year;
@@ -42,6 +37,7 @@ public class CustomPicture extends RelativeLayout {
     // Constants across all custom picture
     private static final int picturePadding = 7;
 
+    // Variables
     private String labelName;
     private String categoryName;
     private RelativeLayout blackSpace;
@@ -51,8 +47,8 @@ public class CustomPicture extends RelativeLayout {
     private TextView labelNameTVN;
 
 
-    public CustomPicture(Context context, String photoPath, String labelName, String categoryName, String position,
-                         int year, int month, int day, int hour, int min, int sec) {
+    public CustomPicture(Context context, String photoPath, String labelName, String categoryName,
+                         String position, int year, int month, int day, int hour, int min, int sec) {
         super(context);
         this.year = year;
         this.month = month;
