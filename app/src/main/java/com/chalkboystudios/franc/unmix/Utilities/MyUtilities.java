@@ -17,7 +17,6 @@ import android.widget.ImageView;
 
 import com.chalkboystudios.franc.unmix.ActivityMain;
 import com.chalkboystudios.franc.unmix.R;
-import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -58,8 +57,8 @@ public class MyUtilities {
     }
 
     // Makes a copy of the image file selected and put inside app folder
-    public static Uri copyMediaStoreUriToCacheDir(Uri uri, String filename, Context myContext) {
-        String destinationFilename = myContext.getExternalFilesDir(ActivityMain.IMAGE_FOLDER_NAME) + "/" + filename + ".jpg";
+    public static Uri copyMediaStoreUriToCacheDir(Uri uri, Context myContext) {
+        String destinationFilename = myContext.getExternalFilesDir(ActivityMain.IMAGE_STORAGE_FOLDER_NAME) + "/" + generateFileNamePrefix() + ".jpg";
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
 
@@ -94,17 +93,17 @@ public class MyUtilities {
 
     //Creates an blank image file with unique names for it
     public static File createEmptyFile(Activity currentActivity) throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp;
-        File storageDir = currentActivity.getExternalFilesDir(ActivityMain.IMAGE_FOLDER_NAME);
+        File storageDir = currentActivity.getExternalFilesDir(ActivityMain.IMAGE_STORAGE_FOLDER_NAME);
+        File imageFile = File.createTempFile(generateFileNamePrefix(), ".jpg", storageDir);
 
-        //This will may not give a unique name
-        //File imageFile = new File(storageDir, imageFileName + ".jpg");
-
-        //But this will give a unique file name by adding -(some number) to end of file name
-        File imageFile = File.createTempFile(imageFileName, ".jpg", storageDir);
         return imageFile;
+    }
+
+    private static String generateFileNamePrefix() {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String fileName = "JPEG_" + timeStamp;
+
+        return fileName;
     }
 
     public static void createOneTimeIntroDialog(Context context, String prefKey, int drawableId) {

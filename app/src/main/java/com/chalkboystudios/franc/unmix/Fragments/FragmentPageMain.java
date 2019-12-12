@@ -30,9 +30,10 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.chalkboystudios.franc.unmix.ActivityMain;
 import com.chalkboystudios.franc.unmix.RecyclerViewAdaptors.RecyclerViewAdaptorMain;
-import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
+import com.chalkboystudios.franc.unmix.Utilities.PicturesDatabaseHelper;
 import com.chalkboystudios.franc.unmix.R;
 import com.chalkboystudios.franc.unmix.Utilities.MyUtilities;
+import com.chalkboystudios.franc.unmix.Utilities.RequestCodeHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -216,14 +217,14 @@ public class FragmentPageMain extends Fragment implements View.OnTouchListener, 
                         // If it is a camera button
                         case R.id.cambutton:
                             // Start camera
-                            ActivityMain.getCamera().dispatchTakePictureIntent();
+                            ActivityMain.startCamera();
                             break;
 
                         // If it is an add from gallery button
                         case R.id.addButton:
                             // Start gallery
                             Intent goToGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-                            getActivity().startActivityForResult(goToGallery, ActivityMain.PICK_IMAGE_REQUEST);
+                            getActivity().startActivityForResult(goToGallery, RequestCodeHelper.PICK_IMAGE_REQUEST);
                             break;
                     }
                 }

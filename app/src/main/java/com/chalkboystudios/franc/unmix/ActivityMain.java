@@ -9,23 +9,22 @@ import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
+import com.chalkboystudios.franc.unmix.Utilities.PicturesDatabaseHelper;
 import com.chalkboystudios.franc.unmix.Utilities.MyCamera;
 import com.chalkboystudios.franc.unmix.Utilities.MyUtilities;
 import com.chalkboystudios.franc.unmix.Fragments.FragmentAdaptor;
+import com.chalkboystudios.franc.unmix.Utilities.RequestCodeHelper;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
+
+/**
+ * The main entry point to the application.
+ */
 public class ActivityMain extends FragmentActivity {
     public static final String MY_PREFS_NAME = "MyPrefsFile";
-    public static final String DEFAULT_CAT_NAME = "Unsorted";
-    public static final String IMAGE_FOLDER_NAME = "UserPictures";
-
-    // Request codes
-    public static final int TAKE_PHOTO_REQUEST = 1;
-    public static final int PICK_IMAGE_REQUEST = 2;
+    public static final String DEFAULT_CATEGORY_NAME = "Unsorted";
+    public static final String IMAGE_STORAGE_FOLDER_NAME = "UserPictures";
 
     private static MyCamera myCamera;
     private PicturesDatabaseHelper mydb;
@@ -33,7 +32,6 @@ public class ActivityMain extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Set initial layout
         setContentView(R.layout.activity_main);
 
         myCamera = new MyCamera(this);
@@ -62,7 +60,6 @@ public class ActivityMain extends FragmentActivity {
                     }, 400);
                 }
             }
-
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
@@ -79,9 +76,40 @@ public class ActivityMain extends FragmentActivity {
         btmTabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.white));
     }
 
-    // Handles activity results in all fragments
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RequestCodeHelper.TAKE_PHOTO_REQUEST && resultCode == RESULT_OK) {
+            // Note that in this case, data will be null since in camera. This is a special case
+            // when pictures taken are stored to a uri
+            updateDatabase(myCamera.getPictureFilePath());
+
+            // Setup first time tutorial guide
+            MyUtilities.createOneTimeIntroDialog(this,"first_time_page1_2", R.drawable.starting_dialog1_2);
+        } else if (requestCode == RequestCodeHelper.PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
+            // Create a image file in UsersPicture folder
+            Uri newUri = MyUtilities.copyMediaStoreUriToCacheDir(data.getData(), this);
+
+            //Store picture into database
+            updateDatabase(newUri.getPath());
+
+            // Setup first time tutorial guide
+            MyUtilities.createOneTimeIntroDialog(this,"first_time_page1_2", R.drawable.starting_dialog1_2);
+        }
+    }
+
+    /**
+     * Starts camera
+     */
+    public static void startCamera() {
+        myCamera.dispatchTakePictureIntent();
+    }
+
+    /**
+     * Inserts photo path and generated time into database
+     *
+     * @param photoPath photo path of the new image file
+     */
+    private void updateDatabase(String photoPath) {
         int year = Calendar.getInstance().get(Calendar.YEAR);
         int month = Calendar.getInstance().get(Calendar.MONTH);
         int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
@@ -89,49 +117,13 @@ public class ActivityMain extends FragmentActivity {
         int min = Calendar.getInstance().get(Calendar.MINUTE);
         int seconds = Calendar.getInstance().get(Calendar.SECOND);
 
-        // After user took a photo
-        if (requestCode == TAKE_PHOTO_REQUEST && resultCode == RESULT_OK) {
-            //*Note: In this case, data will be null since in camera,
-            // I have added instructions to put data into photoURI instead
+        boolean hasInsertedData = mydb.insertNewRowPTable(photoPath, DEFAULT_CATEGORY_NAME, "",
+                null, year, month, day, hour, min, seconds);
 
-            // Store picture into database
-            boolean hasInsertedData = mydb.insertNewRowPTable(myCamera.getPictureFile().getAbsolutePath(),
-                    DEFAULT_CAT_NAME, "", null, year, month, day, hour, min, seconds);
-
-            if (hasInsertedData) {
-                Toast.makeText(this, "Successfully added", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, "Error adding", Toast.LENGTH_LONG).show();
-            }
-
-            // Setup first time tutorial guide
-            MyUtilities.createOneTimeIntroDialog(this,"first_time_page1_2", R.drawable.starting_dialog1_2);
+        if (hasInsertedData) {
+            Toast.makeText(this, "Successfully added", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Error adding", Toast.LENGTH_LONG).show();
         }
-        // After user picked an image from gallery
-        else if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
-            //Make a copy of the image and store into app folder
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String fileName = "JPEG_" + timeStamp;
-            Uri userImageUri = data.getData();
-            Uri newUri = MyUtilities.copyMediaStoreUriToCacheDir(userImageUri, fileName, this);
-
-            //Store picture into database
-            boolean hasInsertedData = mydb.insertNewRowPTable(newUri.getPath(),
-                    DEFAULT_CAT_NAME, "", null, year, month, day, hour, min, seconds);
-
-
-            if (hasInsertedData) {
-                Toast.makeText(this, "Successfully added", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, "Error adding", Toast.LENGTH_LONG).show();
-            }
-
-            // Setup first time tutorial guide
-            MyUtilities.createOneTimeIntroDialog(this,"first_time_page1_2", R.drawable.starting_dialog1_2);
-        }
-    }
-
-    public static MyCamera getCamera() {
-        return myCamera;
     }
 }

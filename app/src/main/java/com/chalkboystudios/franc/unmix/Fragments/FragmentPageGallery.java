@@ -32,7 +32,7 @@ import com.chalkboystudios.franc.unmix.RecyclerViewAdaptors.RecyclerViewAdaptorG
 import com.chalkboystudios.franc.unmix.CustomWidgets.CustomInformationDialog;
 import com.chalkboystudios.franc.unmix.CustomWidgets.CustomPicture;
 import com.chalkboystudios.franc.unmix.R;
-import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
+import com.chalkboystudios.franc.unmix.Utilities.PicturesDatabaseHelper;
 import com.chalkboystudios.franc.unmix.Utilities.MyUtilities;
 
 import java.util.ArrayList;
@@ -277,8 +277,8 @@ public class FragmentPageGallery extends Fragment implements View.OnTouchListene
         }
 
         // If dun have unsorted category
-        if (!distinctCategoryNames.contains(ActivityMain.DEFAULT_CAT_NAME)) {
-            distinctCategoryNames.add(0, ActivityMain.DEFAULT_CAT_NAME);
+        if (!distinctCategoryNames.contains(ActivityMain.DEFAULT_CATEGORY_NAME)) {
+            distinctCategoryNames.add(0, ActivityMain.DEFAULT_CATEGORY_NAME);
         }
 
         return distinctCategoryNames;

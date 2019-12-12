@@ -1,7 +1,6 @@
 package com.chalkboystudios.franc.unmix.CustomWidgets;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -15,7 +14,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.chalkboystudios.franc.unmix.R;
-import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
 
 /**
  * Created by franc on 2/7/2019.

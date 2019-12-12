@@ -5,20 +5,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
-
-import com.chalkboystudios.franc.unmix.ActivityMain;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
- * Created by franc on 16/6/2019.
+ * Handles camera intents
  */
-
 public class MyCamera {
+    private static final String TAG = "MyCamera";
     private File currentImageFile;
     private Activity currentActivity;
 
@@ -26,17 +22,20 @@ public class MyCamera {
         this.currentActivity = currentActivity;
     }
 
+    /**
+     * Dispatch intent to take photo and stores image into a image file
+     */
     public void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(currentActivity.getPackageManager()) == null) {
-            System.out.println("Problem loading camera");
-        }
-        else {
+            Log.e(TAG, "dispatchTakePictureIntent: Problem loading camera");
+        } else {
             try {
                 currentImageFile = MyUtilities.createEmptyFile(currentActivity);
             } catch (IOException ex) {
-                System.out.println("Error occurred while creating the an empty file for image");
+                Log.e(TAG, "dispatchTakePictureIntent: " +
+                        "Error occurred while creating the an empty file for image");
             }
             // Continue only if the empty file was successfully created
             if (currentImageFile != null) {
@@ -44,14 +43,19 @@ public class MyCamera {
                         "com.example.android.fileprovider",
                         currentImageFile);
 
-                // Add extra instructions to intent to store the image output(EXTRA_OUTPUT) into photoURI of the empty file created
+                // Image taken will be written to photoURI path
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                currentActivity.startActivityForResult(takePictureIntent, ActivityMain.TAKE_PHOTO_REQUEST);
+                currentActivity.startActivityForResult(takePictureIntent, RequestCodeHelper.TAKE_PHOTO_REQUEST);
             }
         }
     }
 
-    public File getPictureFile() {
-        return currentImageFile;
+    /**
+     * Returns the image file that contains the image taken by user
+     *
+     * @return String of the most recent image file path
+     */
+    public String getPictureFilePath() {
+        return currentImageFile.getAbsolutePath();
     }
 }

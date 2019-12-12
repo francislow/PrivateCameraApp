@@ -18,7 +18,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.chalkboystudios.franc.unmix.Fragments.FragmentPageMain;
 import com.chalkboystudios.franc.unmix.R;
-import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
+import com.chalkboystudios.franc.unmix.Utilities.PicturesDatabaseHelper;
 
 import java.util.ArrayList;
 

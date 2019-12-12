@@ -40,7 +40,7 @@ import com.bumptech.glide.Glide;
 import com.chalkboystudios.franc.unmix.Fragments.FragmentPageGallery;
 import com.chalkboystudios.franc.unmix.CustomWidgets.CustomPicture;
 import com.chalkboystudios.franc.unmix.R;
-import com.chalkboystudios.franc.unmix.SQLiteDatabases.PicturesDatabaseHelper;
+import com.chalkboystudios.franc.unmix.Utilities.PicturesDatabaseHelper;
 import com.chalkboystudios.franc.unmix.Utilities.MyUtilities;
 
 import java.io.File;
@@ -81,13 +81,13 @@ public class RecyclerViewAdaptorGallery extends RecyclerView.Adapter<RecyclerVie
         Log.d(TAG, "onDetachedFromRecyclerView: ran");
 
         // Update category table database
-        mydb.deleteAllRowsCTable();
+        mydb.emptyCTable();
         for (String categoryName : categoryNames) {
             mydb.insertNewRowCTable(categoryName);
         }
 
         // Update picture table database
-        mydb.deleteAllRowsPTable();
+        mydb.emptyPTable();
         // Loop through each category
         for (int i = 0; i < customPicsLists.size(); i++) {
             ArrayList<CustomPicture> customPictureList = customPicsLists.get(i);
