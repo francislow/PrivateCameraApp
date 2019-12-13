@@ -7,13 +7,13 @@
         android:layout_height="45dp" >
 
         <RelativeLayout
-            android:id="@+id/top_tab_space"
+            android:id="@+id/top_tab_brown"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/top_bar_background" />
 
         <RelativeLayout
-            android:id="@+id/top_tab_space_2"
+            android:id="@+id/top_tab_red"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/remove_tb"

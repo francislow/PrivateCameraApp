@@ -28,16 +28,13 @@ import static android.content.ContentValues.TAG;
  * Recycler view adaptor for the main fragment page
  */
 public class RecyclerViewAdaptorMain extends RecyclerView.Adapter<RecyclerViewAdaptorMain.ViewHolder> {
-    private ArrayList<FragmentPageMain.PictureInfo> pictureInfoList = new ArrayList<>();
+    private ArrayList<FragmentPageMain.PictureInfo> pictureInfoList;
     private Context myContext;
-    private PicturesDatabaseHelper mydb;
 
 
     public RecyclerViewAdaptorMain(Context context, ArrayList<FragmentPageMain.PictureInfo> pictureInfoList) {
         this.myContext = context;
-        this.pictureInfoList = pictureInfoList;
-
-        mydb = new PicturesDatabaseHelper(myContext);
+        this.pictureInfoList = new ArrayList<>(pictureInfoList);
     }
 
     @NonNull
@@ -51,7 +48,6 @@ public class RecyclerViewAdaptorMain extends RecyclerView.Adapter<RecyclerViewAd
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: main fragment");
 
-        ImageView currentIV = holder.displayImage;
         final String currentPhotoPathName = pictureInfoList.get(position).getPhotopath();
 
         // Set up display image
@@ -59,42 +55,10 @@ public class RecyclerViewAdaptorMain extends RecyclerView.Adapter<RecyclerViewAd
                 .with(myContext)
                 .load(currentPhotoPathName)
                 .transform(new CenterCrop())
-                .into(currentIV);
+                .into(holder.displayImage);
 
         //Set on click listener for the image view
-        holder.displayImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Animation fadeout = new AlphaAnimation(1.f, 0.5f);
-                fadeout.setDuration(300);
-                v.startAnimation(fadeout);
-                v.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Show preview image function
-                        final Dialog nagDialog = new Dialog(myContext, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-                        nagDialog.setContentView(R.layout.dialog_preview_image);
-
-                        // Button
-                        Button sendButton = (Button) nagDialog.findViewById(R.id.sendButton);
-                        sendButton.setVisibility(View.GONE);
-
-                        ImageView previewImage = (ImageView) nagDialog.findViewById(R.id.preview_image);
-                        Glide
-                                .with(myContext)
-                                .load(currentPhotoPathName)
-                                .into(previewImage);
-                        nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                            @Override
-                            public void onCancel(DialogInterface dialog) {
-                                nagDialog.dismiss();
-                            }
-                        });
-                        nagDialog.show();
-                    }
-                }, 300);
-            }
-        });
+        holder.displayImage.setOnClickListener(new ImageClickListener(currentPhotoPathName));
     }
 
     @Override
@@ -109,6 +73,46 @@ public class RecyclerViewAdaptorMain extends RecyclerView.Adapter<RecyclerViewAd
         public ViewHolder(View itemView) {
             super(itemView);
             displayImage = (ImageView) itemView.findViewById(R.id.display_image);
+        }
+    }
+
+    private class ImageClickListener implements View.OnClickListener {
+        private String currentPhotoPathName;
+
+        public ImageClickListener(String currentPhotoPathName) {
+            this.currentPhotoPathName = currentPhotoPathName;
+        }
+
+        @Override
+        public void onClick(View view) {
+            Animation fadeout = new AlphaAnimation(1.f, 0.5f);
+            fadeout.setDuration(300);
+            view.startAnimation(fadeout);
+            view.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Show preview image function
+                    final Dialog nagDialog = new Dialog(myContext, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+                    nagDialog.setContentView(R.layout.dialog_preview_image);
+
+                    // Button
+                    Button sendButton = (Button) nagDialog.findViewById(R.id.sendButton);
+                    sendButton.setVisibility(View.GONE);
+
+                    ImageView previewImage = (ImageView) nagDialog.findViewById(R.id.preview_image);
+                    Glide
+                            .with(myContext)
+                            .load(currentPhotoPathName)
+                            .into(previewImage);
+                    nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            nagDialog.dismiss();
+                        }
+                    });
+                    nagDialog.show();
+                }
+            }, 300);
         }
     }
 }

@@ -28,6 +28,7 @@ public class ActivityMain extends FragmentActivity {
 
     private static MyCamera myCamera;
     private PicturesDatabaseHelper mydb;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,31 +43,12 @@ public class ActivityMain extends FragmentActivity {
 
         // Set viewpager
         FragmentAdaptor fragmentAdaptor = new FragmentAdaptor(getSupportFragmentManager());
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.myvp);
+        viewPager = (ViewPager) findViewById(R.id.myvp);
         viewPager.setAdapter(fragmentAdaptor);
         viewPager.setCurrentItem(0);
 
         // Setup first time tutorial guide
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                if (position == 1) {
-                    viewPager.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            MyUtilities.createOneTimeIntroDialog(ActivityMain.this,
-                                    "first_time_page2", R.drawable.starting_dialog2);
-                        }
-                    }, 400);
-                }
-            }
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
+        viewPager.addOnPageChangeListener(new ViewpagerPageChangeListener());
 
         // Setup Btm Tab
         TabLayout btmTabLayout = (TabLayout) findViewById(R.id.btmtablayout);
@@ -124,6 +106,29 @@ public class ActivityMain extends FragmentActivity {
             Toast.makeText(this, "Successfully added", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(this, "Error adding", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private class ViewpagerPageChangeListener implements ViewPager.OnPageChangeListener {
+        @Override
+        public void onPageSelected(int position) {
+            if (position == 1) {
+                viewPager.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        MyUtilities.createOneTimeIntroDialog(ActivityMain.this,
+                                "first_time_page2", R.drawable.starting_dialog2);
+                    }
+                }, 400);
+            }
+        }
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
         }
     }
 }

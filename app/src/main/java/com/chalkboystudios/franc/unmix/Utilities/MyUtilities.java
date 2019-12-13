@@ -105,7 +105,7 @@ public class MyUtilities {
     }
 
     public static void createOneTimeIntroDialog(Context context, String prefKey, int drawableId) {
-        Log.d(TAG, "createOneTimeIntroDialog: tried running one time dialog");
+        Log.d(TAG, "createOneTimeIntroDialog: Running one time dialog");
         SharedPreferences prefs = context.getSharedPreferences(ActivityMain.MY_PREFS_NAME, Context.MODE_PRIVATE);
         boolean first_time_flag = prefs.getBoolean(prefKey, true);//"No name defined" is the default value.
 

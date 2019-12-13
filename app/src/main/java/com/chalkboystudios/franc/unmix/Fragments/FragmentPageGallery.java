@@ -42,13 +42,13 @@ import static android.content.ContentValues.TAG;
 /**
  * Gallery fragment page
  */
-public class FragmentPageGallery extends Fragment implements View.OnTouchListener, View.OnDragListener {
+public class FragmentPageGallery extends Fragment {
     private PicturesDatabaseHelper mydb;
     private Button addCatButton;
     private Button informationButton;
     private TextView appNameTV;
-    private RelativeLayout topTabSpace;
-    private RelativeLayout topTabSpaceRemove;
+    private RelativeLayout brownTopTab;
+    private RelativeLayout redTopTab;
     private TextView dustbinTV;
     private RecyclerView recyclerView;
     private RecyclerViewAdaptorGallery recyclerViewAdaptorGallery;
@@ -71,10 +71,10 @@ public class FragmentPageGallery extends Fragment implements View.OnTouchListene
         super.onViewCreated(view, savedInstanceState);
 
         // Setup Top Tab
-        topTabSpace = (RelativeLayout) getActivity().findViewById(R.id.top_tab_space);
-        topTabSpaceRemove = (RelativeLayout) getActivity().findViewById(R.id.top_tab_space_2);
-        topTabSpaceRemove.setOnDragListener(this);
-        topTabSpaceRemove.setAlpha(0);
+        brownTopTab = (RelativeLayout) getActivity().findViewById(R.id.top_tab_brown);
+        redTopTab = (RelativeLayout) getActivity().findViewById(R.id.top_tab_red);
+        redTopTab.setOnDragListener(new RedTopTabDragListener());
+        redTopTab.setAlpha(0);
 
         // Dustbin imageview
         dustbinTV = (TextView) getActivity().findViewById(R.id.dustbin);
@@ -85,10 +85,10 @@ public class FragmentPageGallery extends Fragment implements View.OnTouchListene
 
         // Photo Button
         addCatButton = (Button) getActivity().findViewById(R.id.add_cat_button);
-        addCatButton.setOnTouchListener(this);
+        addCatButton.setOnTouchListener(new ButtonTouchListener());
 
         informationButton = (Button) getActivity().findViewById(R.id.information_button);
-        informationButton.setOnTouchListener(this);
+        informationButton.setOnTouchListener(new ButtonTouchListener());
     }
 
     @Override
@@ -114,152 +114,145 @@ public class FragmentPageGallery extends Fragment implements View.OnTouchListene
         initRecyclerView(distinctCategoryNames, customPictureLists);
     }
 
-    /* This on touch method is for the add category button on the top tab */
-    @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        PropertyValuesHolder scaleXUp = PropertyValuesHolder.ofFloat(View.SCALE_X, 0.5f, 1f);
-        PropertyValuesHolder scaleYUp = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.5f, 1f);
-        PropertyValuesHolder alphaUp = PropertyValuesHolder.ofFloat(View.ALPHA, 0.5f, 1f);
+    private class ButtonTouchListener implements View.OnTouchListener {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            PropertyValuesHolder scaleXUp = PropertyValuesHolder.ofFloat(View.SCALE_X, 0.5f, 1f);
+            PropertyValuesHolder scaleYUp = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.5f, 1f);
+            PropertyValuesHolder alphaUp = PropertyValuesHolder.ofFloat(View.ALPHA, 0.5f, 1f);
 
-        PropertyValuesHolder scaleXDown = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0.5f);
-        PropertyValuesHolder scaleYDown = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0.5f);
-        PropertyValuesHolder alphaDown = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0.5f);
-        switch (motionEvent.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                ObjectAnimator.ofPropertyValuesHolder(view, alphaDown, scaleXDown, scaleYDown).start();
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                ObjectAnimator.ofPropertyValuesHolder(view, alphaUp, scaleXUp, scaleYUp).start();
-                break;
-            case MotionEvent.ACTION_UP:
-                ObjectAnimator.ofPropertyValuesHolder(view, alphaUp, scaleXUp, scaleYUp).start();
+            PropertyValuesHolder scaleXDown = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0.5f);
+            PropertyValuesHolder scaleYDown = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0.5f);
+            PropertyValuesHolder alphaDown = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0.5f);
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    ObjectAnimator.ofPropertyValuesHolder(view, alphaDown, scaleXDown, scaleYDown).start();
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    ObjectAnimator.ofPropertyValuesHolder(view, alphaUp, scaleXUp, scaleYUp).start();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    ObjectAnimator.ofPropertyValuesHolder(view, alphaUp, scaleXUp, scaleYUp).start();
 
-                //If user's touch up is still inside button
-                if (MyUtilities.touchUpInButton(motionEvent, (Button) view)) {
-                    switch (view.getId()) {
-                        case R.id.information_button:
-                            CustomInformationDialog myDialog = new CustomInformationDialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
-                            myDialog.show();
-                            break;
-                        case R.id.add_cat_button:
-                            //Add a category
-                            final Dialog nagDialog = new Dialog(getActivity());
-                            //nagDialog.getWindow().getAttributes().windowAnimations = R.style.DialogScale;
-                            nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                            nagDialog.setContentView(R.layout.dialog_insert_cat_name);
-                            nagDialog.getWindow().getDecorView().setBackgroundResource(android.R.color.transparent);
+                    //If user's touch up is still inside button
+                    if (MyUtilities.touchUpInButton(motionEvent, (Button) view)) {
+                        switch (view.getId()) {
+                            case R.id.information_button:
+                                CustomInformationDialog myDialog = new CustomInformationDialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+                                myDialog.show();
+                                break;
+                            case R.id.add_cat_button:
+                                //Add a category
+                                final Dialog nagDialog = new Dialog(getActivity());
+                                //nagDialog.getWindow().getAttributes().windowAnimations = R.style.DialogScale;
+                                nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                nagDialog.setContentView(R.layout.dialog_insert_cat_name);
+                                nagDialog.getWindow().getDecorView().setBackgroundResource(android.R.color.transparent);
 
 
-                            final EditText catNameET = (EditText) nagDialog.findViewById(R.id.editT1);
-                            // Automatically bring up keyboard
-                            catNameET.requestFocus();
-                            nagDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                                final EditText catNameET = (EditText) nagDialog.findViewById(R.id.editT1);
+                                // Automatically bring up keyboard
+                                catNameET.requestFocus();
+                                nagDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
-                            //Set add category button on click listener
-                            Button submitButton = (Button) nagDialog.findViewById(R.id.button1);
-                            submitButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    EditText categoryNameText = (EditText) nagDialog.findViewById(R.id.editT1);
-                                    String newCategoryName = categoryNameText.getText().toString().trim();
-                                    if (!MyUtilities.hasDuplicatedCatNames(newCategoryName, recyclerViewAdaptorGallery.categoryNames)) {
-                                        // Update recycler view
-                                        recyclerViewAdaptorGallery.categoryNames.add(newCategoryName);
-                                        recyclerViewAdaptorGallery.customPicsLists.add(new ArrayList<CustomPicture>());
-                                        int currentIndex = recyclerViewAdaptorGallery.categoryNames.indexOf(newCategoryName);
-                                        recyclerViewAdaptorGallery.notifyItemInserted(currentIndex);
-                                        nagDialog.dismiss();
+                                //Set add category button on click listener
+                                Button submitButton = (Button) nagDialog.findViewById(R.id.button1);
+                                submitButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        EditText categoryNameText = (EditText) nagDialog.findViewById(R.id.editT1);
+                                        String newCategoryName = categoryNameText.getText().toString().trim();
+                                        if (!MyUtilities.hasDuplicatedCatNames(newCategoryName, recyclerViewAdaptorGallery.categoryNames)) {
+                                            // Update recycler view
+                                            recyclerViewAdaptorGallery.categoryNames.add(newCategoryName);
+                                            recyclerViewAdaptorGallery.customPicsLists.add(new ArrayList<CustomPicture>());
+                                            int currentIndex = recyclerViewAdaptorGallery.categoryNames.indexOf(newCategoryName);
+                                            recyclerViewAdaptorGallery.notifyItemInserted(currentIndex);
+                                            nagDialog.dismiss();
 
-                                        MyUtilities.createOneTimeIntroDialog(getActivity(), "first_time_page4", R.drawable.starting_dialog4);
-                                    } else {
-                                        Toast.makeText(getActivity(), "Unable to add label, you already have an exact label name", Toast.LENGTH_LONG).show();
+                                            MyUtilities.createOneTimeIntroDialog(getActivity(), "first_time_page4", R.drawable.starting_dialog4);
+                                        } else {
+                                            Toast.makeText(getActivity(), "Unable to add label, you already have an exact label name", Toast.LENGTH_LONG).show();
+                                        }
                                     }
-                                }
-                            });
-                            nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                @Override
-                                public void onCancel(DialogInterface dialog) {
+                                });
+                                nagDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialog) {
 
-                                    nagDialog.dismiss();
-                                }
-                            });
-                            nagDialog.show();
-                            break;
+                                        nagDialog.dismiss();
+                                    }
+                                });
+                                nagDialog.show();
+                                break;
+                        }
                     }
-                }
+            }
+            return true;
         }
-        return true;
     }
 
-    /* This on drag is for detecting drop for the remove picture top bar */
-    @Override
-    public boolean onDrag(View view, DragEvent event) {
-        // view -> topTabSpace2
-        PropertyValuesHolder scaleXUp = PropertyValuesHolder.ofFloat(View.SCALE_X, 0.5f, 1f);
-        PropertyValuesHolder scaleYUp = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.5f, 1f);
-        PropertyValuesHolder alphaUp = PropertyValuesHolder.ofFloat(View.ALPHA, 0f, 1f);
+    private class RedTopTabDragListener implements View.OnDragListener {
 
-        PropertyValuesHolder scaleXDown = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0.5f);
-        PropertyValuesHolder scaleYDown = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0.5f);
-        PropertyValuesHolder alphaDown = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0f);
-        switch (event.getAction()) {
-            case DragEvent.ACTION_DRAG_STARTED:
-                // Remove
-                ObjectAnimator.ofPropertyValuesHolder(topTabSpace, alphaDown).start();
-                ObjectAnimator.ofPropertyValuesHolder(addCatButton, alphaDown).start();
-                ObjectAnimator.ofPropertyValuesHolder(informationButton, alphaDown).start();
-                ObjectAnimator.ofPropertyValuesHolder(appNameTV, alphaDown).start();
+        /* This on drag is for detecting drop for the remove picture top bar */
+        @Override
+        public boolean onDrag(View view, DragEvent event) {
+            // view -> topTabSpace2
+            PropertyValuesHolder scaleXUp = PropertyValuesHolder.ofFloat(View.SCALE_X, 0.5f, 1f);
+            PropertyValuesHolder scaleYUp = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.5f, 1f);
+            PropertyValuesHolder alphaUp = PropertyValuesHolder.ofFloat(View.ALPHA, 0f, 1f);
 
-                // Appear
-                ObjectAnimator.ofPropertyValuesHolder(dustbinTV, scaleXUp, scaleYUp, alphaUp).start();
-                ObjectAnimator.ofPropertyValuesHolder(topTabSpaceRemove, alphaUp).start();
+            PropertyValuesHolder scaleXDown = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0.5f);
+            PropertyValuesHolder scaleYDown = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0.5f);
+            PropertyValuesHolder alphaDown = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0f);
+            switch (event.getAction()) {
+                case DragEvent.ACTION_DRAG_STARTED:
+                    // Remove
+                    ObjectAnimator.ofPropertyValuesHolder(brownTopTab, alphaDown).start();
+                    ObjectAnimator.ofPropertyValuesHolder(addCatButton, alphaDown).start();
+                    ObjectAnimator.ofPropertyValuesHolder(informationButton, alphaDown).start();
+                    ObjectAnimator.ofPropertyValuesHolder(appNameTV, alphaDown).start();
 
-                break;
-            case DragEvent.ACTION_DRAG_ENDED:
-                // Remove
-                ObjectAnimator.ofPropertyValuesHolder(dustbinTV, scaleXDown, scaleYDown, alphaDown).start();
-                ObjectAnimator.ofPropertyValuesHolder(topTabSpaceRemove, alphaDown).start();
+                    // Appear
+                    ObjectAnimator.ofPropertyValuesHolder(dustbinTV, scaleXUp, scaleYUp, alphaUp).start();
+                    ObjectAnimator.ofPropertyValuesHolder(redTopTab, alphaUp).start();
 
-                // Appear
-                ObjectAnimator.ofPropertyValuesHolder(topTabSpace, alphaUp).start();
-                ObjectAnimator.ofPropertyValuesHolder(addCatButton, alphaUp).start();
-                ObjectAnimator.ofPropertyValuesHolder(informationButton, alphaUp).start();
-                ObjectAnimator.ofPropertyValuesHolder(appNameTV, alphaUp).start();
+                    break;
+                case DragEvent.ACTION_DRAG_ENDED:
+                    // Remove
+                    ObjectAnimator.ofPropertyValuesHolder(dustbinTV, scaleXDown, scaleYDown, alphaDown).start();
+                    ObjectAnimator.ofPropertyValuesHolder(redTopTab, alphaDown).start();
 
-                break;
-            case DragEvent.ACTION_DRAG_ENTERED:
-                PropertyValuesHolder textSizeUpX = PropertyValuesHolder.ofFloat(TextView.SCALE_X, 1f, 1.2f);
-                PropertyValuesHolder textSizeUpY = PropertyValuesHolder.ofFloat(TextView.SCALE_Y, 1f, 1.2f);
-                ObjectAnimator.ofPropertyValuesHolder(dustbinTV, textSizeUpX, textSizeUpY).start();
-                break;
-            case DragEvent.ACTION_DRAG_EXITED:
-                PropertyValuesHolder textSizeDownX = PropertyValuesHolder.ofFloat(TextView.SCALE_X, 1.2f, 1f);
-                PropertyValuesHolder textSizeDownY = PropertyValuesHolder.ofFloat(TextView.SCALE_Y, 1.2f, 1f);
-                ObjectAnimator.ofPropertyValuesHolder(dustbinTV, textSizeDownX, textSizeDownY).start();
-                break;
-            case DragEvent.ACTION_DROP:
-                dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-                Log.d(TAG, "onDrag: Drop detected at remove bar");
+                    // Appear
+                    ObjectAnimator.ofPropertyValuesHolder(brownTopTab, alphaUp).start();
+                    ObjectAnimator.ofPropertyValuesHolder(addCatButton, alphaUp).start();
+                    ObjectAnimator.ofPropertyValuesHolder(informationButton, alphaUp).start();
+                    ObjectAnimator.ofPropertyValuesHolder(appNameTV, alphaUp).start();
 
-                // Delete actual file stored in package
-                MyUtilities.deleteFile(draggedPicture.getPhotoPath());
-                /* Don't need to do this since recyclerview removed the dragged picture already after drag
-                started. If dropped anywhere else except top remove bar, it will add back to original grid
-                // User wants to delete the photo
-                // Update recycler view
-                int currentIndex = recyclerViewAdaptorGallery.categoryNames.indexOf(draggedPicture.getCatName());
-                recyclerViewAdaptorGallery.photoPathLists.get(currentIndex).remove(draggedPicture.getPhotoPath());
-                recyclerViewAdaptorGallery.notifyItemChanged(currentIndex);
-                */
+                    break;
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    PropertyValuesHolder textSizeUpX = PropertyValuesHolder.ofFloat(TextView.SCALE_X, 1f, 1.2f);
+                    PropertyValuesHolder textSizeUpY = PropertyValuesHolder.ofFloat(TextView.SCALE_Y, 1f, 1.2f);
+                    ObjectAnimator.ofPropertyValuesHolder(dustbinTV, textSizeUpX, textSizeUpY).start();
+                    break;
+                case DragEvent.ACTION_DRAG_EXITED:
+                    PropertyValuesHolder textSizeDownX = PropertyValuesHolder.ofFloat(TextView.SCALE_X, 1.2f, 1f);
+                    PropertyValuesHolder textSizeDownY = PropertyValuesHolder.ofFloat(TextView.SCALE_Y, 1.2f, 1f);
+                    ObjectAnimator.ofPropertyValuesHolder(dustbinTV, textSizeDownX, textSizeDownY).start();
+                    break;
+                case DragEvent.ACTION_DROP:
+                    dustbinTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+                    Log.d(TAG, "onDrag: Drop detected at remove bar");
 
-                break;
-            default:
-                break;
+                    // Delete actual file stored in package
+                    MyUtilities.deleteFile(draggedPicture.getPhotoPath());
+                    break;
+                default:
+                    break;
+            }
+            return true;
         }
-        return true;
     }
-
-
 
 
 
@@ -275,7 +268,7 @@ public class FragmentPageGallery extends Fragment implements View.OnTouchListene
             distinctCategoryNames.add(currentCatName);
         }
 
-        // If dun have unsorted category
+        // If unsorted category is not present
         if (!distinctCategoryNames.contains(ActivityMain.DEFAULT_CATEGORY_NAME)) {
             distinctCategoryNames.add(0, ActivityMain.DEFAULT_CATEGORY_NAME);
         }

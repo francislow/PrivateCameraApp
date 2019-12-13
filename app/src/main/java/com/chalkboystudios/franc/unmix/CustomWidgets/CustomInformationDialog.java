@@ -16,6 +16,7 @@ import com.chalkboystudios.franc.unmix.R;
  */
 public class CustomInformationDialog extends Dialog {
     private Context context;
+    private ImageView informationIV;
     private int currentDialogPage = 1;
 
     public CustomInformationDialog(@NonNull Context context) {
@@ -42,33 +43,37 @@ public class CustomInformationDialog extends Dialog {
         this.getWindow().getAttributes().windowAnimations = R.style.DialogFade;
 
         // Set cancel on back button pressed
-        this.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                dialog.dismiss();
-            }
-        });
+        this.setOnCancelListener(new DialogCancelListener());
 
         // Set initial background
-        final ImageView informationIV = findViewById(R.id.informationIV);
+        informationIV = findViewById(R.id.informationIV);
         informationIV.setBackground(context.getResources().getDrawable(R.drawable.instruction1));
 
         // User click to go next page
-        informationIV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentDialogPage == 1) {
-                    informationIV.setBackground(context.getResources().getDrawable(R.drawable.instruction2));
-                    currentDialogPage = 2;
-                }
-                else if (currentDialogPage == 2) {
-                    informationIV.setBackground(context.getResources().getDrawable(R.drawable.instruction3));
-                    currentDialogPage = 3;
-                }
-                else {
-                    CustomInformationDialog.this.dismiss();
-                }
+        informationIV.setOnClickListener(new InformationClickListener());
+    }
+
+    private class DialogCancelListener implements DialogInterface.OnCancelListener {
+        @Override
+        public void onCancel(DialogInterface dialog) {
+            dialog.dismiss();
+        }
+    }
+
+    private class InformationClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            if (currentDialogPage == 1) {
+                informationIV.setBackground(context.getResources().getDrawable(R.drawable.instruction2));
+                currentDialogPage = 2;
             }
-        });
+            else if (currentDialogPage == 2) {
+                informationIV.setBackground(context.getResources().getDrawable(R.drawable.instruction3));
+                currentDialogPage = 3;
+            }
+            else {
+                CustomInformationDialog.this.dismiss();
+            }
+        }
     }
 }
