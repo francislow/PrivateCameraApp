@@ -1,10 +1,20 @@
 # Unmix-Photo-Gallery
-<i><b>*Compatible with Android devices only</b></i>
 
-A separate gallery that allows the user to manage pictures that they do not want to be mixed into their default phone gallery.
-
-This is a private gallery, separated from your phone's gallery, tailored to store temporary pictures (eg: study / work related). It is easy, simple and light to organize and manage these pictures. It makes your photo management less tedious. Keep track of these junk photos and delete them once you are done with them.
+A separate gallery that allows the user to manage and store pictures that they do not want to be mixed into their default phone gallery. Tailored to store work / study related photos. Easily keep track of these photos and delete them once you are done with them.
+- This project is built during the 2019 summer period
+- Built with Android Studios
+- Data stored using SQLite
 
 <a href="https://play.google.com/store/apps/details?id=com.chalkboystudios.franc.unmix">
-         <img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height="50px"/></a>
+  <img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height="50px"/>
+</a>
+
+# Run on local machine
+1) Fork this repository and clone it to your local system
+2) Run Android Studios
+3) Import cloned repository by selecting "import project" option under file -> new
+
+<img src="https://raw.githubusercontent.com/francislow/unmix-photo-gallery/master/readme%20imgs/unmix_1.png" width="40%">
+
+
 
