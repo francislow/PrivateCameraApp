@@ -1,4 +1,4 @@
-# Unmix-Photo-Gallery
+<h1 align="center">Unmix-Photo-Gallery</h1>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/francislow/unmix-photo-gallery/master/readme%20imgs/unmix_2.png" width="15%">
